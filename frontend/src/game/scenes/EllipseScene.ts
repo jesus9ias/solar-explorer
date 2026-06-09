@@ -196,6 +196,8 @@ export class EllipseScene extends Phaser.Scene {
   }
 
   private setupInput(): void {
+    this.input.addPointer(1);
+
     this.input.on(
       'wheel',
       (_p: Phaser.Input.Pointer, _o: unknown, _dx: number, dy: number) => {
