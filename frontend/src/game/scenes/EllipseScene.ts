@@ -60,6 +60,7 @@ export class EllipseScene extends Phaser.Scene {
   private speedMultiplier = DEFAULT_ORBIT_SPEED;
   private sunArrow!: SunArrow;
   private isDragging = false;
+  private lastPinchDist = -1;
 
   constructor() {
     super(SCENE_ELLIPSE);
@@ -211,8 +212,27 @@ export class EllipseScene extends Phaser.Scene {
     });
     this.input.on('pointerup', () => {
       this.isDragging = false;
+      this.lastPinchDist = -1;
     });
     this.input.on('pointermove', (pointer: Phaser.Input.Pointer) => {
+      const p1 = this.input.pointer1;
+      const p2 = this.input.pointer2;
+
+      if (p1.isDown && p2.isDown) {
+        const dist = Phaser.Math.Distance.Between(p1.x, p1.y, p2.x, p2.y);
+        if (this.lastPinchDist > 0) {
+          const factor = dist / this.lastPinchDist;
+          const camera = this.cameras.main;
+          camera.setZoom(
+            Phaser.Math.Clamp(camera.zoom * factor, ELLIPSE_MIN_ZOOM, ELLIPSE_MAX_ZOOM),
+          );
+        }
+        this.lastPinchDist = dist;
+        return;
+      }
+
+      this.lastPinchDist = -1;
+
       if (!this.isDragging) return;
       const camera = this.cameras.main;
       camera.scrollX -= (pointer.x - pointer.prevPosition.x) / camera.zoom;

@@ -161,7 +161,7 @@ export class LinearScene extends Phaser.Scene {
     });
     this.input.on('pointermove', (pointer: Phaser.Input.Pointer) => {
       if (!this.isDragging) return;
-      this.cameras.main.scrollY -= pointer.velocity.y;
+      this.cameras.main.scrollY -= pointer.y - pointer.prevPosition.y;
       this.syncNavigation();
     });
   }
