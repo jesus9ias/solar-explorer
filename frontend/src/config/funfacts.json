@@ -1,0 +1,42 @@
+[
+  {
+    "id": "asteroid_belt",
+    "triggerDistanceMkm": 330,
+    "en": {
+      "text": "You are entering the Asteroid Belt. Although it holds millions of rocks, they are so spread out that, on average, neighboring asteroids are hundreds of thousands of kilometers apart — which is why spacecraft cross it safely."
+    },
+    "es": {
+      "text": "Estás entrando al Cinturón de Asteroides. Aunque contiene millones de rocas, están tan dispersas que, en promedio, los asteroides vecinos están a cientos de miles de kilómetros entre sí, por eso las naves lo cruzan sin peligro."
+    }
+  },
+  {
+    "id": "kuiper_belt",
+    "triggerDistanceMkm": 4600,
+    "en": {
+      "text": "Beyond Neptune lies the Kuiper Belt. Unlike the rocky Asteroid Belt, it is a vast ring of icy bodies and dwarf planets, far colder and much wider."
+    },
+    "es": {
+      "text": "Más allá de Neptuno se encuentra el Cinturón de Kuiper. A diferencia del rocoso Cinturón de Asteroides, es un enorme anillo de cuerpos helados y planetas enanos, mucho más frío y más extenso."
+    }
+  },
+  {
+    "id": "heliopause",
+    "triggerDistanceMkm": 18000,
+    "en": {
+      "text": "Around here the solar wind fades and meets interstellar space. This boundary, the heliopause, marks the edge of the Sun's bubble of influence."
+    },
+    "es": {
+      "text": "Por aquí el viento solar se desvanece y se encuentra con el espacio interestelar. Esta frontera, la heliopausa, marca el borde de la burbuja de influencia del Sol."
+    }
+  },
+  {
+    "id": "journey_end",
+    "triggerDistanceMkm": 24000,
+    "en": {
+      "text": "This is as far as we go, the current position of Voyager 1. The Oort Cloud is thought to begin around 2,000 AU away, and the nearest star, Proxima Centauri, lies about 268,000 AU from the Sun."
+    },
+    "es": {
+      "text": "Hasta aquí llegamos, la posición actual de la Voyager 1. Se cree que la Nube de Oort comienza a unas 2,000 UA, y la estrella más cercana, Próxima Centauri, está a unas 268,000 UA del Sol."
+    }
+  }
+]

@@ -1,0 +1,106 @@
+{
+  "en": {
+    "app": {
+      "title": "Solar Explorer",
+      "subtitle": "Navigate the solar system to scale"
+    },
+    "hud": {
+      "language": "Language",
+      "mode": "Mode",
+      "unit": "Distance unit",
+      "audio": "Audio",
+      "library": "Library",
+      "linear": "Linear",
+      "ellipse": "Ellipse",
+      "mkm": "Million km",
+      "au": "AU",
+      "on": "On",
+      "off": "Off",
+      "prevElement": "Previous",
+      "nextElement": "Next",
+      "orbitSpeed": "Orbit speed",
+      "orbitLines": "Orbit lines",
+      "show": "Show",
+      "hide": "Hide"
+    },
+    "modal": {
+      "distanceToSun": "Distance to Sun",
+      "orbitalPeriod": "Orbital period",
+      "rotationPeriod": "Rotation period",
+      "temperature": "Temperature",
+      "facts": "Did you know?",
+      "objectives": "Mission objectives",
+      "instruments": "Main instruments",
+      "missionComplete": "Mission complete",
+      "launched": "Launched",
+      "host": "Orbits",
+      "close": "Close",
+      "years": "years",
+      "days": "days"
+    },
+    "library": {
+      "title": "Library",
+      "star": "Star",
+      "planets": "Planets",
+      "dwarfPlanets": "Dwarf Planets",
+      "moons": "Natural Satellites",
+      "spacecraft": "Artificial Spacecraft",
+      "asteroidsComets": "Asteroids & Comets"
+    },
+    "ruler": {
+      "label": "Distance from Sun"
+    }
+  },
+  "es": {
+    "app": {
+      "title": "Explorador Solar",
+      "subtitle": "Navega el sistema solar a escala"
+    },
+    "hud": {
+      "language": "Idioma",
+      "mode": "Modo",
+      "unit": "Unidad de distancia",
+      "audio": "Audio",
+      "library": "Biblioteca",
+      "linear": "Lineal",
+      "ellipse": "Elíptico",
+      "mkm": "Millones de km",
+      "au": "UA",
+      "on": "Encendido",
+      "off": "Apagado",
+      "prevElement": "Anterior",
+      "nextElement": "Siguiente",
+      "orbitSpeed": "Velocidad orbital",
+      "orbitLines": "Líneas de órbita",
+      "show": "Mostrar",
+      "hide": "Ocultar"
+    },
+    "modal": {
+      "distanceToSun": "Distancia al Sol",
+      "orbitalPeriod": "Período orbital",
+      "rotationPeriod": "Período de rotación",
+      "temperature": "Temperatura",
+      "facts": "¿Sabías que?",
+      "objectives": "Objetivos de la misión",
+      "instruments": "Instrumentos principales",
+      "missionComplete": "Misión completada",
+      "launched": "Lanzamiento",
+      "host": "Orbita",
+      "close": "Cerrar",
+      "years": "años",
+      "days": "días"
+    },
+    "library": {
+      "title": "Biblioteca",
+      "star": "Estrella",
+      "planets": "Planetas",
+      "dwarfPlanets": "Planetas enanos",
+      "moons": "Satélites naturales",
+      "spacecraft": "Naves artificiales",
+      "asteroidsComets": "Asteroides y cometas"
+    },
+    "ruler": {
+      "label": "Distancia desde el Sol"
+    }
+  }
+}

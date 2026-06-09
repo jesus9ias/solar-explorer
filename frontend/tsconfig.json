@@ -1,0 +1,15 @@
+{
+  "extends": "astro/tsconfigs/strict",
+  "compilerOptions": {
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "resolveJsonModule": true,
+    "verbatimModuleSyntax": false,
+    "types": ["vitest/globals"]
+  },
+  "include": ["src/**/*", "*.mjs"],
+  "exclude": ["node_modules", "dist"]
+}

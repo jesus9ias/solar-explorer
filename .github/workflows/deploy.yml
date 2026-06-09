@@ -1,0 +1,87 @@
+# Solar Explorer — frontend CI/CD
+#
+# Installs dependencies, runs the unit tests (failing the workflow on any test
+# failure), builds the Astro site, syncs it to S3 and invalidates CloudFront.
+#
+# Required repository secrets:
+#   AWS_DEPLOY_ROLE_ARN  - IAM role ARN assumed via GitHub OIDC
+#   AWS_REGION           - deployment region (e.g. us-east-1)
+#   S3_BUCKET            - target S3 bucket name (from the CDK stack output)
+#   CF_DISTRIBUTION_ID   - CloudFront distribution ID (from the CDK output)
+# Optional build-time public variables:
+#   PUBLIC_DOMAIN, PUBLIC_CF_DISTRIBUTION_ID, PUBLIC_AWS_REGION
+
+name: Deploy Frontend
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/deploy.yml'
+  workflow_dispatch:
+
+defaults:
+  run:
+    working-directory: frontend
+
+permissions:
+  id-token: write # required for AWS OIDC
+  contents: read
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      # 1. Install dependencies
+      - name: Install dependencies
+        run: npm ci
+
+      # 2. Run unit tests — the workflow fails if any test fails
+      - name: Run unit tests
+        run: npm test
+
+      # 3. Build the Astro site
+      - name: Build
+        run: npm run build
+        env:
+          PUBLIC_DOMAIN: ${{ secrets.PUBLIC_DOMAIN }}
+          PUBLIC_CF_DISTRIBUTION_ID: ${{ secrets.CF_DISTRIBUTION_ID }}
+          PUBLIC_AWS_REGION: ${{ secrets.AWS_REGION }}
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ secrets.AWS_REGION }}
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+
+      # 4. Sync dist/ to S3 (delete removed files; long-cache hashed assets)
+      - name: Sync to S3
+        run: |
+          aws s3 sync dist/ "s3://${{ secrets.S3_BUCKET }}" \
+            --delete \
+            --cache-control "public,max-age=31536000,immutable" \
+            --exclude "*.html"
+          aws s3 sync dist/ "s3://${{ secrets.S3_BUCKET }}" \
+            --delete \
+            --cache-control "public,max-age=0,must-revalidate" \
+            --content-type "text/html" \
+            --exclude "*" \
+            --include "*.html"
+
+      # 5. Invalidate CloudFront cache
+      - name: Invalidate CloudFront cache
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id "${{ secrets.CF_DISTRIBUTION_ID }}" \
+            --paths "/*"

@@ -1,0 +1,1022 @@
+[
+  {
+    "id": "sun",
+    "type": "star",
+    "host": null,
+    "orbitalRadius_mkm": 0,
+    "orbitalPeriod_years": 0,
+    "rotationPeriod_days": 25.4,
+    "radius_km": 696000,
+    "eccentricity": 0,
+    "temperatureMin_c": 5500,
+    "temperatureMax_c": 5500,
+    "missionStatus": null,
+    "missionEndYear": null,
+    "en": {
+      "name": "Sun",
+      "description": "The star at the center of the solar system, holding every other body in orbit with its gravity.",
+      "facts": [
+        "It contains about 99.86% of the mass of the solar system.",
+        "Light from its surface takes about 8 minutes to reach Earth."
+      ]
+    },
+    "es": {
+      "name": "Sol",
+      "description": "La estrella en el centro del sistema solar, que mantiene en órbita a todos los demás cuerpos con su gravedad.",
+      "facts": [
+        "Contiene cerca del 99.86% de la masa del sistema solar.",
+        "La luz de su superficie tarda unos 8 minutos en llegar a la Tierra."
+      ]
+    }
+  },
+  {
+    "id": "mercury",
+    "type": "planet",
+    "host": null,
+    "orbitalRadius_mkm": 57.9,
+    "orbitalPeriod_years": 0.241,
+    "rotationPeriod_days": 58.6,
+    "radius_km": 2440,
+    "eccentricity": 0.2056,
+    "temperatureMin_c": -173,
+    "temperatureMax_c": 427,
+    "missionStatus": null,
+    "missionEndYear": null,
+    "en": {
+      "name": "Mercury",
+      "description": "The smallest planet and the closest to the Sun, with extreme temperature swings.",
+      "facts": [
+        "A day on Mercury lasts longer than its year.",
+        "It has almost no atmosphere to retain heat."
+      ]
+    },
+    "es": {
+      "name": "Mercurio",
+      "description": "El planeta más pequeño y el más cercano al Sol, con cambios extremos de temperatura.",
+      "facts": [
+        "Un día en Mercurio dura más que su año.",
+        "Casi no tiene atmósfera para retener el calor."
+      ]
+    }
+  },
+  {
+    "id": "venus",
+    "type": "planet",
+    "host": null,
+    "orbitalRadius_mkm": 108.2,
+    "orbitalPeriod_years": 0.615,
+    "rotationPeriod_days": 243,
+    "radius_km": 6052,
+    "eccentricity": 0.0068,
+    "temperatureMin_c": 462,
+    "temperatureMax_c": 462,
+    "missionStatus": null,
+    "missionEndYear": null,
+    "en": {
+      "name": "Venus",
+      "description": "A rocky planet shrouded in thick clouds of sulfuric acid, the hottest in the solar system.",
+      "facts": [
+        "It rotates backwards compared to most planets.",
+        "Its runaway greenhouse effect traps enormous heat."
+      ]
+    },
+    "es": {
+      "name": "Venus",
+      "description": "Un planeta rocoso cubierto por densas nubes de ácido sulfúrico, el más caliente del sistema solar.",
+      "facts": [
+        "Gira en sentido contrario a la mayoría de los planetas.",
+        "Su efecto invernadero desbocado atrapa un calor enorme."
+      ]
+    }
+  },
+  {
+    "id": "earth",
+    "type": "planet",
+    "host": null,
+    "orbitalRadius_mkm": 149.598,
+    "orbitalPeriod_years": 1.0,
+    "rotationPeriod_days": 1.0,
+    "radius_km": 6371,
+    "eccentricity": 0.0167,
+    "temperatureMin_c": -89,
+    "temperatureMax_c": 57,
+    "missionStatus": null,
+    "missionEndYear": null,
+    "en": {
+      "name": "Earth",
+      "description": "Our home planet, the only known world with liquid water oceans and life.",
+      "facts": [
+        "About 71% of its surface is covered by water.",
+        "Its atmosphere is mostly nitrogen and oxygen."
+      ]
+    },
+    "es": {
+      "name": "Tierra",
+      "description": "Nuestro planeta hogar, el único mundo conocido con océanos de agua líquida y vida.",
+      "facts": [
+        "Cerca del 71% de su superficie está cubierta por agua.",
+        "Su atmósfera es principalmente nitrógeno y oxígeno."
+      ]
+    }
+  },
+  {
+    "id": "mars",
+    "type": "planet",
+    "host": null,
+    "orbitalRadius_mkm": 227.9,
+    "orbitalPeriod_years": 1.881,
+    "rotationPeriod_days": 1.026,
+    "radius_km": 3390,
+    "eccentricity": 0.0934,
+    "temperatureMin_c": -143,
+    "temperatureMax_c": 35,
+    "missionStatus": null,
+    "missionEndYear": null,
+    "en": {
+      "name": "Mars",
+      "description": "The red planet, a cold desert world with the largest volcano in the solar system.",
+      "facts": [
+        "Its reddish color comes from iron oxide (rust).",
+        "It hosts Olympus Mons, nearly three times the height of Everest."
+      ]
+    },
+    "es": {
+      "name": "Marte",
+      "description": "El planeta rojo, un frío mundo desértico con el volcán más grande del sistema solar.",
+      "facts": [
+        "Su color rojizo proviene del óxido de hierro.",
+        "Alberga el Monte Olimpo, casi tres veces la altura del Everest."
+      ]
+    }
+  },
+  {
+    "id": "jupiter",
+    "type": "planet",
+    "host": null,
+    "orbitalRadius_mkm": 778.5,
+    "orbitalPeriod_years": 11.86,
+    "rotationPeriod_days": 0.414,
+    "radius_km": 69911,
+    "eccentricity": 0.0489,
+    "temperatureMin_c": -145,
+    "temperatureMax_c": -108,
+    "missionStatus": null,
+    "missionEndYear": null,
+    "en": {
+      "name": "Jupiter",
+      "description": "The largest planet, a gas giant with a centuries-old storm called the Great Red Spot.",
+      "facts": [
+        "It is more than twice as massive as all other planets combined.",
+        "It has the shortest day of any planet, under 10 hours."
+      ]
+    },
+    "es": {
+      "name": "Júpiter",
+      "description": "El planeta más grande, un gigante gaseoso con una tormenta de siglos llamada la Gran Mancha Roja.",
+      "facts": [
+        "Tiene más del doble de masa que todos los demás planetas juntos.",
+        "Tiene el día más corto de todos los planetas, menos de 10 horas."
+      ]
+    }
+  },
+  {
+    "id": "saturn",
+    "type": "planet",
+    "host": null,
+    "orbitalRadius_mkm": 1434,
+    "orbitalPeriod_years": 29.46,
+    "rotationPeriod_days": 0.444,
+    "radius_km": 58232,
+    "eccentricity": 0.0565,
+    "temperatureMin_c": -178,
+    "temperatureMax_c": -139,
+    "missionStatus": null,
+    "missionEndYear": null,
+    "en": {
+      "name": "Saturn",
+      "description": "A gas giant famous for its spectacular system of icy rings.",
+      "facts": [
+        "Its rings are made mostly of water ice and rock.",
+        "It is the least dense planet and would float in water."
+      ]
+    },
+    "es": {
+      "name": "Saturno",
+      "description": "Un gigante gaseoso famoso por su espectacular sistema de anillos helados.",
+      "facts": [
+        "Sus anillos están hechos sobre todo de hielo de agua y roca.",
+        "Es el planeta menos denso y flotaría en el agua."
+      ]
+    }
+  },
+  {
+    "id": "uranus",
+    "type": "planet",
+    "host": null,
+    "orbitalRadius_mkm": 2871,
+    "orbitalPeriod_years": 84.01,
+    "rotationPeriod_days": 0.718,
+    "radius_km": 25362,
+    "eccentricity": 0.0457,
+    "temperatureMin_c": -224,
+    "temperatureMax_c": -216,
+    "missionStatus": null,
+    "missionEndYear": null,
+    "en": {
+      "name": "Uranus",
+      "description": "An ice giant that rotates on its side, giving it extreme seasons.",
+      "facts": [
+        "It is tilted about 98 degrees, almost rolling around the Sun.",
+        "Its pale blue-green color comes from methane in the atmosphere."
+      ]
+    },
+    "es": {
+      "name": "Urano",
+      "description": "Un gigante de hielo que rota de lado, lo que le da estaciones extremas.",
+      "facts": [
+        "Está inclinado unos 98 grados, casi rodando alrededor del Sol.",
+        "Su color azul verdoso pálido proviene del metano en su atmósfera."
+      ]
+    }
+  },
+  {
+    "id": "neptune",
+    "type": "planet",
+    "host": null,
+    "orbitalRadius_mkm": 4495,
+    "orbitalPeriod_years": 164.8,
+    "rotationPeriod_days": 0.671,
+    "radius_km": 24622,
+    "eccentricity": 0.0113,
+    "temperatureMin_c": -218,
+    "temperatureMax_c": -200,
+    "missionStatus": null,
+    "missionEndYear": null,
+    "en": {
+      "name": "Neptune",
+      "description": "The most distant planet, a deep blue ice giant with the fastest winds in the solar system.",
+      "facts": [
+        "Its winds can exceed 2,000 km/h.",
+        "It was the first planet found through mathematical prediction."
+      ]
+    },
+    "es": {
+      "name": "Neptuno",
+      "description": "El planeta más lejano, un gigante de hielo azul intenso con los vientos más rápidos del sistema solar.",
+      "facts": [
+        "Sus vientos pueden superar los 2,000 km/h.",
+        "Fue el primer planeta hallado mediante predicción matemática."
+      ]
+    }
+  },
+  {
+    "id": "ceres",
+    "type": "dwarf_planet",
+    "host": null,
+    "orbitalRadius_mkm": 414,
+    "orbitalPeriod_years": 4.6,
+    "rotationPeriod_days": 0.378,
+    "radius_km": 473,
+    "eccentricity": 0.0758,
+    "temperatureMin_c": -105,
+    "temperatureMax_c": -34,
+    "missionStatus": null,
+    "missionEndYear": null,
+    "en": {
+      "name": "Ceres",
+      "description": "The largest object in the asteroid belt and the closest dwarf planet to the Sun.",
+      "facts": [
+        "It may hold more fresh water than all of Earth's rivers and lakes.",
+        "It was the first asteroid ever discovered, in 1801."
+      ]
+    },
+    "es": {
+      "name": "Ceres",
+      "description": "El objeto más grande del cinturón de asteroides y el planeta enano más cercano al Sol.",
+      "facts": [
+        "Podría contener más agua dulce que todos los ríos y lagos de la Tierra.",
+        "Fue el primer asteroide descubierto, en 1801."
+      ]
+    }
+  },
+  {
+    "id": "pluto",
+    "type": "dwarf_planet",
+    "host": null,
+    "orbitalRadius_mkm": 5906,
+    "orbitalPeriod_years": 248,
+    "rotationPeriod_days": 6.39,
+    "radius_km": 1188,
+    "eccentricity": 0.2488,
+    "temperatureMin_c": -240,
+    "temperatureMax_c": -218,
+    "missionStatus": null,
+    "missionEndYear": null,
+    "en": {
+      "name": "Pluto",
+      "description": "A dwarf planet in the Kuiper Belt whose orbit sometimes brings it closer than Neptune.",
+      "facts": [
+        "It has a large heart-shaped plain of nitrogen ice.",
+        "Its moon Charon is about half its size."
+      ]
+    },
+    "es": {
+      "name": "Plutón",
+      "description": "Un planeta enano del Cinturón de Kuiper cuya órbita a veces lo acerca más que Neptuno.",
+      "facts": [
+        "Tiene una gran llanura de hielo de nitrógeno con forma de corazón.",
+        "Su luna Caronte mide cerca de la mitad de su tamaño."
+      ]
+    }
+  },
+  {
+    "id": "eris",
+    "type": "dwarf_planet",
+    "host": null,
+    "orbitalRadius_mkm": 10125,
+    "orbitalPeriod_years": 559,
+    "rotationPeriod_days": 1.08,
+    "radius_km": 1163,
+    "eccentricity": 0.44,
+    "temperatureMin_c": -243,
+    "temperatureMax_c": -217,
+    "missionStatus": null,
+    "missionEndYear": null,
+    "en": {
+      "name": "Eris",
+      "description": "A distant, massive dwarf planet whose discovery prompted the definition of 'dwarf planet'.",
+      "facts": [
+        "It is one of the most massive known dwarf planets.",
+        "Its discovery led to Pluto's reclassification in 2006."
+      ]
+    },
+    "es": {
+      "name": "Eris",
+      "description": "Un planeta enano lejano y masivo cuyo descubrimiento motivó la definición de 'planeta enano'.",
+      "facts": [
+        "Es uno de los planetas enanos más masivos conocidos.",
+        "Su descubrimiento llevó a reclasificar a Plutón en 2006."
+      ]
+    }
+  },
+  {
+    "id": "makemake",
+    "type": "dwarf_planet",
+    "host": null,
+    "orbitalRadius_mkm": 6850,
+    "orbitalPeriod_years": 305,
+    "rotationPeriod_days": 0.95,
+    "radius_km": 715,
+    "eccentricity": 0.16,
+    "temperatureMin_c": -243,
+    "temperatureMax_c": -239,
+    "missionStatus": null,
+    "missionEndYear": null,
+    "en": {
+      "name": "Makemake",
+      "description": "A bright, reddish dwarf planet in the Kuiper Belt.",
+      "facts": [
+        "It is one of the largest known Kuiper Belt objects.",
+        "It is named after a creator deity of the Rapa Nui people."
+      ]
+    },
+    "es": {
+      "name": "Makemake",
+      "description": "Un planeta enano brillante y rojizo en el Cinturón de Kuiper.",
+      "facts": [
+        "Es uno de los mayores objetos conocidos del Cinturón de Kuiper.",
+        "Lleva el nombre de una deidad creadora del pueblo Rapa Nui."
+      ]
+    }
+  },
+  {
+    "id": "haumea",
+    "type": "dwarf_planet",
+    "host": null,
+    "orbitalRadius_mkm": 6452,
+    "orbitalPeriod_years": 284,
+    "rotationPeriod_days": 0.163,
+    "radius_km": 816,
+    "eccentricity": 0.19,
+    "temperatureMin_c": -241,
+    "temperatureMax_c": -241,
+    "missionStatus": null,
+    "missionEndYear": null,
+    "en": {
+      "name": "Haumea",
+      "description": "An egg-shaped dwarf planet that spins so fast it is stretched out of round.",
+      "facts": [
+        "It completes a rotation in under four hours.",
+        "It has its own ring and two small moons."
+      ]
+    },
+    "es": {
+      "name": "Haumea",
+      "description": "Un planeta enano con forma de huevo que gira tan rápido que se deforma.",
+      "facts": [
+        "Completa una rotación en menos de cuatro horas.",
+        "Tiene su propio anillo y dos pequeñas lunas."
+      ]
+    }
+  },
+  {
+    "id": "moon",
+    "type": "moon",
+    "host": "earth",
+    "orbitalRadius_mkm": 0.3844,
+    "orbitalPeriod_years": 0.0748,
+    "rotationPeriod_days": 27.3,
+    "radius_km": 1737,
+    "eccentricity": 0.0549,
+    "temperatureMin_c": -173,
+    "temperatureMax_c": 127,
+    "missionStatus": null,
+    "missionEndYear": null,
+    "en": {
+      "name": "Moon",
+      "description": "Earth's only natural satellite and the only other world humans have walked on.",
+      "facts": [
+        "It always shows the same face to Earth.",
+        "Its gravity drives the ocean tides."
+      ]
+    },
+    "es": {
+      "name": "Luna",
+      "description": "El único satélite natural de la Tierra y el único otro mundo que los humanos han pisado.",
+      "facts": [
+        "Siempre muestra la misma cara a la Tierra.",
+        "Su gravedad provoca las mareas oceánicas."
+      ]
+    }
+  },
+  {
+    "id": "phobos",
+    "type": "moon",
+    "host": "mars",
+    "orbitalRadius_mkm": 0.00938,
+    "orbitalPeriod_years": 0.00087,
+    "rotationPeriod_days": 0.319,
+    "radius_km": 11,
+    "eccentricity": 0.0151,
+    "temperatureMin_c": -40,
+    "temperatureMax_c": -40,
+    "missionStatus": null,
+    "missionEndYear": null,
+    "en": {
+      "name": "Phobos",
+      "description": "The larger and inner of Mars's two small, lumpy moons.",
+      "facts": [
+        "It orbits Mars faster than Mars rotates.",
+        "It is slowly spiraling inward toward the planet."
+      ]
+    },
+    "es": {
+      "name": "Fobos",
+      "description": "La mayor e interior de las dos pequeñas lunas irregulares de Marte.",
+      "facts": [
+        "Orbita Marte más rápido de lo que Marte rota.",
+        "Se acerca lentamente en espiral hacia el planeta."
+      ]
+    }
+  },
+  {
+    "id": "deimos",
+    "type": "moon",
+    "host": "mars",
+    "orbitalRadius_mkm": 0.0235,
+    "orbitalPeriod_years": 0.00345,
+    "rotationPeriod_days": 1.263,
+    "radius_km": 6,
+    "eccentricity": 0.0002,
+    "temperatureMin_c": -40,
+    "temperatureMax_c": -40,
+    "missionStatus": null,
+    "missionEndYear": null,
+    "en": {
+      "name": "Deimos",
+      "description": "The smaller and outer of Mars's two moons.",
+      "facts": [
+        "Its surface is covered in a thick layer of dust.",
+        "From Mars it would look like a bright star."
+      ]
+    },
+    "es": {
+      "name": "Deimos",
+      "description": "La menor y exterior de las dos lunas de Marte.",
+      "facts": [
+        "Su superficie está cubierta por una gruesa capa de polvo.",
+        "Desde Marte se vería como una estrella brillante."
+      ]
+    }
+  },
+  {
+    "id": "io",
+    "type": "moon",
+    "host": "jupiter",
+    "orbitalRadius_mkm": 0.4217,
+    "orbitalPeriod_years": 0.00485,
+    "rotationPeriod_days": 1.769,
+    "radius_km": 1822,
+    "eccentricity": 0.0041,
+    "temperatureMin_c": -143,
+    "temperatureMax_c": 127,
+    "missionStatus": null,
+    "missionEndYear": null,
+    "en": {
+      "name": "Io",
+      "description": "The most volcanically active body in the solar system, a moon of Jupiter.",
+      "facts": [
+        "It has hundreds of active volcanoes.",
+        "Jupiter's tides keep its interior molten."
+      ]
+    },
+    "es": {
+      "name": "Ío",
+      "description": "El cuerpo con mayor actividad volcánica del sistema solar, una luna de Júpiter.",
+      "facts": [
+        "Tiene cientos de volcanes activos.",
+        "Las mareas de Júpiter mantienen fundido su interior."
+      ]
+    }
+  },
+  {
+    "id": "europa",
+    "type": "moon",
+    "host": "jupiter",
+    "orbitalRadius_mkm": 0.6711,
+    "orbitalPeriod_years": 0.00973,
+    "rotationPeriod_days": 3.551,
+    "radius_km": 1561,
+    "eccentricity": 0.009,
+    "temperatureMin_c": -220,
+    "temperatureMax_c": -160,
+    "missionStatus": null,
+    "missionEndYear": null,
+    "en": {
+      "name": "Europa",
+      "description": "An icy moon of Jupiter thought to hide a global ocean beneath its crust.",
+      "facts": [
+        "Its subsurface ocean may hold more water than Earth.",
+        "Its smooth surface is criss-crossed with cracks."
+      ]
+    },
+    "es": {
+      "name": "Europa",
+      "description": "Una luna helada de Júpiter que se cree oculta un océano global bajo su corteza.",
+      "facts": [
+        "Su océano interior podría tener más agua que la Tierra.",
+        "Su superficie lisa está surcada por grietas."
+      ]
+    }
+  },
+  {
+    "id": "ganymede",
+    "type": "moon",
+    "host": "jupiter",
+    "orbitalRadius_mkm": 1.0704,
+    "orbitalPeriod_years": 0.0196,
+    "rotationPeriod_days": 7.155,
+    "radius_km": 2634,
+    "eccentricity": 0.0013,
+    "temperatureMin_c": -200,
+    "temperatureMax_c": -120,
+    "missionStatus": null,
+    "missionEndYear": null,
+    "en": {
+      "name": "Ganymede",
+      "description": "The largest moon in the solar system, bigger than the planet Mercury.",
+      "facts": [
+        "It is the only moon known to have its own magnetic field.",
+        "It is one of Jupiter's four Galilean moons."
+      ]
+    },
+    "es": {
+      "name": "Ganímedes",
+      "description": "La luna más grande del sistema solar, mayor que el planeta Mercurio.",
+      "facts": [
+        "Es la única luna conocida con su propio campo magnético.",
+        "Es una de las cuatro lunas galileanas de Júpiter."
+      ]
+    }
+  },
+  {
+    "id": "callisto",
+    "type": "moon",
+    "host": "jupiter",
+    "orbitalRadius_mkm": 1.8827,
+    "orbitalPeriod_years": 0.0457,
+    "rotationPeriod_days": 16.689,
+    "radius_km": 2410,
+    "eccentricity": 0.0074,
+    "temperatureMin_c": -190,
+    "temperatureMax_c": -110,
+    "missionStatus": null,
+    "missionEndYear": null,
+    "en": {
+      "name": "Callisto",
+      "description": "The most heavily cratered body in the solar system, an outer moon of Jupiter.",
+      "facts": [
+        "Its ancient surface has barely changed in billions of years.",
+        "It lies far enough from Jupiter to avoid intense radiation."
+      ]
+    },
+    "es": {
+      "name": "Calisto",
+      "description": "El cuerpo con más cráteres del sistema solar, una luna exterior de Júpiter.",
+      "facts": [
+        "Su antigua superficie apenas ha cambiado en miles de millones de años.",
+        "Está lo bastante lejos de Júpiter para evitar la radiación intensa."
+      ]
+    }
+  },
+  {
+    "id": "titan",
+    "type": "moon",
+    "host": "saturn",
+    "orbitalRadius_mkm": 1.2218,
+    "orbitalPeriod_years": 0.0437,
+    "rotationPeriod_days": 15.945,
+    "radius_km": 2575,
+    "eccentricity": 0.0288,
+    "temperatureMin_c": -179,
+    "temperatureMax_c": -179,
+    "missionStatus": null,
+    "missionEndYear": null,
+    "en": {
+      "name": "Titan",
+      "description": "Saturn's largest moon, with a thick atmosphere and lakes of liquid methane.",
+      "facts": [
+        "It is the only moon with a dense atmosphere.",
+        "It has rivers and seas of liquid hydrocarbons."
+      ]
+    },
+    "es": {
+      "name": "Titán",
+      "description": "La mayor luna de Saturno, con una atmósfera densa y lagos de metano líquido.",
+      "facts": [
+        "Es la única luna con una atmósfera densa.",
+        "Tiene ríos y mares de hidrocarburos líquidos."
+      ]
+    }
+  },
+  {
+    "id": "enceladus",
+    "type": "moon",
+    "host": "saturn",
+    "orbitalRadius_mkm": 0.238,
+    "orbitalPeriod_years": 0.00375,
+    "rotationPeriod_days": 1.37,
+    "radius_km": 252,
+    "eccentricity": 0.0047,
+    "temperatureMin_c": -201,
+    "temperatureMax_c": -198,
+    "missionStatus": null,
+    "missionEndYear": null,
+    "en": {
+      "name": "Enceladus",
+      "description": "A small icy moon of Saturn that sprays water vapor from its south pole.",
+      "facts": [
+        "Geysers feed one of Saturn's rings.",
+        "It hides a salty ocean beneath its icy shell."
+      ]
+    },
+    "es": {
+      "name": "Encélado",
+      "description": "Una pequeña luna helada de Saturno que expulsa vapor de agua desde su polo sur.",
+      "facts": [
+        "Sus géiseres alimentan uno de los anillos de Saturno.",
+        "Oculta un océano salado bajo su capa de hielo."
+      ]
+    }
+  },
+  {
+    "id": "mimas",
+    "type": "moon",
+    "host": "saturn",
+    "orbitalRadius_mkm": 0.185,
+    "orbitalPeriod_years": 0.00258,
+    "rotationPeriod_days": 0.942,
+    "radius_km": 198,
+    "eccentricity": 0.0202,
+    "temperatureMin_c": -209,
+    "temperatureMax_c": -209,
+    "missionStatus": null,
+    "missionEndYear": null,
+    "en": {
+      "name": "Mimas",
+      "description": "A small moon of Saturn dominated by one enormous impact crater.",
+      "facts": [
+        "Its giant crater makes it resemble the Death Star.",
+        "It may hide a liquid ocean under its surface."
+      ]
+    },
+    "es": {
+      "name": "Mimas",
+      "description": "Una pequeña luna de Saturno dominada por un enorme cráter de impacto.",
+      "facts": [
+        "Su cráter gigante lo hace parecer la Estrella de la Muerte.",
+        "Podría ocultar un océano líquido bajo su superficie."
+      ]
+    }
+  },
+  {
+    "id": "rhea",
+    "type": "moon",
+    "host": "saturn",
+    "orbitalRadius_mkm": 0.527,
+    "orbitalPeriod_years": 0.01238,
+    "rotationPeriod_days": 4.518,
+    "radius_km": 763,
+    "eccentricity": 0.001,
+    "temperatureMin_c": -220,
+    "temperatureMax_c": -174,
+    "missionStatus": null,
+    "missionEndYear": null,
+    "en": {
+      "name": "Rhea",
+      "description": "Saturn's second-largest moon, an icy, heavily cratered world.",
+      "facts": [
+        "It is made mostly of water ice and rock.",
+        "It may have a tenuous oxygen atmosphere."
+      ]
+    },
+    "es": {
+      "name": "Rea",
+      "description": "La segunda luna más grande de Saturno, un mundo helado y lleno de cráteres.",
+      "facts": [
+        "Está compuesta sobre todo de hielo de agua y roca.",
+        "Podría tener una tenue atmósfera de oxígeno."
+      ]
+    }
+  },
+  {
+    "id": "titania",
+    "type": "moon",
+    "host": "uranus",
+    "orbitalRadius_mkm": 0.4363,
+    "orbitalPeriod_years": 0.02385,
+    "rotationPeriod_days": 8.706,
+    "radius_km": 788,
+    "eccentricity": 0.0011,
+    "temperatureMin_c": -203,
+    "temperatureMax_c": -203,
+    "missionStatus": null,
+    "missionEndYear": null,
+    "en": {
+      "name": "Titania",
+      "description": "The largest moon of Uranus, marked by huge canyons and ice cliffs.",
+      "facts": [
+        "It has enormous fault valleys across its surface.",
+        "It was discovered by William Herschel in 1787."
+      ]
+    },
+    "es": {
+      "name": "Titania",
+      "description": "La mayor luna de Urano, marcada por enormes cañones y acantilados de hielo.",
+      "facts": [
+        "Tiene enormes valles de falla en su superficie.",
+        "Fue descubierta por William Herschel en 1787."
+      ]
+    }
+  },
+  {
+    "id": "oberon",
+    "type": "moon",
+    "host": "uranus",
+    "orbitalRadius_mkm": 0.5835,
+    "orbitalPeriod_years": 0.03687,
+    "rotationPeriod_days": 13.463,
+    "radius_km": 761,
+    "eccentricity": 0.0014,
+    "temperatureMin_c": -203,
+    "temperatureMax_c": -203,
+    "missionStatus": null,
+    "missionEndYear": null,
+    "en": {
+      "name": "Oberon",
+      "description": "The outermost large moon of Uranus, ancient and cratered.",
+      "facts": [
+        "Some of its craters have dark floors.",
+        "It is the second-largest moon of Uranus."
+      ]
+    },
+    "es": {
+      "name": "Oberón",
+      "description": "La luna grande más externa de Urano, antigua y llena de cráteres.",
+      "facts": [
+        "Algunos de sus cráteres tienen fondos oscuros.",
+        "Es la segunda luna más grande de Urano."
+      ]
+    }
+  },
+  {
+    "id": "triton",
+    "type": "moon",
+    "host": "neptune",
+    "orbitalRadius_mkm": 0.3547,
+    "orbitalPeriod_years": 0.01609,
+    "rotationPeriod_days": 5.877,
+    "radius_km": 1353,
+    "eccentricity": 0.000016,
+    "temperatureMin_c": -235,
+    "temperatureMax_c": -235,
+    "missionStatus": null,
+    "missionEndYear": null,
+    "en": {
+      "name": "Triton",
+      "description": "Neptune's largest moon, which orbits backwards and has nitrogen geysers.",
+      "facts": [
+        "It orbits Neptune in the opposite direction to the planet's spin.",
+        "It is likely a captured Kuiper Belt object."
+      ]
+    },
+    "es": {
+      "name": "Tritón",
+      "description": "La mayor luna de Neptuno, que orbita al revés y tiene géiseres de nitrógeno.",
+      "facts": [
+        "Orbita Neptuno en sentido contrario al giro del planeta.",
+        "Probablemente es un objeto capturado del Cinturón de Kuiper."
+      ]
+    }
+  },
+  {
+    "id": "charon",
+    "type": "moon",
+    "host": "pluto",
+    "orbitalRadius_mkm": 0.01959,
+    "orbitalPeriod_years": 0.01749,
+    "rotationPeriod_days": 6.387,
+    "radius_km": 606,
+    "eccentricity": 0.0,
+    "temperatureMin_c": -220,
+    "temperatureMax_c": -220,
+    "missionStatus": null,
+    "missionEndYear": null,
+    "en": {
+      "name": "Charon",
+      "description": "Pluto's largest moon, so big the two orbit a point in empty space.",
+      "facts": [
+        "Pluto and Charon always face each other.",
+        "It has a dark reddish polar region nicknamed Mordor."
+      ]
+    },
+    "es": {
+      "name": "Caronte",
+      "description": "La mayor luna de Plutón, tan grande que ambos orbitan un punto en el espacio vacío.",
+      "facts": [
+        "Plutón y Caronte siempre se muestran la misma cara.",
+        "Tiene una región polar rojiza oscura apodada Mordor."
+      ]
+    }
+  },
+  {
+    "id": "vesta",
+    "type": "asteroid",
+    "host": null,
+    "orbitalRadius_mkm": 353,
+    "orbitalPeriod_years": 3.63,
+    "rotationPeriod_days": 0.2226,
+    "radius_km": 263,
+    "eccentricity": 0.0887,
+    "temperatureMin_c": -190,
+    "temperatureMax_c": -3,
+    "missionStatus": null,
+    "missionEndYear": null,
+    "en": {
+      "name": "Vesta",
+      "description": "One of the largest bodies in the asteroid belt, visited by the Dawn mission.",
+      "facts": [
+        "It is bright enough to occasionally be seen with the naked eye.",
+        "A giant impact carved a crater near its south pole."
+      ]
+    },
+    "es": {
+      "name": "Vesta",
+      "description": "Uno de los mayores cuerpos del cinturón de asteroides, visitado por la misión Dawn.",
+      "facts": [
+        "Es lo bastante brillante para verse a veces a simple vista.",
+        "Un impacto gigante esculpió un cráter cerca de su polo sur."
+      ]
+    }
+  },
+  {
+    "id": "pallas",
+    "type": "asteroid",
+    "host": null,
+    "orbitalRadius_mkm": 414,
+    "orbitalPeriod_years": 4.62,
+    "rotationPeriod_days": 0.3256,
+    "radius_km": 256,
+    "eccentricity": 0.231,
+    "temperatureMin_c": -190,
+    "temperatureMax_c": -190,
+    "missionStatus": null,
+    "missionEndYear": null,
+    "en": {
+      "name": "Pallas",
+      "description": "The third-largest asteroid, on a steeply tilted, eccentric orbit.",
+      "facts": [
+        "Its orbit is unusually inclined to the rest of the belt.",
+        "It was the second asteroid ever discovered."
+      ]
+    },
+    "es": {
+      "name": "Palas",
+      "description": "El tercer asteroide más grande, en una órbita excéntrica y muy inclinada.",
+      "facts": [
+        "Su órbita está inusualmente inclinada respecto al resto del cinturón.",
+        "Fue el segundo asteroide descubierto."
+      ]
+    }
+  },
+  {
+    "id": "hygiea",
+    "type": "asteroid",
+    "host": null,
+    "orbitalRadius_mkm": 470,
+    "orbitalPeriod_years": 5.56,
+    "rotationPeriod_days": 0.575,
+    "radius_km": 217,
+    "eccentricity": 0.112,
+    "temperatureMin_c": -190,
+    "temperatureMax_c": -190,
+    "missionStatus": null,
+    "missionEndYear": null,
+    "en": {
+      "name": "Hygiea",
+      "description": "The fourth-largest asteroid, nearly round and possibly a dwarf planet.",
+      "facts": [
+        "It is the largest of the dark, carbon-rich asteroids.",
+        "Its near-spherical shape surprised astronomers."
+      ]
+    },
+    "es": {
+      "name": "Higía",
+      "description": "El cuarto asteroide más grande, casi redondo y posiblemente un planeta enano.",
+      "facts": [
+        "Es el mayor de los asteroides oscuros ricos en carbono.",
+        "Su forma casi esférica sorprendió a los astrónomos."
+      ]
+    }
+  },
+  {
+    "id": "halley",
+    "type": "comet",
+    "host": null,
+    "orbitalRadius_mkm": 2667,
+    "orbitalPeriod_years": 75.3,
+    "rotationPeriod_days": 2.2,
+    "radius_km": 5.5,
+    "eccentricity": 0.967,
+    "temperatureMin_c": -220,
+    "temperatureMax_c": -70,
+    "missionStatus": null,
+    "missionEndYear": null,
+    "en": {
+      "name": "Halley's Comet",
+      "description": "The most famous comet, returning to the inner solar system about every 76 years.",
+      "facts": [
+        "It was last seen from Earth in 1986 and returns around 2061.",
+        "Observations of it date back more than 2,000 years."
+      ]
+    },
+    "es": {
+      "name": "Cometa Halley",
+      "description": "El cometa más famoso, que regresa al sistema solar interior cada 76 años aproximadamente.",
+      "facts": [
+        "Se vio por última vez desde la Tierra en 1986 y regresa hacia 2061.",
+        "Hay observaciones suyas de hace más de 2,000 años."
+      ]
+    }
+  },
+  {
+    "id": "churyumov",
+    "type": "comet",
+    "host": null,
+    "orbitalRadius_mkm": 518,
+    "orbitalPeriod_years": 6.44,
+    "rotationPeriod_days": 0.515,
+    "radius_km": 2,
+    "eccentricity": 0.64,
+    "temperatureMin_c": -70,
+    "temperatureMax_c": -43,
+    "missionStatus": null,
+    "missionEndYear": null,
+    "en": {
+      "name": "67P/Churyumov-Gerasimenko",
+      "description": "A duck-shaped comet that was orbited and landed on by the Rosetta mission.",
+      "facts": [
+        "Its two lobes give it a rubber-duck shape.",
+        "Rosetta's Philae lander touched down on it in 2014."
+      ]
+    },
+    "es": {
+      "name": "67P/Churyumov-Gerasimenko",
+      "description": "Un cometa con forma de pato que la misión Rosetta orbitó y donde aterrizó.",
+      "facts": [
+        "Sus dos lóbulos le dan forma de patito de goma.",
+        "El módulo Philae de Rosetta se posó en él en 2014."
+      ]
+    }
+  }
+]

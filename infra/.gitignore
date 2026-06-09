@@ -1,0 +1,29 @@
+# CDK
+cdk.out/
+cdk.context.json
+
+# Dependencies
+node_modules/
+
+# Compiled output
+*.js
+*.d.ts
+!jest.config.js
+
+# Secrets / environment
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+npm-debug.log*
+
+# TypeScript
+*.tsbuildinfo
+
+# Editor / OS
+.DS_Store
+Thumbs.db
+ehthumbs.db
+desktop.ini

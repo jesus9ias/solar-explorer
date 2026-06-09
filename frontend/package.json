@@ -1,0 +1,27 @@
+{
+  "name": "solar-explorer-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Solar Explorer — Astro + Phaser frontend for exploring a scale model of the solar system.",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "check": "astro check",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "astro": "^6.4.4",
+    "phaser": "^4.1.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.9",
+    "jsdom": "^29.1.1",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.8"
+  }
+}

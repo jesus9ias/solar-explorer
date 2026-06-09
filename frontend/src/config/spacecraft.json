@@ -1,0 +1,530 @@
+[
+  {
+    "id": "hubble",
+    "type": "space_telescope",
+    "host": "earth",
+    "launchYear": 1990,
+    "missionStatus": "active",
+    "missionEndYear": null,
+    "orbitalRadius_mkm": 0.00057,
+    "en": {
+      "name": "Hubble Space Telescope",
+      "objectives": "Observe the universe in visible and ultraviolet light from low Earth orbit, free of atmospheric blur.",
+      "instruments": [
+        { "name": "WFC3", "description": "Wide Field Camera 3 images across ultraviolet, visible and near-infrared light." },
+        { "name": "COS", "description": "Cosmic Origins Spectrograph studies faint ultraviolet sources." }
+      ],
+      "facts": [
+        "It has operated for over three decades.",
+        "It orbits Earth roughly every 95 minutes."
+      ]
+    },
+    "es": {
+      "name": "Telescopio Espacial Hubble",
+      "objectives": "Observar el universo en luz visible y ultravioleta desde la órbita baja terrestre, sin la distorsión de la atmósfera.",
+      "instruments": [
+        { "name": "WFC3", "description": "La Cámara de Campo Amplio 3 capta imágenes en ultravioleta, visible e infrarrojo cercano." },
+        { "name": "COS", "description": "El Espectrógrafo de Orígenes Cósmicos estudia fuentes ultravioleta débiles." }
+      ],
+      "facts": [
+        "Ha funcionado durante más de tres décadas.",
+        "Orbita la Tierra cada 95 minutos aproximadamente."
+      ]
+    }
+  },
+  {
+    "id": "jwst",
+    "type": "space_telescope",
+    "host": "earth",
+    "launchYear": 2021,
+    "missionStatus": "active",
+    "missionEndYear": null,
+    "orbitalRadius_mkm": 1.5,
+    "en": {
+      "name": "James Webb Space Telescope",
+      "objectives": "Observe the infrared universe, from the first galaxies to atmospheres of distant exoplanets, from the Sun-Earth L2 point.",
+      "instruments": [
+        { "name": "NIRCam", "description": "Near-Infrared Camera, the telescope's primary imager." },
+        { "name": "MIRI", "description": "Mid-Infrared Instrument for imaging and spectroscopy of cooler objects." }
+      ],
+      "facts": [
+        "Its mirror spans 6.5 meters across 18 gold-coated segments.",
+        "It operates about 1.5 million km from Earth."
+      ]
+    },
+    "es": {
+      "name": "Telescopio Espacial James Webb",
+      "objectives": "Observar el universo infrarrojo, desde las primeras galaxias hasta atmósferas de exoplanetas lejanos, desde el punto L2 Sol-Tierra.",
+      "instruments": [
+        { "name": "NIRCam", "description": "Cámara de Infrarrojo Cercano, el generador de imágenes principal." },
+        { "name": "MIRI", "description": "Instrumento de Infrarrojo Medio para imágenes y espectroscopía de objetos fríos." }
+      ],
+      "facts": [
+        "Su espejo mide 6.5 metros en 18 segmentos cubiertos de oro.",
+        "Opera a unos 1.5 millones de km de la Tierra."
+      ]
+    }
+  },
+  {
+    "id": "parker",
+    "type": "probe",
+    "host": "sun",
+    "launchYear": 2018,
+    "missionStatus": "active",
+    "missionEndYear": null,
+    "orbitalRadius_mkm": 9,
+    "en": {
+      "name": "Parker Solar Probe",
+      "objectives": "Fly through the Sun's outer atmosphere to study the solar wind and coronal heating.",
+      "instruments": [
+        { "name": "FIELDS", "description": "Measures electric and magnetic fields around the spacecraft." },
+        { "name": "WISPR", "description": "Wide-field imager that photographs the corona and solar wind." }
+      ],
+      "facts": [
+        "It is the fastest human-made object ever built.",
+        "Its heat shield endures temperatures over 1,000 °C."
+      ]
+    },
+    "es": {
+      "name": "Sonda Solar Parker",
+      "objectives": "Atravesar la atmósfera exterior del Sol para estudiar el viento solar y el calentamiento de la corona.",
+      "instruments": [
+        { "name": "FIELDS", "description": "Mide los campos eléctricos y magnéticos alrededor de la nave." },
+        { "name": "WISPR", "description": "Generador de imágenes de campo amplio que fotografía la corona y el viento solar." }
+      ],
+      "facts": [
+        "Es el objeto fabricado por el ser humano más rápido jamás construido.",
+        "Su escudo térmico soporta temperaturas de más de 1,000 °C."
+      ]
+    }
+  },
+  {
+    "id": "solar_orbiter",
+    "type": "orbiter",
+    "host": "sun",
+    "launchYear": 2020,
+    "missionStatus": "active",
+    "missionEndYear": null,
+    "orbitalRadius_mkm": 60,
+    "en": {
+      "name": "Solar Orbiter",
+      "objectives": "Image the Sun from close range and study its poles and the heliosphere.",
+      "instruments": [
+        { "name": "EUI", "description": "Extreme Ultraviolet Imager captures the Sun's hot outer layers." },
+        { "name": "PHI", "description": "Polarimetric and Helioseismic Imager maps the surface magnetic field." }
+      ],
+      "facts": [
+        "It returned the closest images of the Sun ever taken at the time.",
+        "Its orbit tilts to view the Sun's polar regions."
+      ]
+    },
+    "es": {
+      "name": "Solar Orbiter",
+      "objectives": "Fotografiar el Sol de cerca y estudiar sus polos y la heliosfera.",
+      "instruments": [
+        { "name": "EUI", "description": "El generador de imágenes en ultravioleta extremo capta las capas externas calientes del Sol." },
+        { "name": "PHI", "description": "El generador polarimétrico y heliosísmico cartografía el campo magnético superficial." }
+      ],
+      "facts": [
+        "Devolvió las imágenes más cercanas del Sol tomadas hasta entonces.",
+        "Su órbita se inclina para observar las regiones polares del Sol."
+      ]
+    }
+  },
+  {
+    "id": "mars_express",
+    "type": "orbiter",
+    "host": "mars",
+    "launchYear": 2003,
+    "missionStatus": "active",
+    "missionEndYear": null,
+    "orbitalRadius_mkm": 0.009,
+    "en": {
+      "name": "Mars Express",
+      "objectives": "Map the surface, subsurface and atmosphere of Mars from orbit.",
+      "instruments": [
+        { "name": "HRSC", "description": "High Resolution Stereo Camera maps the surface in 3D." },
+        { "name": "MARSIS", "description": "Radar sounder probes beneath the surface for water ice." }
+      ],
+      "facts": [
+        "It found signs of water ice near the south pole.",
+        "It is one of ESA's longest-running planetary missions."
+      ]
+    },
+    "es": {
+      "name": "Mars Express",
+      "objectives": "Cartografiar la superficie, el subsuelo y la atmósfera de Marte desde la órbita.",
+      "instruments": [
+        { "name": "HRSC", "description": "La cámara estéreo de alta resolución cartografía la superficie en 3D." },
+        { "name": "MARSIS", "description": "El radar de sondeo explora bajo la superficie en busca de hielo de agua." }
+      ],
+      "facts": [
+        "Encontró indicios de hielo de agua cerca del polo sur.",
+        "Es una de las misiones planetarias más longevas de la ESA."
+      ]
+    }
+  },
+  {
+    "id": "juno",
+    "type": "orbiter",
+    "host": "jupiter",
+    "launchYear": 2011,
+    "missionStatus": "active",
+    "missionEndYear": null,
+    "orbitalRadius_mkm": 4,
+    "en": {
+      "name": "Juno",
+      "objectives": "Study Jupiter's interior, magnetic field, and deep atmosphere.",
+      "instruments": [
+        { "name": "JunoCam", "description": "Visible-light camera returning images of Jupiter's clouds." },
+        { "name": "MWR", "description": "Microwave Radiometer probes beneath the cloud tops." }
+      ],
+      "facts": [
+        "It is solar powered despite Jupiter's great distance from the Sun.",
+        "It flies in a looping polar orbit to avoid intense radiation."
+      ]
+    },
+    "es": {
+      "name": "Juno",
+      "objectives": "Estudiar el interior, el campo magnético y la atmósfera profunda de Júpiter.",
+      "instruments": [
+        { "name": "JunoCam", "description": "Cámara de luz visible que envía imágenes de las nubes de Júpiter." },
+        { "name": "MWR", "description": "El radiómetro de microondas sondea bajo las capas de nubes." }
+      ],
+      "facts": [
+        "Funciona con energía solar pese a la gran distancia de Júpiter al Sol.",
+        "Vuela en una órbita polar para evitar la radiación intensa."
+      ]
+    }
+  },
+  {
+    "id": "perseverance",
+    "type": "rover",
+    "host": "mars",
+    "launchYear": 2020,
+    "missionStatus": "active",
+    "missionEndYear": null,
+    "orbitalRadius_mkm": 0,
+    "en": {
+      "name": "Perseverance",
+      "objectives": "Seek signs of ancient microbial life on Mars and cache samples for future return.",
+      "instruments": [
+        { "name": "Mastcam-Z", "description": "Zoomable stereo cameras for panoramic imaging." },
+        { "name": "SHERLOC", "description": "Detects organic molecules and minerals in rocks." }
+      ],
+      "facts": [
+        "It carried the Ingenuity helicopter, the first aircraft on another planet.",
+        "It is collecting rock cores in Jezero Crater."
+      ]
+    },
+    "es": {
+      "name": "Perseverance",
+      "objectives": "Buscar señales de vida microbiana antigua en Marte y almacenar muestras para una futura recolección.",
+      "instruments": [
+        { "name": "Mastcam-Z", "description": "Cámaras estéreo con zoom para imágenes panorámicas." },
+        { "name": "SHERLOC", "description": "Detecta moléculas orgánicas y minerales en las rocas." }
+      ],
+      "facts": [
+        "Llevó el helicóptero Ingenuity, la primera aeronave en otro planeta.",
+        "Recolecta núcleos de roca en el cráter Jezero."
+      ]
+    }
+  },
+  {
+    "id": "bepicolombo",
+    "type": "orbiter",
+    "host": "mercury",
+    "launchYear": 2018,
+    "missionStatus": "en_route",
+    "missionEndYear": null,
+    "orbitalRadius_mkm": 57.9,
+    "en": {
+      "name": "BepiColombo",
+      "objectives": "Enter orbit around Mercury to study its composition, magnetic field and history.",
+      "instruments": [
+        { "name": "MERTIS", "description": "Thermal infrared spectrometer mapping surface minerals." },
+        { "name": "MPO-MAG", "description": "Magnetometer measuring Mercury's magnetic field." }
+      ],
+      "facts": [
+        "It uses repeated flybys to brake into Mercury orbit.",
+        "It is a joint mission of Europe and Japan."
+      ]
+    },
+    "es": {
+      "name": "BepiColombo",
+      "objectives": "Entrar en órbita de Mercurio para estudiar su composición, campo magnético e historia.",
+      "instruments": [
+        { "name": "MERTIS", "description": "Espectrómetro de infrarrojo térmico que cartografía minerales superficiales." },
+        { "name": "MPO-MAG", "description": "Magnetómetro que mide el campo magnético de Mercurio." }
+      ],
+      "facts": [
+        "Usa sobrevuelos repetidos para frenar hasta entrar en órbita de Mercurio.",
+        "Es una misión conjunta de Europa y Japón."
+      ]
+    }
+  },
+  {
+    "id": "osiris_rex",
+    "type": "probe",
+    "host": "earth",
+    "launchYear": 2016,
+    "missionStatus": "active",
+    "missionEndYear": null,
+    "orbitalRadius_mkm": 149.598,
+    "en": {
+      "name": "OSIRIS-REx",
+      "objectives": "Collect a sample from asteroid Bennu and deliver it to Earth for study.",
+      "instruments": [
+        { "name": "TAGSAM", "description": "Sampling arm that grabbed material from Bennu's surface." },
+        { "name": "OCAMS", "description": "Camera suite that mapped the asteroid in detail." }
+      ],
+      "facts": [
+        "It returned its sample capsule to Earth in 2023.",
+        "It has been redirected to visit asteroid Apophis."
+      ]
+    },
+    "es": {
+      "name": "OSIRIS-REx",
+      "objectives": "Recolectar una muestra del asteroide Bennu y entregarla a la Tierra para su estudio.",
+      "instruments": [
+        { "name": "TAGSAM", "description": "Brazo de muestreo que tomó material de la superficie de Bennu." },
+        { "name": "OCAMS", "description": "Conjunto de cámaras que cartografió el asteroide en detalle." }
+      ],
+      "facts": [
+        "Devolvió su cápsula de muestras a la Tierra en 2023.",
+        "Ha sido redirigida para visitar el asteroide Apofis."
+      ]
+    }
+  },
+  {
+    "id": "voyager1",
+    "type": "probe",
+    "host": null,
+    "launchYear": 1977,
+    "missionStatus": "active",
+    "missionEndYear": null,
+    "orbitalRadius_mkm": 24000,
+    "en": {
+      "name": "Voyager 1",
+      "objectives": "Explore the outer planets and continue into interstellar space.",
+      "instruments": [
+        { "name": "CRS", "description": "Cosmic Ray Subsystem measuring high-energy particles." },
+        { "name": "MAG", "description": "Magnetometer measuring interstellar magnetic fields." }
+      ],
+      "facts": [
+        "It is the most distant human-made object from Earth.",
+        "It crossed into interstellar space in 2012."
+      ]
+    },
+    "es": {
+      "name": "Voyager 1",
+      "objectives": "Explorar los planetas exteriores y continuar hacia el espacio interestelar.",
+      "instruments": [
+        { "name": "CRS", "description": "Subsistema de rayos cósmicos que mide partículas de alta energía." },
+        { "name": "MAG", "description": "Magnetómetro que mide los campos magnéticos interestelares." }
+      ],
+      "facts": [
+        "Es el objeto fabricado por el ser humano más lejano de la Tierra.",
+        "Cruzó al espacio interestelar en 2012."
+      ]
+    }
+  },
+  {
+    "id": "voyager2",
+    "type": "probe",
+    "host": null,
+    "launchYear": 1977,
+    "missionStatus": "active",
+    "missionEndYear": null,
+    "orbitalRadius_mkm": 20000,
+    "en": {
+      "name": "Voyager 2",
+      "objectives": "Tour all four giant planets and continue into interstellar space.",
+      "instruments": [
+        { "name": "PLS", "description": "Plasma Science instrument measuring the solar and interstellar wind." },
+        { "name": "MAG", "description": "Magnetometer measuring magnetic fields along its path." }
+      ],
+      "facts": [
+        "It is the only spacecraft to have visited Uranus and Neptune.",
+        "It entered interstellar space in 2018."
+      ]
+    },
+    "es": {
+      "name": "Voyager 2",
+      "objectives": "Recorrer los cuatro planetas gigantes y continuar hacia el espacio interestelar.",
+      "instruments": [
+        { "name": "PLS", "description": "Instrumento de ciencia del plasma que mide el viento solar e interestelar." },
+        { "name": "MAG", "description": "Magnetómetro que mide los campos magnéticos a lo largo de su trayectoria." }
+      ],
+      "facts": [
+        "Es la única nave que ha visitado Urano y Neptuno.",
+        "Entró en el espacio interestelar en 2018."
+      ]
+    }
+  },
+  {
+    "id": "pioneer10",
+    "type": "probe",
+    "host": null,
+    "launchYear": 1972,
+    "missionStatus": "complete",
+    "missionEndYear": 2003,
+    "orbitalRadius_mkm": 19000,
+    "en": {
+      "name": "Pioneer 10",
+      "objectives": "Be the first spacecraft to traverse the asteroid belt and fly by Jupiter.",
+      "instruments": [
+        { "name": "Imaging Photopolarimeter", "description": "Built up images of Jupiter from spin-scan data." },
+        { "name": "Geiger Tube Telescope", "description": "Measured radiation in the outer solar system." }
+      ],
+      "facts": [
+        "It was the first probe to fly past Jupiter.",
+        "Its last faint signal was received in 2003."
+      ]
+    },
+    "es": {
+      "name": "Pioneer 10",
+      "objectives": "Ser la primera nave en atravesar el cinturón de asteroides y sobrevolar Júpiter.",
+      "instruments": [
+        { "name": "Fotopolarímetro de imagen", "description": "Construía imágenes de Júpiter a partir del escaneo por giro." },
+        { "name": "Telescopio de tubo Geiger", "description": "Midió la radiación en el sistema solar exterior." }
+      ],
+      "facts": [
+        "Fue la primera sonda en sobrevolar Júpiter.",
+        "Su última señal débil se recibió en 2003."
+      ]
+    }
+  },
+  {
+    "id": "pioneer11",
+    "type": "probe",
+    "host": null,
+    "launchYear": 1973,
+    "missionStatus": "complete",
+    "missionEndYear": 1995,
+    "orbitalRadius_mkm": 15000,
+    "en": {
+      "name": "Pioneer 11",
+      "objectives": "Fly by Jupiter and make the first flyby of Saturn.",
+      "instruments": [
+        { "name": "Magnetometer", "description": "Measured the magnetic fields of Jupiter and Saturn." },
+        { "name": "Imaging Photopolarimeter", "description": "Imaged the giant planets during flybys." }
+      ],
+      "facts": [
+        "It was the first spacecraft to fly past Saturn.",
+        "Contact was lost in 1995."
+      ]
+    },
+    "es": {
+      "name": "Pioneer 11",
+      "objectives": "Sobrevolar Júpiter y realizar el primer sobrevuelo de Saturno.",
+      "instruments": [
+        { "name": "Magnetómetro", "description": "Midió los campos magnéticos de Júpiter y Saturno." },
+        { "name": "Fotopolarímetro de imagen", "description": "Capturó imágenes de los planetas gigantes durante los sobrevuelos." }
+      ],
+      "facts": [
+        "Fue la primera nave en sobrevolar Saturno.",
+        "Se perdió el contacto en 1995."
+      ]
+    }
+  },
+  {
+    "id": "new_horizons",
+    "type": "probe",
+    "host": null,
+    "launchYear": 2006,
+    "missionStatus": "active",
+    "missionEndYear": null,
+    "orbitalRadius_mkm": 8800,
+    "en": {
+      "name": "New Horizons",
+      "objectives": "Perform the first flyby of Pluto and explore Kuiper Belt objects.",
+      "instruments": [
+        { "name": "LORRI", "description": "Long-range telescopic camera for high-resolution images." },
+        { "name": "Ralph", "description": "Color imager and spectrometer mapping surfaces and composition." }
+      ],
+      "facts": [
+        "It flew past Pluto in 2015.",
+        "It later visited the distant object Arrokoth."
+      ]
+    },
+    "es": {
+      "name": "New Horizons",
+      "objectives": "Realizar el primer sobrevuelo de Plutón y explorar objetos del Cinturón de Kuiper.",
+      "instruments": [
+        { "name": "LORRI", "description": "Cámara telescópica de largo alcance para imágenes de alta resolución." },
+        { "name": "Ralph", "description": "Generador de imágenes a color y espectrómetro que cartografía superficies y composición." }
+      ],
+      "facts": [
+        "Sobrevoló Plutón en 2015.",
+        "Más tarde visitó el lejano objeto Arrokoth."
+      ]
+    }
+  },
+  {
+    "id": "cassini",
+    "type": "orbiter",
+    "host": "saturn",
+    "launchYear": 1997,
+    "missionStatus": "complete",
+    "missionEndYear": 2017,
+    "orbitalRadius_mkm": 1.2,
+    "en": {
+      "name": "Cassini",
+      "objectives": "Orbit Saturn to study its rings, atmosphere and moons over many years.",
+      "instruments": [
+        { "name": "ISS", "description": "Imaging Science Subsystem cameras for wide and narrow views." },
+        { "name": "CIRS", "description": "Infrared spectrometer measuring temperatures and composition." }
+      ],
+      "facts": [
+        "It delivered the Huygens probe to Titan's surface.",
+        "It ended by plunging into Saturn in 2017."
+      ]
+    },
+    "es": {
+      "name": "Cassini",
+      "objectives": "Orbitar Saturno para estudiar sus anillos, atmósfera y lunas durante muchos años.",
+      "instruments": [
+        { "name": "ISS", "description": "Cámaras del subsistema de imagen para vistas amplias y estrechas." },
+        { "name": "CIRS", "description": "Espectrómetro infrarrojo que mide temperaturas y composición." }
+      ],
+      "facts": [
+        "Llevó la sonda Huygens a la superficie de Titán.",
+        "Terminó sumergiéndose en Saturno en 2017."
+      ]
+    }
+  },
+  {
+    "id": "galileo",
+    "type": "orbiter",
+    "host": "jupiter",
+    "launchYear": 1989,
+    "missionStatus": "complete",
+    "missionEndYear": 2003,
+    "orbitalRadius_mkm": 4,
+    "en": {
+      "name": "Galileo",
+      "objectives": "Orbit Jupiter to study the planet and its major moons in detail.",
+      "instruments": [
+        { "name": "SSI", "description": "Solid State Imager that photographed Jupiter and its moons." },
+        { "name": "NIMS", "description": "Near-Infrared Mapping Spectrometer studying surface composition." }
+      ],
+      "facts": [
+        "It dropped a probe into Jupiter's atmosphere.",
+        "It was deliberately crashed into Jupiter in 2003."
+      ]
+    },
+    "es": {
+      "name": "Galileo",
+      "objectives": "Orbitar Júpiter para estudiar el planeta y sus lunas principales en detalle.",
+      "instruments": [
+        { "name": "SSI", "description": "Generador de imágenes de estado sólido que fotografió Júpiter y sus lunas." },
+        { "name": "NIMS", "description": "Espectrómetro de mapeo en infrarrojo cercano que estudia la composición superficial." }
+      ],
+      "facts": [
+        "Lanzó una sonda a la atmósfera de Júpiter.",
+        "Fue estrellada deliberadamente contra Júpiter en 2003."
+      ]
+    }
+  }
+]
