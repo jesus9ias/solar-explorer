@@ -1,7 +1,7 @@
 import {
   convertMkmToAU,
   convertAUToMkm,
-  logScale,
+  linearScale,
   pixelsPerMkm,
   bodyRadiusPx,
 } from '../logic/scale';
@@ -29,26 +29,37 @@ describe('scale — unit conversion', () => {
   });
 });
 
-describe('scale — logarithmic orbital radii', () => {
-  it('logScale returns MIN_SCREEN_RADIUS for the smallest real radius', () => {
-    expect(logScale(MIN_REAL_RADIUS_MKM)).toBeCloseTo(MIN_SCREEN_RADIUS, 6);
+describe('scale — linear orbital radii', () => {
+  it('linearScale returns MIN_SCREEN_RADIUS for the smallest real radius', () => {
+    expect(linearScale(MIN_REAL_RADIUS_MKM)).toBeCloseTo(MIN_SCREEN_RADIUS, 6);
   });
 
-  it('logScale returns MAX_SCREEN_RADIUS for the largest real radius', () => {
-    expect(logScale(MAX_REAL_RADIUS_MKM)).toBeCloseTo(MAX_SCREEN_RADIUS, 6);
+  it('linearScale returns MAX_SCREEN_RADIUS for the largest real radius', () => {
+    expect(linearScale(MAX_REAL_RADIUS_MKM)).toBeCloseTo(MAX_SCREEN_RADIUS, 6);
   });
 
-  it('logScale returns a value between min and max for mid-range input', () => {
+  it('linearScale returns a value between min and max for mid-range input', () => {
     const mid = (MIN_REAL_RADIUS_MKM + MAX_REAL_RADIUS_MKM) / 2;
-    const result = logScale(mid);
+    const result = linearScale(mid);
     expect(result).toBeGreaterThan(MIN_SCREEN_RADIUS);
     expect(result).toBeLessThan(MAX_SCREEN_RADIUS);
   });
 
-  it('logScale is monotonically increasing', () => {
+  it('linearScale maps the arithmetic midpoint to the arithmetic midpoint of screen radii', () => {
+    const mid = (MIN_REAL_RADIUS_MKM + MAX_REAL_RADIUS_MKM) / 2;
+    const expectedMid = (MIN_SCREEN_RADIUS + MAX_SCREEN_RADIUS) / 2;
+    expect(linearScale(mid)).toBeCloseTo(expectedMid, 6);
+  });
+
+  it('linearScale is monotonically increasing', () => {
     const r1 = MIN_REAL_RADIUS_MKM * 2;
     const r2 = MIN_REAL_RADIUS_MKM * 4;
-    expect(logScale(r1)).toBeLessThan(logScale(r2));
+    expect(linearScale(r1)).toBeLessThan(linearScale(r2));
+  });
+
+  it('linearScale extrapolates beyond MAX_REAL_RADIUS_MKM for distant probes', () => {
+    const voyager1 = 24000;
+    expect(linearScale(voyager1)).toBeGreaterThan(MAX_SCREEN_RADIUS);
   });
 });
 

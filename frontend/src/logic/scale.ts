@@ -33,29 +33,28 @@ export function convertAUToMkm(au: number): number {
 
 /**
  * Map a real orbital radius (million km) onto a screen radius (px) using a
- * logarithmic scale bounded by the configured min/max constants.
+ * linear scale bounded by the configured min/max constants.
  *
  * Returns exactly MIN_SCREEN_RADIUS at MIN_REAL_RADIUS_MKM and exactly
- * MAX_SCREEN_RADIUS at MAX_REAL_RADIUS_MKM, increasing monotonically between.
+ * MAX_SCREEN_RADIUS at MAX_REAL_RADIUS_MKM, increasing linearly between.
+ * Preserves true distance proportions so the vast gaps beyond Jupiter are
+ * faithfully represented in the ellipse view.
  */
-export function logScale(realRadiusMkm: number): number {
-  const logMin = Math.log(MIN_REAL_RADIUS_MKM);
-  const logMax = Math.log(MAX_REAL_RADIUS_MKM);
-  const fraction = (Math.log(realRadiusMkm) - logMin) / (logMax - logMin);
+export function linearScale(realRadiusMkm: number): number {
+  const fraction =
+    (realRadiusMkm - MIN_REAL_RADIUS_MKM) / (MAX_REAL_RADIUS_MKM - MIN_REAL_RADIUS_MKM);
   return MIN_SCREEN_RADIUS + fraction * (MAX_SCREEN_RADIUS - MIN_SCREEN_RADIUS);
 }
 
 /**
- * Inverse of {@link logScale}: map a screen radius (px) back to the real
+ * Inverse of {@link linearScale}: map a screen radius (px) back to the real
  * orbital radius (million km). Used to translate the Ellipse camera extent
  * into a solar distance when switching modes.
  */
-export function inverseLogScale(screenRadius: number): number {
-  const logMin = Math.log(MIN_REAL_RADIUS_MKM);
-  const logMax = Math.log(MAX_REAL_RADIUS_MKM);
+export function inverseLinearScale(screenRadius: number): number {
   const fraction =
     (screenRadius - MIN_SCREEN_RADIUS) / (MAX_SCREEN_RADIUS - MIN_SCREEN_RADIUS);
-  return Math.exp(logMin + fraction * (logMax - logMin));
+  return MIN_REAL_RADIUS_MKM + fraction * (MAX_REAL_RADIUS_MKM - MIN_REAL_RADIUS_MKM);
 }
 
 /** Clamp a requested pixels-per-million-km zoom into the allowed range. */

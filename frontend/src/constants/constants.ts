@@ -71,13 +71,13 @@ export const ZOOM_MAX_PX_PER_MKM = 20;
 export const ZOOM_MIN_PX_PER_MKM = 0.5;
 
 // ---------------------------------------------------------------------------
-// Scale — Ellipse mode (logarithmic orbital radii)
+// Scale — Ellipse mode (linear orbital radii)
 // ---------------------------------------------------------------------------
 
-/** Smallest real orbital radius mapped by the log scale (Mercury). */
+/** Smallest real orbital radius mapped by the linear scale (Mercury). */
 export const MIN_REAL_RADIUS_MKM = 57.9;
-/** Largest real orbital radius mapped by the log scale (Voyager 1 approx.). */
-export const MAX_REAL_RADIUS_MKM = 7375;
+/** Largest real orbital radius mapped by the linear scale (Neptune). */
+export const MAX_REAL_RADIUS_MKM = 4500;
 /** Screen radius (px) the smallest real radius maps to, at base zoom. */
 export const MIN_SCREEN_RADIUS = 60;
 /** Screen radius (px) the largest real radius maps to, at base zoom. */
@@ -170,14 +170,12 @@ export const ELEMENT_JUMP_DURATION_MS = 800;
 // ---------------------------------------------------------------------------
 
 /** Default camera zoom in Ellipse mode. */
-export const ELLIPSE_DEFAULT_ZOOM = 0.2;
+export const ELLIPSE_DEFAULT_ZOOM = 0.12;
 /** Minimum / maximum camera zoom in Ellipse mode. */
 export const ELLIPSE_MIN_ZOOM = 0.05;
 export const ELLIPSE_MAX_ZOOM = 4;
 /** Zoom step applied per wheel notch. */
 export const ELLIPSE_ZOOM_STEP = 0.1;
-/** Screen radius (px) used to place non-orbiting probes from the Sun. */
-export const PROBE_STATIC_RADIUS_PX = 2900;
 
 // ---------------------------------------------------------------------------
 // Audio

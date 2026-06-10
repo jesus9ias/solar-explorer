@@ -428,10 +428,10 @@ Scenario: Non-orbiting probes
 
 ### Feature: Scale system
 ```gherkin
-Scenario: Logarithmic orbital radii in Ellipse mode
+Scenario: Linear orbital radii in Ellipse mode
   Given the Ellipse scene is loaded
   Then Neptune's screen radius is greater than Earth's screen radius
-  And the ratio between them is logarithmic, not linear
+  And the ratio between them reflects the true linear distance proportion
 
 Scenario: Proportional body sizes
   Given any two planets are visible

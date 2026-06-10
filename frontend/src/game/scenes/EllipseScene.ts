@@ -1,9 +1,10 @@
 /**
  * Solar Explorer — EllipseScene.
  *
- * Orbital map with the Sun at the origin. Bodies orbit on logarithmically
- * scaled radii; the camera pans and zooms. A compass arrow always points to the
- * Sun. Non-orbiting probes are shown statically in interstellar space.
+ * Orbital map with the Sun at the origin. Bodies orbit on linearly
+ * scaled radii that preserve true distance proportions; the camera pans and
+ * zooms. A compass arrow always points to the Sun. Non-orbiting probes are
+ * shown statically in interstellar space.
  */
 import Phaser from 'phaser';
 import {
@@ -15,7 +16,6 @@ import {
   ELLIPSE_DEFAULT_ZOOM,
   ELLIPSE_MIN_ZOOM,
   ELLIPSE_MAX_ZOOM,
-  PROBE_STATIC_RADIUS_PX,
   MIN_SCREEN_RADIUS,
   MAX_SCREEN_RADIUS,
   MIN_REAL_RADIUS_MKM,
@@ -24,7 +24,7 @@ import {
 } from '../../constants/constants';
 import { bodies, spacecraft, sun } from '../../logic/catalog';
 import type { BodyData, SpacecraftData } from '../../logic/library';
-import { logScale, inverseLogScale } from '../../logic/scale';
+import { linearScale, inverseLinearScale } from '../../logic/scale';
 import { yearsToOrbitMs, isOrbiting } from '../../logic/orbit';
 import { navigationState } from '../../state/NavigationState';
 import { CelestialBody, type SelectHandler } from '../objects/CelestialBody';
@@ -90,7 +90,7 @@ export class EllipseScene extends Phaser.Scene {
     const hostObjects = new Map<string, Phaser.GameObjects.Image>();
     for (const body of bodies) {
       if (body.host !== null || body.orbitalRadius_mkm <= 0) continue;
-      const radius = logScale(body.orbitalRadius_mkm);
+      const radius = linearScale(body.orbitalRadius_mkm);
       this.orbitLines.push(new OrbitLine(this, radius, body.eccentricity));
       const obj = new CelestialBody(this, body, this.onSelect);
       hostObjects.set(body.id, obj);
@@ -150,17 +150,14 @@ export class EllipseScene extends Phaser.Scene {
     const obj = new Spacecraft(this, craft, this.onSelect);
 
     if (!isOrbiting(craft.id)) {
-      // Interstellar probe: static position out in deep space.
       const angle = seedAngle(craft.id);
-      obj.setPosition(
-        Math.cos(angle) * PROBE_STATIC_RADIUS_PX,
-        Math.sin(angle) * PROBE_STATIC_RADIUS_PX,
-      );
+      const radius = linearScale(craft.orbitalRadius_mkm);
+      obj.setPosition(Math.cos(angle) * radius, Math.sin(angle) * radius);
       return;
     }
 
     if (craft.host === 'sun' || craft.host === null) {
-      const radius = logScale(Math.max(craft.orbitalRadius_mkm, MIN_REAL_RADIUS_MKM));
+      const radius = linearScale(Math.max(craft.orbitalRadius_mkm, MIN_REAL_RADIUS_MKM));
       this.entries.push({
         obj,
         radiusX: radius,
@@ -188,7 +185,7 @@ export class EllipseScene extends Phaser.Scene {
     const distance = navigationState.getDistance();
     let zoom = ELLIPSE_DEFAULT_ZOOM;
     if (distance > 0) {
-      const targetRadius = logScale(Math.max(distance, MIN_REAL_RADIUS_MKM));
+      const targetRadius = linearScale(Math.max(distance, MIN_REAL_RADIUS_MKM));
       const desiredScreen = Math.min(this.scale.width, this.scale.height) * VIEW_FILL_FRACTION;
       zoom = Phaser.Math.Clamp(desiredScreen / targetRadius, ELLIPSE_MIN_ZOOM, ELLIPSE_MAX_ZOOM);
     }
@@ -272,7 +269,7 @@ export class EllipseScene extends Phaser.Scene {
     const visibleScreenRadius =
       Math.min(this.scale.width, this.scale.height) / (2 * this.cameras.main.zoom);
     const clamped = Phaser.Math.Clamp(visibleScreenRadius, MIN_SCREEN_RADIUS, MAX_SCREEN_RADIUS);
-    navigationState.setDistance(inverseLogScale(clamped));
+    navigationState.setDistance(inverseLinearScale(clamped));
   }
 
   private onShutdown(): void {
