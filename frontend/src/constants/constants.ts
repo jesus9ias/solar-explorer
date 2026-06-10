@@ -158,8 +158,6 @@ export const DEFAULT_ORBIT_LINES_VISIBLE = true;
 export const LINEAR_PX_PER_MKM = 0.05;
 /** Top padding (px) before the Sun at the start of Linear mode. */
 export const LINEAR_TOP_PADDING_PX = 120;
-/** Horizontal x (px) of the central vertical axis in Linear mode. */
-export const LINEAR_AXIS_X = 200;
 /** Ruler tick interval in million km. */
 export const RULER_TICK_INTERVAL_MKM = 250;
 /** Width (px) of the left distance ruler. */

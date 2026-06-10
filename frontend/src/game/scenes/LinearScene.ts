@@ -9,7 +9,6 @@
 import Phaser from 'phaser';
 import {
   SCENE_LINEAR,
-  LINEAR_AXIS_X,
   LINEAR_TOP_PADDING_PX,
   ELEMENT_JUMP_DURATION_MS,
   EVENT_LINEAR_PREV,
@@ -94,6 +93,8 @@ export class LinearScene extends Phaser.Scene {
       ...spacecraft.map((c) => ({ id: c.id, distance: this.craftDistance(c) })),
     ].sort((a, b) => a.distance - b.distance);
 
+    const axisX = this.scale.width / 2;
+
     let worldHeight = LINEAR_TOP_PADDING_PX;
     for (const element of elements) {
       const y = LINEAR_TOP_PADDING_PX + element.distance * this.pxPerMkm;
@@ -102,17 +103,17 @@ export class LinearScene extends Phaser.Scene {
       const body = bodies.find((b) => b.id === element.id);
       if (body) {
         const obj = new CelestialBody(this, body, this.onSelect);
-        obj.setPosition(LINEAR_AXIS_X, y);
+        obj.setPosition(axisX, y);
       } else {
         const craft = spacecraft.find((c) => c.id === element.id);
         if (craft) {
           const obj = new Spacecraft(this, craft, this.onSelect);
-          obj.setPosition(LINEAR_AXIS_X, y);
+          obj.setPosition(axisX, y);
         }
       }
 
       const label = this.add
-        .text(LINEAR_AXIS_X + LABEL_OFFSET_X, y, getText(`${element.id}.name`, lang), {
+        .text(axisX + LABEL_OFFSET_X, y, getText(`${element.id}.name`, lang), {
           fontFamily: 'monospace',
           fontSize: '12px',
           color: COLOR_TEXT,

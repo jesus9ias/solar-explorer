@@ -61,6 +61,7 @@ export class EllipseScene extends Phaser.Scene {
   private sunArrow!: SunArrow;
   private isDragging = false;
   private lastPinchDist = -1;
+  private lastZoom = -1;
 
   constructor() {
     super(SCENE_ELLIPSE);
@@ -290,6 +291,13 @@ export class EllipseScene extends Phaser.Scene {
         center.y + Math.sin(entry.angle) * entry.radiusY,
       );
     }
+
+    const zoom = this.cameras.main.zoom;
+    if (zoom !== this.lastZoom) {
+      this.lastZoom = zoom;
+      for (const line of this.orbitLines) line.updateZoom(zoom);
+    }
+
     this.updateSunArrow();
     this.syncNavigation();
   }
