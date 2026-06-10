@@ -39,6 +39,9 @@ interface ElementLayout {
 }
 
 const SCROLL_WHEEL_FACTOR = 0.6;
+const SCROLL_DRAG_FRICTION = 0.92;
+const SCROLL_DRAG_MIN_VELOCITY_PX = 0.5;
+const SCROLL_VELOCITY_SAMPLES = 5;
 const LABEL_OFFSET_X = 26;
 const FUNFACT_VISIBLE_MS = 7000;
 
@@ -50,6 +53,8 @@ export class LinearScene extends Phaser.Scene {
   private funFactText!: Phaser.GameObjects.Text;
   private funFactTimer?: Phaser.Time.TimerEvent;
   private isDragging = false;
+  private dragVelocity = 0;
+  private readonly velocitySamples: number[] = [];
 
   constructor() {
     super(SCENE_LINEAR);
@@ -155,14 +160,28 @@ export class LinearScene extends Phaser.Scene {
 
     this.input.on('pointerdown', () => {
       this.isDragging = true;
+      this.dragVelocity = 0;
+      this.velocitySamples.length = 0;
+      // Cancel any in-flight tween so drag takes immediate control
+      this.tweens.killTweensOf(this.cameras.main);
     });
     this.input.on('pointerup', () => {
       this.isDragging = false;
+      // Hand off average velocity to the coasting animation
+      if (this.velocitySamples.length > 0) {
+        const sum = this.velocitySamples.reduce((a, b) => a + b, 0);
+        this.dragVelocity = sum / this.velocitySamples.length;
+      }
     });
     this.input.on('pointermove', (pointer: Phaser.Input.Pointer) => {
       if (!this.isDragging) return;
-      this.cameras.main.scrollY -= pointer.y - pointer.prevPosition.y;
+      const delta = pointer.y - pointer.prevPosition.y;
+      this.cameras.main.scrollY -= delta;
       this.syncNavigation();
+      this.velocitySamples.push(delta);
+      if (this.velocitySamples.length > SCROLL_VELOCITY_SAMPLES) {
+        this.velocitySamples.shift();
+      }
     });
   }
 
@@ -237,6 +256,10 @@ export class LinearScene extends Phaser.Scene {
   }
 
   update(): void {
+    if (!this.isDragging && Math.abs(this.dragVelocity) > SCROLL_DRAG_MIN_VELOCITY_PX) {
+      this.cameras.main.scrollY -= this.dragVelocity;
+      this.dragVelocity *= SCROLL_DRAG_FRICTION;
+    }
     this.syncNavigation();
     this.ruler.update(this.pxPerMkm, LINEAR_TOP_PADDING_PX, scaleState.getUnit());
     this.maybeShowFunFact();
