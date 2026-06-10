@@ -162,7 +162,7 @@ frontend/src/
 |---|---|---|---|
 | Language | Switch | English / Spanish | localStorage |
 | Mode | Switch | Linear / Ellipse | localStorage |
-| Distance unit | Switch | Million km / AU | localStorage |
+| Distance unit | Switch | MKm / AU | localStorage |
 | Audio | Switch | On / Off | localStorage |
 
 All switch state reads from `UserPreferences` on init. On change: update `UserPreferences`, update `localStorage`, notify relevant subscribers.
@@ -233,7 +233,7 @@ When the user switches mode, the current scroll/camera position is converted to 
 
 ### Distance Ruler
 
-A fixed ruler on the left edge of the viewport. Shows the distance traveled from the Sun in the current unit (Million km or AU). Updates continuously as the user scrolls. Tick marks at regular intervals defined in `constants.ts`.
+A fixed ruler on the left edge of the viewport. Shows the distance traveled from the Sun in the current unit (MKm or AU). Updates continuously as the user scrolls. Tick marks at regular intervals defined in `constants.ts`.
 
 ### Fun Facts
 
@@ -508,7 +508,7 @@ Feature: Distance unit switch
   So that I can understand distances in my preferred unit
 
   Scenario: Switch to AU
-    Given the unit is set to Million km
+    Given the unit is set to MKm
     When the user switches to AU
     Then all distance labels update to AU values
     And the ruler in Linear mode updates
@@ -699,7 +699,7 @@ Feature: Scale system
     And no planet is rendered below BODY_MIN_RADIUS_PX
 
   Scenario: Linear scale conversion
-    Given the unit is Million km
+    Given the unit is MKm
     When the zoom level changes
     Then the pixels-per-million-km ratio stays within the configured min/max range
 ```

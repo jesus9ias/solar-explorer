@@ -41,6 +41,7 @@ export interface HUDDeps {
 interface SegmentOption<T> {
   readonly value: T;
   readonly label: string;
+  readonly icon?: string;
 }
 
 function el<K extends keyof HTMLElementTagNameMap>(
@@ -84,7 +85,16 @@ export class HUD {
     const segments = el('div', 'se-segments');
     for (const option of options) {
       const button = el('button', 'se-segment');
-      button.textContent = option.label;
+      if (option.icon !== undefined) {
+        const iconSpan = el('span', 'se-btn-icon');
+        iconSpan.textContent = option.icon;
+        iconSpan.setAttribute('aria-hidden', 'true');
+        const textSpan = el('span', 'se-btn-text');
+        textSpan.textContent = option.label;
+        button.append(iconSpan, textSpan);
+      } else {
+        button.textContent = option.label;
+      }
       if (option.value === current) button.classList.add('is-active');
       button.addEventListener('click', () => onChange(option.value));
       segments.append(button);
@@ -93,10 +103,20 @@ export class HUD {
     return control;
   }
 
-  private button(labelKey: string, onClick: () => void): HTMLButtonElement {
+  private button(labelKey: string, onClick: () => void, icon?: string): HTMLButtonElement {
     const lang = userPreferences.getLanguage();
     const button = el('button', 'se-button');
-    button.textContent = getText(labelKey, lang);
+    const text = getText(labelKey, lang);
+    if (icon !== undefined) {
+      const iconSpan = el('span', 'se-btn-icon');
+      iconSpan.textContent = icon;
+      iconSpan.setAttribute('aria-hidden', 'true');
+      const textSpan = el('span', 'se-btn-text');
+      textSpan.textContent = text;
+      button.append(iconSpan, textSpan);
+    } else {
+      button.textContent = text;
+    }
     button.addEventListener('click', onClick);
     return button;
   }
@@ -149,8 +169,8 @@ export class HUD {
       this.segment<boolean>(
         'hud.audio',
         [
-          { value: true, label: getText('hud.on', lang) },
-          { value: false, label: getText('hud.off', lang) },
+          { value: true, label: getText('hud.on', lang), icon: '🔊' },
+          { value: false, label: getText('hud.off', lang), icon: '🔇' },
         ],
         userPreferences.isAudioEnabled(),
         (value) => {
@@ -161,12 +181,12 @@ export class HUD {
     );
 
     // Library button.
-    this.container.append(this.button('hud.library', () => this.deps.onLibrary()));
+    this.container.append(this.button('hud.library', () => this.deps.onLibrary(), '≡'));
 
     // Mode-specific controls.
     if (modeState.getMode() === Mode.LINEAR) {
-      this.container.append(this.button('hud.prevElement', () => this.deps.emit(EVENT_LINEAR_PREV)));
-      this.container.append(this.button('hud.nextElement', () => this.deps.emit(EVENT_LINEAR_NEXT)));
+      this.container.append(this.button('hud.prevElement', () => this.deps.emit(EVENT_LINEAR_PREV), '◀'));
+      this.container.append(this.button('hud.nextElement', () => this.deps.emit(EVENT_LINEAR_NEXT), '▶'));
     } else {
       this.container.append(
         this.segment<number>(
@@ -184,8 +204,8 @@ export class HUD {
         this.segment<boolean>(
           'hud.orbitLines',
           [
-            { value: true, label: getText('hud.show', lang) },
-            { value: false, label: getText('hud.hide', lang) },
+            { value: true, label: getText('hud.show', lang), icon: '⊙' },
+            { value: false, label: getText('hud.hide', lang), icon: '⊘' },
           ],
           this.orbitLinesVisible,
           (value) => {

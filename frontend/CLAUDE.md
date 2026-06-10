@@ -290,7 +290,7 @@ Scenario: Mode preference persists on reload
 ### Feature: Distance unit switch
 ```gherkin
 Scenario: Switch to AU
-  Given the unit is set to Million km
+  Given the unit is set to MKm
   When the user switches to AU
   Then all distance labels update to AU values
   And the ruler in Linear mode updates
@@ -439,7 +439,7 @@ Scenario: Proportional body sizes
   And no planet is rendered below BODY_MIN_RADIUS_PX
 
 Scenario: Linear scale conversion
-  Given the unit is Million km
+  Given the unit is MKm
   When the zoom level changes
   Then the pixels-per-million-km ratio stays within the configured min/max range
 ```

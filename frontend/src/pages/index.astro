@@ -196,6 +196,7 @@ const subtitle = getText('app.subtitle', Language.EN);
       }
       .se-segments { display: flex; border: 1px solid var(--se-border); border-radius: 4px; overflow: hidden; }
       .se-segment {
+        flex: 1;
         background: var(--se-panel);
         color: var(--se-text);
         border: none;
@@ -221,6 +222,8 @@ const subtitle = getText('app.subtitle', Language.EN);
         cursor: pointer;
       }
       .se-button:hover { background: var(--se-panel-2); border-color: var(--se-accent); }
+
+      .se-btn-icon { display: none; }
 
       /* Modal */
       .se-modal-overlay {
@@ -332,6 +335,21 @@ const subtitle = getText('app.subtitle', Language.EN);
       }
       .se-library-item:hover { border-color: var(--se-accent); color: var(--se-accent); }
       .se-library-complete { color: var(--se-amber); }
+
+      @media (max-width: 640px) {
+        .se-hud {
+          flex-wrap: nowrap;
+          overflow-x: auto;
+          gap: 8px;
+          padding: 8px 10px;
+          scrollbar-width: none;
+        }
+        .se-hud::-webkit-scrollbar { display: none; }
+        .se-control-label { display: none; }
+        .se-btn-icon { display: inline; }
+        .se-btn-icon ~ .se-btn-text { display: none; }
+        .se-button { align-self: center; }
+      }
     </style>
   </body>
 </html>
