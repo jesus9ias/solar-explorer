@@ -35,11 +35,11 @@
   {
     "id": "jwst",
     "type": "space_telescope",
-    "host": "earth",
+    "host": "sun",
     "launchYear": 2021,
     "missionStatus": "active",
     "missionEndYear": null,
-    "orbitalRadius_mkm": 1.5,
+    "orbitalRadius_mkm": 151.1,
     "en": {
       "name": "James Webb Space Telescope",
       "objectives": "Observe the infrared universe, from the first galaxies to atmospheres of distant exoplanets, from the Sun-Earth L2 point.",
