@@ -190,10 +190,9 @@ This project is developed **test-first**:
 
 ### Add a new fun fact
 
-1. Add a `FunFactId` enum member in `constants.ts`.
-2. Add an entry to `config/funfacts.json`: `id` (matching the enum value),
+1. Add an entry to `config/funfacts.json`: `id` (unique string),
    `triggerDistanceMkm`, and `en`/`es` `{ text }`.
-3. `funfacts.test.ts` assumes the **Asteroid Belt** fact triggers at ~414 Mkm
+2. `funfacts.test.ts` assumes the **Asteroid Belt** fact triggers at ~414 Mkm
    and that it is the only fact reached at that distance. Keep the asteroid-belt
    trigger ≤ 414 Mkm and other triggers above it, or update the test (with
    authorization).

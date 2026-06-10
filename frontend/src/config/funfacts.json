@@ -1,5 +1,15 @@
 [
   {
+    "id": "goldilocks_zone",
+    "triggerDistanceMkm": 150,
+    "en": {
+      "text": "You are crossing Earth's orbital distance — the inner edge of the Sun's habitable zone. Here temperatures allow liquid water to exist on a planet's surface. Drift much closer and oceans boil; drift farther and they freeze."
+    },
+    "es": {
+      "text": "Cruzas la distancia orbital de la Tierra, el borde interior de la zona habitable del Sol. Aquí las temperaturas permiten que exista agua líquida en la superficie de un planeta. Un poco más cerca y los océanos hierven; un poco más lejos y se congelan."
+    }
+  },
+  {
     "id": "asteroid_belt",
     "triggerDistanceMkm": 330,
     "en": {
@@ -7,6 +17,56 @@
     },
     "es": {
       "text": "Estás entrando al Cinturón de Asteroides. Aunque contiene millones de rocas, están tan dispersas que, en promedio, los asteroides vecinos están a cientos de miles de kilómetros entre sí, por eso las naves lo cruzan sin peligro."
+    }
+  },
+  {
+    "id": "frost_line",
+    "triggerDistanceMkm": 500,
+    "en": {
+      "text": "You have crossed the frost line — the distance where water ice becomes stable under sunlight. This boundary was decisive in the formation of the solar system: beyond it, icy material helped the outer planets grow massive enough to capture hydrogen and helium."
+    },
+    "es": {
+      "text": "Has cruzado la línea de escarcha, la distancia a partir de la cual el hielo de agua es estable bajo la luz solar. Esta frontera fue decisiva en la formación del sistema solar: más allá, el material helado ayudó a los planetas exteriores a crecer lo suficiente para capturar hidrógeno y helio."
+    }
+  },
+  {
+    "id": "jupiter_shield",
+    "triggerDistanceMkm": 900,
+    "en": {
+      "text": "You are passing Jupiter's orbit. Its enormous gravity acts as a cosmic shield, pulling in or deflecting countless asteroids and comets that would otherwise threaten the inner solar system. Without Jupiter's influence, impacts on Earth might be far more frequent."
+    },
+    "es": {
+      "text": "Pasas por la órbita de Júpiter. Su enorme gravedad actúa como un escudo cósmico, atrapando o desviando asteroides y cometas que de otro modo amenazarían el sistema solar interior. Sin la influencia de Júpiter, los impactos sobre la Tierra serían mucho más frecuentes."
+    }
+  },
+  {
+    "id": "saturn_rings",
+    "triggerDistanceMkm": 1550,
+    "en": {
+      "text": "You are at Saturn's orbit. Its rings span 270,000 km — wider than the distance from Earth to the Moon — yet they are only 10 to 100 metres thick. Proportionally thinner than a sheet of paper, they consist mostly of ice particles and rock."
+    },
+    "es": {
+      "text": "Estás en la órbita de Saturno. Sus anillos se extienden 270 000 km —más que la distancia de la Tierra a la Luna—, pero miden apenas 10 a 100 metros de grosor. Proporcionalmente más delgados que una hoja de papel, están formados principalmente por partículas de hielo y roca."
+    }
+  },
+  {
+    "id": "uranus_tilt",
+    "triggerDistanceMkm": 2920,
+    "en": {
+      "text": "Uranus orbits nearly on its side, with an axial tilt of 98°. Each pole spends 42 years bathed in continuous sunlight followed by 42 years of total darkness. The cause is thought to be a massive collision early in the solar system's history."
+    },
+    "es": {
+      "text": "Urano orbita casi de lado, con una inclinación axial de 98°. Cada polo pasa 42 años bajo luz solar continua seguidos de 42 años de oscuridad total. Se cree que la causa fue una colisión masiva en los primeros tiempos del sistema solar."
+    }
+  },
+  {
+    "id": "neptune_winds",
+    "triggerDistanceMkm": 4300,
+    "en": {
+      "text": "Neptune receives 900 times less sunlight than Earth, yet it hosts the strongest sustained winds in the solar system — exceeding 2,000 km/h. Where this energy comes from remains an open question; Neptune radiates more heat than it receives from the Sun."
+    },
+    "es": {
+      "text": "Neptuno recibe 900 veces menos luz solar que la Tierra, pero tiene los vientos sostenidos más fuertes del sistema solar, superando los 2 000 km/h. De dónde proviene esa energía sigue siendo una pregunta abierta: Neptuno irradia más calor del que recibe del Sol."
     }
   },
   {
@@ -20,6 +80,36 @@
     }
   },
   {
+    "id": "pluto_orbit",
+    "triggerDistanceMkm": 5906,
+    "en": {
+      "text": "You are near Pluto's average orbital distance. Pluto takes 248 Earth years to complete one orbit. When New Horizons flew past in 2015 — humanity's first close look — Pluto had not yet completed a single orbit since its discovery in 1930."
+    },
+    "es": {
+      "text": "Estás cerca de la distancia orbital media de Plutón. Tarda 248 años terrestres en completar una vuelta al Sol. Cuando New Horizons lo sobrevoló en 2015 —la primera mirada cercana de la humanidad—, Plutón aún no había completado ni una sola órbita desde su descubrimiento en 1930."
+    }
+  },
+  {
+    "id": "eris_reclassification",
+    "triggerDistanceMkm": 10120,
+    "en": {
+      "text": "Around here lies the orbit of Eris, discovered in 2005. Though slightly smaller in volume than Pluto, Eris is more massive — made of denser rock and ice. Its discovery sparked the 2006 IAU debate that redefined what a planet is and reclassified Pluto as a dwarf planet."
+    },
+    "es": {
+      "text": "Por aquí se encuentra la órbita de Eris, descubierto en 2005. Aunque ligeramente más pequeño en volumen que Plutón, Eris es más masivo: está hecho de roca y hielo más densos. Su descubrimiento desencadenó el debate de la UAI en 2006 que redefinió qué es un planeta y reclasificó a Plutón como planeta enano."
+    }
+  },
+  {
+    "id": "termination_shock",
+    "triggerDistanceMkm": 14000,
+    "en": {
+      "text": "Around here the solar wind abruptly slows from supersonic to subsonic as it rams into the interstellar medium. This boundary, the termination shock, is the first of three layers that separate the Sun's domain from interstellar space."
+    },
+    "es": {
+      "text": "Por aquí el viento solar frena abruptamente de supersónico a subsónico al chocar con el medio interestelar. Esta frontera, el choque de terminación, es la primera de las tres capas que separan el dominio del Sol del espacio interestelar."
+    }
+  },
+  {
     "id": "heliopause",
     "triggerDistanceMkm": 18000,
     "en": {
@@ -30,13 +120,23 @@
     }
   },
   {
-    "id": "journey_end",
-    "triggerDistanceMkm": 24000,
+    "id": "voyager_signal",
+    "triggerDistanceMkm": 21000,
     "en": {
-      "text": "This is as far as we go, the current position of Voyager 1. The Oort Cloud is thought to begin around 2,000 AU away, and the nearest star, Proxima Centauri, lies about 268,000 AU from the Sun."
+      "text": "A radio signal from this distance takes over 19 hours to reach Earth, travelling at the speed of light."
     },
     "es": {
-      "text": "Hasta aquí llegamos, la posición actual de la Voyager 1. Se cree que la Nube de Oort comienza a unas 2,000 UA, y la estrella más cercana, Próxima Centauri, está a unas 268,000 UA del Sol."
+      "text": "Una señal de radio desde esta distancia tarda más de 19 horas en llegar a la Tierra, viajando a la velocidad de la luz."
+    }
+  },
+  {
+    "id": "journey_end",
+    "triggerDistanceMkm": 24100,
+    "en": {
+      "text": "This is as far as we go. The Oort Cloud is thought to begin around 2,000 AU away, and the nearest star, Proxima Centauri, lies about 268,000 AU from the Sun."
+    },
+    "es": {
+      "text": "Hasta aquí llegamos. Se cree que la Nube de Oort comienza a unas 2,000 UA, y la estrella más cercana, Próxima Centauri, está a unas 268,000 UA del Sol."
     }
   }
 ]

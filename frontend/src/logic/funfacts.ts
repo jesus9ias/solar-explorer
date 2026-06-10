@@ -7,12 +7,12 @@
  * (Not part of the original architecture sketch; provides the home for the
  * fun-fact retrieval logic the tests require.)
  */
-import { FunFactId, Language } from '../constants/constants';
+import { Language } from '../constants/constants';
 import funfactsJson from '../config/funfacts.json';
 
 /** A localized fun fact resolved for display. */
 export interface FunFact {
-  readonly id: FunFactId;
+  readonly id: string;
   readonly triggerDistanceMkm: number;
   readonly text: string;
 }
@@ -57,8 +57,21 @@ export function getFunFactsAtDistance(
 
   if (best === null) return null;
   return {
-    id: best.id as FunFactId,
+    id: best.id,
     triggerDistanceMkm: best.triggerDistanceMkm,
     text: best[lang].text,
   };
+}
+
+/**
+ * Return all fun facts localized to the given language, in config order.
+ */
+export function getAllFunFacts(lang: Language): FunFact[] {
+  if (!Array.isArray(funfactsJson)) return [];
+  const facts = funfactsJson as FunFactConfig[];
+  return facts.map((fact) => ({
+    id: fact.id,
+    triggerDistanceMkm: fact.triggerDistanceMkm,
+    text: fact[lang].text,
+  }));
 }

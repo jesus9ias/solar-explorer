@@ -23,7 +23,7 @@ import {
 import { bodies, spacecraft } from '../../logic/catalog';
 import type { BodyData, SpacecraftData } from '../../logic/library';
 import { getText } from '../../logic/i18n';
-import { getFunFactsAtDistance } from '../../logic/funfacts';
+import { getAllFunFacts } from '../../logic/funfacts';
 import { userPreferences } from '../../state/UserPreferences';
 import { scaleState } from '../../state/ScaleState';
 import { navigationState } from '../../state/NavigationState';
@@ -42,15 +42,12 @@ const SCROLL_DRAG_FRICTION = 0.92;
 const SCROLL_DRAG_MIN_VELOCITY_PX = 0.5;
 const SCROLL_VELOCITY_SAMPLES = 5;
 const LABEL_OFFSET_X = 26;
-const FUNFACT_VISIBLE_MS = 7000;
 
 export class LinearScene extends Phaser.Scene {
   private pxPerMkm = 1;
   private ruler!: RulerRenderer;
   private layouts: ElementLayout[] = [];
-  private readonly shownFunFacts = new Set<string>();
-  private funFactText!: Phaser.GameObjects.Text;
-  private funFactTimer?: Phaser.Time.TimerEvent;
+  private funFactTexts: Phaser.GameObjects.Text[] = [];
   private isDragging = false;
   private dragVelocity = 0;
   private readonly velocitySamples: number[] = [];
@@ -83,7 +80,6 @@ export class LinearScene extends Phaser.Scene {
   create(): void {
     this.cameras.main.setBackgroundColor(COLOR_BG);
     this.pxPerMkm = scaleState.getZoom();
-    this.shownFunFacts.clear();
     this.layouts = [];
 
     const lang = userPreferences.getLanguage();
@@ -125,20 +121,25 @@ export class LinearScene extends Phaser.Scene {
     this.cameras.main.setBounds(0, 0, this.scale.width, worldHeight + this.scale.height);
 
     this.ruler = new RulerRenderer(this);
-    this.funFactText = this.add
-      .text(this.scale.width / 2 + RULER_WIDTH_PX / 2, this.scale.height - 60, '', {
-        fontFamily: 'monospace',
-        fontSize: '13px',
-        color: COLOR_ACCENT_AMBER,
-        align: 'center',
-        wordWrap: { width: this.scale.width - RULER_WIDTH_PX - 80 },
-        backgroundColor: 'rgba(5,8,15,0.85)',
-        padding: { x: 10, y: 8 },
-      })
-      .setScrollFactor(0)
-      .setOrigin(0.5, 1)
-      .setDepth(1000)
-      .setVisible(false);
+    this.funFactTexts = [];
+    const centerX = this.scale.width / 2 + RULER_WIDTH_PX / 2;
+    for (const fact of getAllFunFacts(lang)) {
+      const worldY = LINEAR_TOP_PADDING_PX + fact.triggerDistanceMkm * this.pxPerMkm;
+      this.funFactTexts.push(
+        this.add
+          .text(centerX, worldY, fact.text, {
+            fontFamily: 'monospace',
+            fontSize: '13px',
+            color: COLOR_ACCENT_AMBER,
+            align: 'center',
+            wordWrap: { width: this.scale.width - RULER_WIDTH_PX - 80 },
+            backgroundColor: 'rgba(5,8,15,0.85)',
+            padding: { x: 10, y: 8 },
+          })
+          .setOrigin(0.5, 0.5)
+          .setDepth(1000),
+      );
+    }
 
     this.setupInput();
     this.restoreScrollFromNavigation();
@@ -233,18 +234,10 @@ export class LinearScene extends Phaser.Scene {
     for (const layout of this.layouts) {
       layout.label.setText(getText(`${layout.id}.name`, lang));
     }
-  }
-
-  private maybeShowFunFact(): void {
-    const lang = userPreferences.getLanguage();
-    const fact = getFunFactsAtDistance(this.centerDistance(), lang, this.shownFunFacts);
-    if (!fact) return;
-    this.shownFunFacts.add(fact.id);
-    this.funFactText.setText(fact.text).setVisible(true);
-    this.funFactTimer?.remove();
-    this.funFactTimer = this.time.delayedCall(FUNFACT_VISIBLE_MS, () => {
-      this.funFactText.setVisible(false);
-    });
+    const updated = getAllFunFacts(lang);
+    for (let i = 0; i < this.funFactTexts.length; i++) {
+      this.funFactTexts[i].setText(updated[i].text);
+    }
   }
 
   private onShutdown(): void {
@@ -263,6 +256,5 @@ export class LinearScene extends Phaser.Scene {
     }
     this.syncNavigation();
     this.ruler.update(this.pxPerMkm, LINEAR_TOP_PADDING_PX, scaleState.getUnit());
-    this.maybeShowFunFact();
   }
 }

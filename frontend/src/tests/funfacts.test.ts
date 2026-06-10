@@ -1,5 +1,5 @@
-import { getFunFactsAtDistance } from '../logic/funfacts';
-import { FunFactId, Language } from '../constants/constants';
+import { getFunFactsAtDistance, getAllFunFacts } from '../logic/funfacts';
+import { Language } from '../constants/constants';
 
 // Mid-belt distance (≈ Ceres orbital radius) chosen to fall inside the
 // Asteroid Belt fun-fact trigger window. Stage 4 config must keep the belt
@@ -14,7 +14,7 @@ describe('funfacts — getFunFactsAtDistance', () => {
       Language.EN,
       new Set<string>(),
     );
-    expect(fact?.id).toBe(FunFactId.ASTEROID_BELT);
+    expect(fact?.id).toBe('asteroid_belt');
   });
 
   it('returns null before the first trigger distance', () => {
@@ -42,18 +42,32 @@ describe('funfacts — getFunFactsAtDistance', () => {
   });
 
   it('does not repeat a fact already shown', () => {
+    // 200 Mkm sits between goldilocks_zone (150) and asteroid_belt (330),
+    // so exactly one fact is reachable — after showing it the result must be null.
+    const SINGLE_FACT_DISTANCE = 200;
     const shown = new Set<string>();
-    const first = getFunFactsAtDistance(
-      ASTEROID_BELT_DISTANCE_MKM,
-      Language.EN,
-      shown,
-    );
+    const first = getFunFactsAtDistance(SINGLE_FACT_DISTANCE, Language.EN, shown);
     shown.add(first?.id ?? '');
-    const second = getFunFactsAtDistance(
-      ASTEROID_BELT_DISTANCE_MKM,
-      Language.EN,
-      shown,
-    );
+    const second = getFunFactsAtDistance(SINGLE_FACT_DISTANCE, Language.EN, shown);
     expect(second).toBeNull();
+  });
+});
+
+describe('funfacts — getAllFunFacts', () => {
+  it('returns all 14 facts', () => {
+    expect(getAllFunFacts(Language.EN)).toHaveLength(14);
+  });
+
+  it('returns localized text that differs between languages', () => {
+    const en = getAllFunFacts(Language.EN);
+    const es = getAllFunFacts(Language.ES);
+    expect(en[0].text).toBeTruthy();
+    expect(es[0].text).not.toBe(en[0].text);
+  });
+
+  it('includes a positive triggerDistanceMkm for every fact', () => {
+    for (const fact of getAllFunFacts(Language.EN)) {
+      expect(fact.triggerDistanceMkm).toBeGreaterThan(0);
+    }
   });
 });

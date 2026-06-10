@@ -53,14 +53,6 @@ export enum MissionStatus {
   EN_ROUTE = 'en_route',
 }
 
-/** Stable identifiers for the contextual fun facts shown in Linear mode. */
-export enum FunFactId {
-  ASTEROID_BELT = 'asteroid_belt',
-  KUIPER_BELT = 'kuiper_belt',
-  HELIOPAUSE = 'heliopause',
-  JOURNEY_END = 'journey_end',
-}
-
 // ---------------------------------------------------------------------------
 // Scale — Linear mode
 // ---------------------------------------------------------------------------
