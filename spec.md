@@ -621,6 +621,13 @@ Feature: Linear mode navigation
     Given the user scrolls to the Asteroid Belt trigger distance
     When the fun fact threshold is crossed
     Then the Asteroid Belt fun fact note appears in the scene
+
+  Scenario: Satellites do not overlap their host
+    Given a moon orbits a planet at a distance far smaller than the planet's distance from the Sun
+    When the Linear scene lays out the elements
+    Then the moon is pushed clear of the planet's rendered disc instead of landing inside it
+    And consecutive moons stack as an even ladder below the host
+    And the displacement does not shift bodies in the next cluster
 ```
 
 ### Feature: Ellipse mode navigation
@@ -702,6 +709,13 @@ Feature: Scale system
     Given the unit is MKm
     When the zoom level changes
     Then the pixels-per-million-km ratio stays within the configured min/max range
+
+  Scenario: Piecewise scale at the asteroid belt
+    Given the user is in Linear mode
+    Then distances inside the asteroid belt are drawn at an expanded rate
+    And distances beyond the belt keep the base zoom rate and their original spacing
+    So that the inner planets get room to breathe without crowding the outer system
+    And the ruler marks the belt where the scale rate changes
 ```
 
 ---

@@ -1,6 +1,7 @@
 [
   {
     "id": "sun",
+    "image": "sun.jpg",
     "type": "star",
     "host": null,
     "orbitalRadius_mkm": 0,
@@ -31,6 +32,7 @@
   },
   {
     "id": "mercury",
+    "image": "mercury.png",
     "type": "planet",
     "host": null,
     "orbitalRadius_mkm": 57.9,
@@ -61,6 +63,7 @@
   },
   {
     "id": "venus",
+    "image": "venus.png",
     "type": "planet",
     "host": null,
     "orbitalRadius_mkm": 108.2,
@@ -91,6 +94,7 @@
   },
   {
     "id": "earth",
+    "image": "earth.png",
     "type": "planet",
     "host": null,
     "orbitalRadius_mkm": 149.598,
@@ -121,6 +125,7 @@
   },
   {
     "id": "mars",
+    "image": "mars.png",
     "type": "planet",
     "host": null,
     "orbitalRadius_mkm": 227.9,
@@ -151,6 +156,7 @@
   },
   {
     "id": "jupiter",
+    "image": "jupiter.png",
     "type": "planet",
     "host": null,
     "orbitalRadius_mkm": 778.5,
@@ -181,6 +187,7 @@
   },
   {
     "id": "saturn",
+    "image": "saturn.png",
     "type": "planet",
     "host": null,
     "orbitalRadius_mkm": 1434,
@@ -211,6 +218,7 @@
   },
   {
     "id": "uranus",
+    "image": "uranus.png",
     "type": "planet",
     "host": null,
     "orbitalRadius_mkm": 2871,
@@ -241,6 +249,7 @@
   },
   {
     "id": "neptune",
+    "image": "neptune.png",
     "type": "planet",
     "host": null,
     "orbitalRadius_mkm": 4495,
@@ -271,6 +280,7 @@
   },
   {
     "id": "ceres",
+    "image": "ceres.png",
     "type": "dwarf_planet",
     "host": null,
     "orbitalRadius_mkm": 414,
@@ -301,6 +311,7 @@
   },
   {
     "id": "pluto",
+    "image": "pluto.png",
     "type": "dwarf_planet",
     "host": null,
     "orbitalRadius_mkm": 5906,
@@ -331,6 +342,7 @@
   },
   {
     "id": "eris",
+    "image": "eris.png",
     "type": "dwarf_planet",
     "host": null,
     "orbitalRadius_mkm": 10125,
@@ -361,6 +373,7 @@
   },
   {
     "id": "makemake",
+    "image": "makemake.png",
     "type": "dwarf_planet",
     "host": null,
     "orbitalRadius_mkm": 6850,
@@ -391,6 +404,7 @@
   },
   {
     "id": "haumea",
+    "image": "haumea.webp",
     "type": "dwarf_planet",
     "host": null,
     "orbitalRadius_mkm": 6452,
@@ -421,6 +435,7 @@
   },
   {
     "id": "moon",
+    "image": "moon.png",
     "type": "moon",
     "host": "earth",
     "orbitalRadius_mkm": 0.3844,
@@ -451,6 +466,7 @@
   },
   {
     "id": "phobos",
+    "image": "phobos.jpg",
     "type": "moon",
     "host": "mars",
     "orbitalRadius_mkm": 0.00938,
@@ -481,6 +497,7 @@
   },
   {
     "id": "deimos",
+    "image": "deimos.jpg",
     "type": "moon",
     "host": "mars",
     "orbitalRadius_mkm": 0.0235,
@@ -511,6 +528,7 @@
   },
   {
     "id": "io",
+    "image": "io.png",
     "type": "moon",
     "host": "jupiter",
     "orbitalRadius_mkm": 0.4217,
@@ -541,6 +559,7 @@
   },
   {
     "id": "europa",
+    "image": "europa.png",
     "type": "moon",
     "host": "jupiter",
     "orbitalRadius_mkm": 0.6711,
@@ -571,6 +590,7 @@
   },
   {
     "id": "ganymede",
+    "image": "ganymede.png",
     "type": "moon",
     "host": "jupiter",
     "orbitalRadius_mkm": 1.0704,
@@ -601,6 +621,7 @@
   },
   {
     "id": "callisto",
+    "image": "callisto.jpg",
     "type": "moon",
     "host": "jupiter",
     "orbitalRadius_mkm": 1.8827,
@@ -631,6 +652,7 @@
   },
   {
     "id": "titan",
+    "image": "titan.jpg",
     "type": "moon",
     "host": "saturn",
     "orbitalRadius_mkm": 1.2218,
@@ -661,6 +683,7 @@
   },
   {
     "id": "enceladus",
+    "image": "enceladus.png",
     "type": "moon",
     "host": "saturn",
     "orbitalRadius_mkm": 0.238,
@@ -691,6 +714,7 @@
   },
   {
     "id": "mimas",
+    "image": "mimas.png",
     "type": "moon",
     "host": "saturn",
     "orbitalRadius_mkm": 0.185,
@@ -721,6 +745,7 @@
   },
   {
     "id": "rhea",
+    "image": "rhea.jpg",
     "type": "moon",
     "host": "saturn",
     "orbitalRadius_mkm": 0.527,
@@ -751,6 +776,7 @@
   },
   {
     "id": "titania",
+    "image": "titania.webp",
     "type": "moon",
     "host": "uranus",
     "orbitalRadius_mkm": 0.4363,
@@ -781,6 +807,7 @@
   },
   {
     "id": "oberon",
+    "image": "oberon.jpg",
     "type": "moon",
     "host": "uranus",
     "orbitalRadius_mkm": 0.5835,
@@ -811,6 +838,7 @@
   },
   {
     "id": "triton",
+    "image": "triton.jpg",
     "type": "moon",
     "host": "neptune",
     "orbitalRadius_mkm": 0.3547,
@@ -841,6 +869,7 @@
   },
   {
     "id": "charon",
+    "image": "charon.webp",
     "type": "moon",
     "host": "pluto",
     "orbitalRadius_mkm": 0.01959,
@@ -871,6 +900,7 @@
   },
   {
     "id": "vesta",
+    "image": "vesta.jpg",
     "type": "asteroid",
     "host": null,
     "orbitalRadius_mkm": 353,
@@ -901,6 +931,7 @@
   },
   {
     "id": "pallas",
+    "image": "pallas.jpg",
     "type": "asteroid",
     "host": null,
     "orbitalRadius_mkm": 414,
@@ -931,6 +962,7 @@
   },
   {
     "id": "hygiea",
+    "image": "hygiea.jpeg",
     "type": "asteroid",
     "host": null,
     "orbitalRadius_mkm": 470,
@@ -961,6 +993,7 @@
   },
   {
     "id": "halley",
+    "image": "halley.jpg",
     "type": "comet",
     "host": null,
     "orbitalRadius_mkm": 2667,
@@ -991,6 +1024,7 @@
   },
   {
     "id": "churyumov",
+    "image": "churyumov.jpg",
     "type": "comet",
     "host": null,
     "orbitalRadius_mkm": 518,

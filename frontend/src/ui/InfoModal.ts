@@ -38,6 +38,7 @@ function el<K extends keyof HTMLElementTagNameMap>(
 export class InfoModal {
   private readonly overlay: HTMLDivElement;
   private readonly canvas: HTMLCanvasElement;
+  private readonly previewImg: HTMLImageElement;
   private readonly title: HTMLHeadingElement;
   private readonly badge: HTMLDivElement;
   private readonly fields: HTMLDListElement;
@@ -57,13 +58,17 @@ export class InfoModal {
     this.canvas.width = CANVAS_SIZE;
     this.canvas.height = CANVAS_SIZE;
 
+    this.previewImg = el('img', 'se-modal-canvas');
+    this.previewImg.hidden = true;
+    this.previewImg.alt = '';
+
     this.title = el('h2', 'se-modal-title');
     this.badge = el('div', 'se-badge');
     this.badge.hidden = true;
     this.fields = el('dl', 'se-modal-fields');
     this.facts = el('div', 'se-modal-facts');
 
-    panel.append(closeBtn, this.canvas, this.title, this.badge, this.fields, this.facts);
+    panel.append(closeBtn, this.canvas, this.previewImg, this.title, this.badge, this.fields, this.facts);
     this.overlay.append(panel);
     this.overlay.addEventListener('click', (event) => {
       if (event.target === this.overlay) this.close();
@@ -86,10 +91,18 @@ export class InfoModal {
 
     if (entry.kind === 'body') {
       this.renderBody(entry.body, lang, unit);
-      this.drawBodyPreview(entry.body);
+      if (entry.body.image) {
+        this.showImage(`/images/library/${entry.body.image}`);
+      } else {
+        this.drawBodyPreview(entry.body);
+      }
     } else {
       this.renderSpacecraft(entry.craft, lang, unit);
-      this.drawSpacecraftPreview();
+      if (entry.craft.image) {
+        this.showImage(`/images/library/${entry.craft.image}`);
+      } else {
+        this.drawSpacecraftPreview();
+      }
     }
 
     this.overlay.hidden = false;
@@ -213,7 +226,15 @@ export class InfoModal {
     }
   }
 
+  private showImage(src: string): void {
+    this.previewImg.src = src;
+    this.previewImg.hidden = false;
+    this.canvas.hidden = true;
+  }
+
   private drawBodyPreview(body: BodyData): void {
+    this.previewImg.hidden = true;
+    this.canvas.hidden = false;
     const ctx = this.canvas.getContext('2d');
     if (!ctx) return;
     ctx.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
@@ -227,6 +248,8 @@ export class InfoModal {
   }
 
   private drawSpacecraftPreview(): void {
+    this.previewImg.hidden = true;
+    this.canvas.hidden = false;
     const ctx = this.canvas.getContext('2d');
     if (!ctx) return;
     ctx.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);

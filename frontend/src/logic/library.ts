@@ -30,6 +30,7 @@ export interface LocalizedSpacecraftText {
 /** Shape of a single entry in `bodies.json`. */
 export interface BodyData {
   readonly id: string;
+  readonly image?: string;
   readonly type: string;
   readonly host: string | null;
   readonly orbitalRadius_mkm: number;
@@ -48,6 +49,7 @@ export interface BodyData {
 /** Shape of a single entry in `spacecraft.json`. */
 export interface SpacecraftData {
   readonly id: string;
+  readonly image?: string;
   readonly type: string;
   readonly host: string | null;
   readonly launchYear: number;
