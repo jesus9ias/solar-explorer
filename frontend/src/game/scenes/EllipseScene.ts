@@ -21,6 +21,8 @@ import {
   MIN_REAL_RADIUS_MKM,
   FULL_CIRCLE_RAD,
   COLOR_BG,
+  ORBIT_LINE_COLORS,
+  COLOR_ORBIT_LINE,
 } from '../../constants/constants';
 import { bodies, spacecraft, sun } from '../../logic/catalog';
 import type { BodyData, SpacecraftData } from '../../logic/library';
@@ -91,7 +93,8 @@ export class EllipseScene extends Phaser.Scene {
     for (const body of bodies) {
       if (body.host !== null || body.orbitalRadius_mkm <= 0) continue;
       const radius = linearScale(body.orbitalRadius_mkm);
-      this.orbitLines.push(new OrbitLine(this, radius, body.eccentricity));
+      const orbitColor = ORBIT_LINE_COLORS[body.type] ?? COLOR_ORBIT_LINE;
+      this.orbitLines.push(new OrbitLine(this, radius, body.eccentricity, orbitColor));
       const obj = new CelestialBody(this, body, this.onSelect);
       hostObjects.set(body.id, obj);
       const minor = radius * Math.sqrt(1 - Math.min(body.eccentricity, 0.9) ** 2);

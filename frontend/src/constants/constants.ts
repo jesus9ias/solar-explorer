@@ -191,6 +191,18 @@ export const COLOR_TEXT = '#cfe3df';
 export const COLOR_BORDER = '#1d3242';
 export const COLOR_ORBIT_LINE = '#1d3a4a';
 
+export const ORBIT_LINE_COLORS: Readonly<Record<string, string>> = {
+  planet:        '#2a7fb5',
+  dwarf_planet:  '#4a5bb5',
+  moon:          '#4a5568',
+  asteroid:      '#7a4a1a',
+  comet:         '#1a8a8a',
+  space_telescope: '#1a7a4a',
+  probe:         '#8a6a1a',
+  orbiter:       '#8a6a1a',
+  rover:         '#8a6a1a',
+};
+
 // ---------------------------------------------------------------------------
 // Phaser scene keys, registry keys and event names
 // ---------------------------------------------------------------------------
