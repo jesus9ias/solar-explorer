@@ -11,7 +11,11 @@ import { userPreferences } from './UserPreferences';
 
 type Listener = () => void;
 
-/** Sensible starting zoom within the allowed range. */
+/**
+ * Sensible starting zoom within the allowed range. This is the base (outer) rate;
+ * the inner planets are spread independently by the piecewise Linear scale, so
+ * the outer system keeps its original 1 px/Mkm spacing.
+ */
 const INITIAL_PX_PER_MKM = 1;
 
 export class ScaleState {

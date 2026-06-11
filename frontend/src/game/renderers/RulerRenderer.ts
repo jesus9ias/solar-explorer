@@ -10,12 +10,15 @@ import {
   Unit,
   RULER_TICK_INTERVAL_MKM,
   RULER_WIDTH_PX,
+  LINEAR_SCALE_SEAM_MKM,
   COLOR_PANEL,
   COLOR_BORDER,
   COLOR_TEXT,
   COLOR_ACCENT_GREEN,
+  COLOR_ACCENT_AMBER,
 } from '../../constants/constants';
 import { convertMkmToAU } from '../../logic/scale';
+import { linearDistanceToY, linearYToDistance } from '../../logic/linearScale';
 
 const TICK_LENGTH = 10;
 const LABEL_FONT = { fontFamily: 'monospace', fontSize: '10px', color: COLOR_TEXT };
@@ -56,9 +59,14 @@ export class RulerRenderer {
     return `${Math.round(distanceMkm)}`;
   }
 
-  /** Redraw tick labels for the current scroll position. */
+  /**
+   * Redraw tick labels for the current scroll position.
+   *
+   * @param zoom  inner-zone scale (pixels per Mkm); the outer zone is compressed
+   *              by the piecewise scale in logic/linearScale.
+   */
   update(
-    pxPerMkm: number,
+    zoom: number,
     topPadPx: number,
     unit: Unit,
   ): void {
@@ -68,13 +76,15 @@ export class RulerRenderer {
     this.ticks.clear();
     this.ticks.lineStyle(1, Phaser.Display.Color.HexStringToColor(COLOR_ACCENT_GREEN).color, 0.8);
 
-    const topDistance = Math.max(0, (camera.scrollY - topPadPx) / pxPerMkm);
+    // Ticks sit at fixed distance intervals but are placed through the piecewise
+    // scale, so they visibly bunch up once past the seam — an honest cue that the
+    // outer system is compressed.
+    const topDistance = linearYToDistance(camera.scrollY, zoom, topPadPx);
     const firstTickIndex = Math.floor(topDistance / RULER_TICK_INTERVAL_MKM);
 
     for (let i = 0; i < MAX_TICKS; i++) {
       const distance = (firstTickIndex + i) * RULER_TICK_INTERVAL_MKM;
-      const worldY = topPadPx + distance * pxPerMkm;
-      const screenY = worldY - camera.scrollY;
+      const screenY = linearDistanceToY(distance, zoom, topPadPx) - camera.scrollY;
       const label = this.labels[i];
       if (screenY < 0 || screenY > height) {
         label.setVisible(false);
@@ -85,5 +95,20 @@ export class RulerRenderer {
       label.setPosition(6, screenY - 6);
       label.setVisible(true);
     }
+
+    this.drawSeam(zoom, topPadPx, camera.scrollY, height);
+  }
+
+  /** Mark the asteroid-belt seam where the scale switches to its outer rate. */
+  private drawSeam(
+    zoom: number,
+    topPadPx: number,
+    scrollY: number,
+    height: number,
+  ): void {
+    const screenY = linearDistanceToY(LINEAR_SCALE_SEAM_MKM, zoom, topPadPx) - scrollY;
+    if (screenY < 0 || screenY > height) return;
+    this.ticks.lineStyle(2, Phaser.Display.Color.HexStringToColor(COLOR_ACCENT_AMBER).color, 0.9);
+    this.ticks.lineBetween(0, screenY, RULER_WIDTH_PX, screenY);
   }
 }

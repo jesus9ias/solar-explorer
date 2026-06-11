@@ -10,6 +10,9 @@ import Phaser from 'phaser';
 import {
   SCENE_LINEAR,
   LINEAR_TOP_PADDING_PX,
+  LINEAR_BODY_GAP_PX,
+  SPACECRAFT_RADIUS_PX,
+  BodyType,
   ELEMENT_JUMP_DURATION_MS,
   EVENT_LINEAR_PREV,
   EVENT_LINEAR_NEXT,
@@ -22,8 +25,11 @@ import {
 } from '../../constants/constants';
 import { bodies, spacecraft } from '../../logic/catalog';
 import type { BodyData, SpacecraftData } from '../../logic/library';
+import { bodyRadiusPx } from '../../logic/scale';
 import { getText } from '../../logic/i18n';
 import { getAllFunFacts } from '../../logic/funfacts';
+import { computeLinearLayout } from '../../logic/linearLayout';
+import { linearDistanceToY, linearYToDistance } from '../../logic/linearScale';
 import { userPreferences } from '../../state/UserPreferences';
 import { scaleState } from '../../state/ScaleState';
 import { navigationState } from '../../state/NavigationState';
@@ -77,6 +83,12 @@ export class LinearScene extends Phaser.Scene {
     return this.hostDistance(craft.host) + craft.orbitalRadius_mkm;
   }
 
+  /** Rendered radius (px) of a body — mirrors CelestialBody's texture sizing. */
+  private bodyRadius(body: BodyData): number {
+    const small = body.type === BodyType.ASTEROID || body.type === BodyType.COMET;
+    return small ? SPACECRAFT_RADIUS_PX : bodyRadiusPx(body.radius_km);
+  }
+
   create(): void {
     this.cameras.main.setBackgroundColor(COLOR_BG);
     this.pxPerMkm = scaleState.getZoom();
@@ -84,16 +96,30 @@ export class LinearScene extends Phaser.Scene {
 
     const lang = userPreferences.getLanguage();
 
-    const elements: { id: string; distance: number }[] = [
-      ...bodies.map((b) => ({ id: b.id, distance: this.bodyDistance(b) })),
-      ...spacecraft.map((c) => ({ id: c.id, distance: this.craftDistance(c) })),
-    ].sort((a, b) => a.distance - b.distance);
+    const baseY = (distanceMkm: number): number =>
+      linearDistanceToY(distanceMkm, this.pxPerMkm, LINEAR_TOP_PADDING_PX);
+
+    const placements = computeLinearLayout(
+      [
+        ...bodies.map((b) => ({
+          id: b.id,
+          baseY: baseY(this.bodyDistance(b)),
+          radiusPx: this.bodyRadius(b),
+        })),
+        ...spacecraft.map((c) => ({
+          id: c.id,
+          baseY: baseY(this.craftDistance(c)),
+          radiusPx: SPACECRAFT_RADIUS_PX,
+        })),
+      ],
+      LINEAR_BODY_GAP_PX,
+    );
 
     const axisX = this.scale.width / 2;
 
     let worldHeight = LINEAR_TOP_PADDING_PX;
-    for (const element of elements) {
-      const y = LINEAR_TOP_PADDING_PX + element.distance * this.pxPerMkm;
+    for (const element of placements) {
+      const y = element.y;
       worldHeight = Math.max(worldHeight, y);
 
       const body = bodies.find((b) => b.id === element.id);
@@ -124,7 +150,7 @@ export class LinearScene extends Phaser.Scene {
     this.funFactTexts = [];
     const centerX = this.scale.width / 2 + RULER_WIDTH_PX / 2;
     for (const fact of getAllFunFacts(lang)) {
-      const worldY = LINEAR_TOP_PADDING_PX + fact.triggerDistanceMkm * this.pxPerMkm;
+      const worldY = baseY(fact.triggerDistanceMkm);
       this.funFactTexts.push(
         this.add
           .text(centerX, worldY, fact.text, {
@@ -188,10 +214,10 @@ export class LinearScene extends Phaser.Scene {
   }
 
   private centerDistance(): number {
-    return Math.max(
-      0,
-      (this.cameras.main.scrollY + this.scale.height / 2 - LINEAR_TOP_PADDING_PX) /
-        this.pxPerMkm,
+    return linearYToDistance(
+      this.cameras.main.scrollY + this.scale.height / 2,
+      this.pxPerMkm,
+      LINEAR_TOP_PADDING_PX,
     );
   }
 
@@ -202,7 +228,8 @@ export class LinearScene extends Phaser.Scene {
   private restoreScrollFromNavigation(): void {
     const distance = navigationState.getDistance();
     const targetScroll =
-      LINEAR_TOP_PADDING_PX + distance * this.pxPerMkm - this.scale.height / 2;
+      linearDistanceToY(distance, this.pxPerMkm, LINEAR_TOP_PADDING_PX) -
+      this.scale.height / 2;
     this.cameras.main.scrollY = targetScroll;
   }
 

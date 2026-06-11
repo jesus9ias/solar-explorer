@@ -148,8 +148,32 @@ export const DEFAULT_ORBIT_LINES_VISIBLE = true;
 
 /** Base render scale: pixels per million km used for vertical layout. */
 export const LINEAR_PX_PER_MKM = 0.05;
+/**
+ * Distance (million km) where Linear mode switches from the expanded inner scale
+ * to the base outer scale — the asteroid belt, between Mars and Jupiter. The four
+ * inner planets span <1% of the journey at one uniform scale, so they are drawn
+ * at an expanded rate up to this seam (see {@link LINEAR_INNER_EXPANSION}); the
+ * outer system keeps the base zoom rate, so it looks exactly as it would without
+ * the seam, just shifted down by the inner expansion.
+ */
+export const LINEAR_SCALE_SEAM_MKM = 414;
+/**
+ * Factor by which the inner zone (inside {@link LINEAR_SCALE_SEAM_MKM}) is
+ * expanded relative to the base outer rate. The scale stays linear within each
+ * zone; only the rate changes at the seam.
+ */
+export const LINEAR_INNER_EXPANSION = 3;
 /** Top padding (px) before the Sun at the start of Linear mode. */
 export const LINEAR_TOP_PADDING_PX = 120;
+/**
+ * Clear space (px) kept between the rendered discs of consecutive elements in
+ * Linear mode. Moon→planet distances are 2–3 orders of magnitude smaller than the
+ * interplanetary spacing, so at one shared linear scale satellites render on top
+ * of their host. After computing true-to-scale positions, a declutter pass pushes
+ * overlapping elements down so each disc clears the previous one's by this margin
+ * (plus a label's height), keeping every element visible and selectable.
+ */
+export const LINEAR_BODY_GAP_PX = 16;
 /** Ruler tick interval in million km. */
 export const RULER_TICK_INTERVAL_MKM = 250;
 /** Width (px) of the left distance ruler. */
