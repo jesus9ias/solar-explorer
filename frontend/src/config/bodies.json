@@ -1007,6 +1007,37 @@
     }
   },
   {
+    "id": "bennu",
+    "image": "bennu.jpg",
+    "type": "asteroid",
+    "host": null,
+    "orbitalRadius_mkm": 168.4,
+    "orbitalPeriod_years": 1.195,
+    "rotationPeriod_days": 0.179,
+    "radius_km": 0.245,
+    "eccentricity": 0.2037,
+    "temperatureMin_c": -73,
+    "temperatureMax_c": 27,
+    "missionStatus": null,
+    "missionEndYear": null,
+    "en": {
+      "name": "Bennu",
+      "description": "A small, carbon-rich near-Earth asteroid and the target of the OSIRIS-REx sample-return mission.",
+      "facts": [
+        "OSIRIS-REx collected a sample from its surface in 2020.",
+        "It is a loose rubble pile rather than a single solid rock."
+      ]
+    },
+    "es": {
+      "name": "Bennu",
+      "description": "Un pequeño asteroide cercano a la Tierra rico en carbono, objetivo de la misión de retorno de muestras OSIRIS-REx.",
+      "facts": [
+        "OSIRIS-REx recolectó una muestra de su superficie en 2020.",
+        "Es un montón de escombros suelto, no una sola roca sólida."
+      ]
+    }
+  },
+  {
     "id": "halley",
     "image": "halley.jpg",
     "type": "comet",

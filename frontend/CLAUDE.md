@@ -189,7 +189,13 @@ This project is developed **test-first**:
 2. If the craft does **not** orbit the Sun (interstellar probe), add its `id` to
    `NON_ORBITING_PROBE_IDS` in `constants.ts` so it renders at a static
    position and `isOrbiting()` returns `false`.
-3. `library.test.ts` checks total counts dynamically and that `cassini` has
+3. (Optional) For a craft that hops between bodies rather than tracing one orbit
+   (e.g. OSIRIS-REx: Earth → Bennu → Earth), add a `phases` array of
+   `{ from, to, durationYears }` stages where `from`/`to` are solar-orbiting body
+   ids. In Ellipse mode it then follows a looping, bowed transfer arc anchored to
+   those (moving) bodies instead of a circular orbit — see `logic/phases.ts` and
+   `EllipseScene`. The phase decision logic is unit-tested in `phases.test.ts`.
+4. `library.test.ts` checks total counts dynamically and that `cassini` has
    `missionStatus === "complete"`; keep those consistent.
 
 ### Add a new fun fact
@@ -219,6 +225,7 @@ Phaser.
 |---|---|
 | `scale.test.ts` | unit conversion, log scale bounds & monotonicity, zoom/body clamps |
 | `orbit.test.ts` | orbital angle progression, speed scaling, period ratio, non-orbiting probes |
+| `phases.test.ts` | multi-phase itinerary: cycle length, active phase + fraction, looping, heliocentric transfer-arc point (stays clear of the Sun, prograde); config integrity (anchors are real solar bodies, BepiColombo itinerary) |
 | `state.test.ts` | UserPreferences defaults/persistence, NavigationState in-memory & handoff |
 | `i18n.test.ts` | getText EN/ES, fallback, `I18nKeyNotFoundError` |
 | `library.test.ts` | grouping (8 planets, 5 dwarfs), complete missions, total count |
@@ -445,6 +452,24 @@ Scenario: Non-orbiting probes
   Given Voyager 1 is included in the scene
   Then Voyager 1 does not follow an orbital path
   And it is shown at its approximate static position in interstellar space
+
+Scenario: Multi-phase mission trajectory
+  Given OSIRIS-REx has a phased itinerary Earth -> Bennu -> (survey) -> Earth
+  When the simulation runs
+  Then the craft follows a heliocentric arc that curves around the Sun without crossing it
+  And the arc always sweeps forward (prograde), never appearing to retreat
+  And it orbits Bennu during the survey phase rather than sitting on top of it
+  And it returns along an arc to Earth
+  And the whole itinerary repeats as a cycle
+  And its anchor bodies (Earth and Bennu) keep orbiting the Sun throughout
+  And the trajectory overlay follows the orbit-lines visibility toggle
+
+Scenario: One-way gravity-assist itinerary
+  Given BepiColombo has a phased itinerary Earth -> Venus -> Mercury
+  When the simulation runs
+  Then the craft cruises inward, orbiting Venus then Mercury between transfers
+  And it ends in orbit around Mercury rather than returning to Earth
+  And a phase anchor only ever references a real solar-orbiting body
 
 Scenario: Moons and satellites clear their host
   Given a host body is drawn at an exaggerated size in Ellipse mode

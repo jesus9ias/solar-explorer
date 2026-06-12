@@ -35,6 +35,7 @@ import { linearScale, inverseLinearScale, bodyRadiusPx } from '../../logic/scale
 import { computeOrbitRingRadii } from '../../logic/orbitRings';
 import { resolveOrbiterSpeedFactor } from '../../logic/orbiterSpeed';
 import { yearsToOrbitMs, isOrbiting } from '../../logic/orbit';
+import { phaseProgressAt, phasePoint, type Phase, type Point } from '../../logic/phases';
 import { navigationState } from '../../state/NavigationState';
 import { CelestialBody, type SelectHandler } from '../objects/CelestialBody';
 import { Spacecraft } from '../objects/Spacecraft';
@@ -50,9 +51,34 @@ interface OrbitEntry {
   angle: number;
 }
 
+/** Live world position and rendered size of a phase anchor body. */
+interface Anchor extends Point {
+  /** Rendered disc radius (px), so an orbiting craft can clear it. */
+  readonly radius: number;
+}
+
+/** A craft following a multi-phase itinerary anchored to moving bodies. */
+interface PhaseEntry {
+  readonly obj: Phaser.GameObjects.Image;
+  readonly phases: readonly Phase[];
+  /** Live anchor (position + rendered radius) by id; anchors orbit, so this moves. */
+  readonly anchor: (id: string) => Anchor;
+  /** Trajectory overlay; redrawn each frame because the anchors move. */
+  readonly trajectory: Phaser.GameObjects.Graphics;
+  /** Deterministic phase offset for the station-keeping orbit around an anchor. */
+  readonly seedAngle: number;
+  elapsedMs: number;
+}
+
 const ZOOM_IN_FACTOR = 1.1;
 const ZOOM_OUT_FACTOR = 0.9;
 const VIEW_FILL_FRACTION = 0.4;
+/** Sample count per transfer arc when redrawing a phased trajectory. */
+const PHASE_TRAJECTORY_SAMPLES = 32;
+/** Line width (px, world space) of a phased trajectory at base zoom. */
+const PHASE_TRAJECTORY_WIDTH_PX = 2;
+/** Orbital period (ms) of a phased craft while station-keeping around an anchor. */
+const STATION_ORBIT_PERIOD_MS = yearsToOrbitMs(ELLIPSE_ORBITER_PERIOD_YEARS);
 
 /** Deterministic starting angle so bodies are spread around their orbits. */
 function seedAngle(id: string): number {
@@ -63,7 +89,9 @@ function seedAngle(id: string): number {
 
 export class EllipseScene extends Phaser.Scene {
   private readonly entries: OrbitEntry[] = [];
+  private readonly phaseEntries: PhaseEntry[] = [];
   private readonly orbitLines: OrbitLine[] = [];
+  private orbitLinesVisible = true;
   private speedMultiplier = DEFAULT_ORBIT_SPEED;
   private sunArrow!: SunArrow;
   private isDragging = false;
@@ -81,7 +109,9 @@ export class EllipseScene extends Phaser.Scene {
   create(): void {
     this.cameras.main.setBackgroundColor(COLOR_BG);
     this.entries.length = 0;
+    this.phaseEntries.length = 0;
     this.orbitLines.length = 0;
+    this.orbitLinesVisible = true;
     this.speedMultiplier = DEFAULT_ORBIT_SPEED;
 
     const origin = () => ({ x: 0, y: 0 });
@@ -118,9 +148,14 @@ export class EllipseScene extends Phaser.Scene {
     // the host disc (and each other).
     this.placeOrbiters(hostObjects);
 
-    // Solar-orbiting and interstellar spacecraft.
+    // Solar-orbiting and interstellar spacecraft. Phased craft (e.g. OSIRIS-REx)
+    // follow a multi-body itinerary instead of a single orbit.
     for (const craft of spacecraft) {
-      this.placeSpacecraft(craft);
+      if (craft.phases && craft.phases.length > 0) {
+        this.placePhasedCraft(craft, hostObjects);
+      } else {
+        this.placeSpacecraft(craft);
+      }
     }
 
     this.sunArrow = new SunArrow(this);
@@ -169,6 +204,7 @@ export class EllipseScene extends Phaser.Scene {
     }
 
     for (const craft of spacecraft) {
+      if (craft.phases && craft.phases.length > 0) continue;
       if (!isOrbiting(craft.id) || craft.host === null || craft.host === 'sun') continue;
       const hostObj = hostObjects.get(craft.host);
       if (!hostObj) continue;
@@ -228,6 +264,40 @@ export class EllipseScene extends Phaser.Scene {
       center: () => ({ x: hostObj.x, y: hostObj.y }),
       angle: seedAngle(craft.id),
     });
+  }
+
+  /**
+   * Place a craft that follows a multi-phase itinerary (e.g. OSIRIS-REx hopping
+   * Earth → Bennu → Earth). Its anchors are solar-orbiting bodies, so they keep
+   * moving; the craft's position and trajectory overlay are recomputed each frame
+   * in {@link update}. Falls back to the world origin for any unknown anchor id.
+   */
+  private placePhasedCraft(
+    craft: SpacecraftData,
+    hostObjects: Map<string, CelestialBody>,
+  ): void {
+    const obj = new Spacecraft(this, craft, this.onSelect);
+    const anchor = (id: string): Anchor => {
+      const host = hostObjects.get(id);
+      return host
+        ? { x: host.x, y: host.y, radius: host.renderedRadius }
+        : { x: 0, y: 0, radius: SPACECRAFT_RADIUS_PX };
+    };
+    const trajectory = this.add.graphics();
+    trajectory.setVisible(this.orbitLinesVisible);
+    this.phaseEntries.push({
+      obj,
+      phases: craft.phases!,
+      anchor,
+      trajectory,
+      seedAngle: seedAngle(craft.id),
+      elapsedMs: 0,
+    });
+  }
+
+  /** Radius (px) at which a phased craft orbits an anchor during station-keeping. */
+  private stationOrbitRadius(anchor: Anchor): number {
+    return anchor.radius + ELLIPSE_ORBIT_GAP_PX + SPACECRAFT_RADIUS_PX;
   }
 
   /**
@@ -321,7 +391,40 @@ export class EllipseScene extends Phaser.Scene {
   }
 
   private setOrbitLines(visible: boolean): void {
+    this.orbitLinesVisible = visible;
     for (const line of this.orbitLines) line.setVisible(visible);
+    for (const entry of this.phaseEntries) entry.trajectory.setVisible(visible);
+  }
+
+  /**
+   * Redraw a phased craft's trajectory overlay. The anchors move every frame, so
+   * the whole itinerary is re-sampled: each transfer phase becomes a heliocentric
+   * arc; each station-keeping phase becomes the small orbit ring around its anchor.
+   */
+  private drawPhaseTrajectory(entry: PhaseEntry): void {
+    const g = entry.trajectory;
+    g.clear();
+    if (!this.orbitLinesVisible) return;
+    const color = Phaser.Display.Color.HexStringToColor(
+      ORBIT_LINE_COLORS[BodyType.ASTEROID] ?? COLOR_ORBIT_LINE,
+    ).color;
+    g.lineStyle(PHASE_TRAJECTORY_WIDTH_PX / this.cameras.main.zoom, color, 0.8);
+    for (const phase of entry.phases) {
+      if (phase.from === phase.to) {
+        const a = entry.anchor(phase.from);
+        g.strokeCircle(a.x, a.y, this.stationOrbitRadius(a));
+        continue;
+      }
+      const from = entry.anchor(phase.from);
+      const to = entry.anchor(phase.to);
+      g.beginPath();
+      for (let i = 0; i <= PHASE_TRAJECTORY_SAMPLES; i++) {
+        const p = phasePoint(from, to, i / PHASE_TRAJECTORY_SAMPLES);
+        if (i === 0) g.moveTo(p.x, p.y);
+        else g.lineTo(p.x, p.y);
+      }
+      g.strokePath();
+    }
   }
 
   private updateSunArrow(): void {
@@ -359,6 +462,24 @@ export class EllipseScene extends Phaser.Scene {
         center.x + Math.cos(entry.angle) * entry.radiusX,
         center.y + Math.sin(entry.angle) * entry.radiusY,
       );
+    }
+
+    // Phased craft: advance simulation time (paused when speed is 0), then place
+    // the craft either along a heliocentric transfer arc or, during a station-
+    // keeping phase, on a small orbit around the anchor (rather than on top of it).
+    for (const entry of this.phaseEntries) {
+      entry.elapsedMs += delta * this.speedMultiplier;
+      const prog = phaseProgressAt(entry.elapsedMs, entry.phases);
+      if (prog.from === prog.to) {
+        const a = entry.anchor(prog.from);
+        const orbitR = this.stationOrbitRadius(a);
+        const ang = entry.seedAngle + (entry.elapsedMs / STATION_ORBIT_PERIOD_MS) * FULL_CIRCLE_RAD;
+        entry.obj.setPosition(a.x + Math.cos(ang) * orbitR, a.y + Math.sin(ang) * orbitR);
+      } else {
+        const p = phasePoint(entry.anchor(prog.from), entry.anchor(prog.to), prog.t);
+        entry.obj.setPosition(p.x, p.y);
+      }
+      this.drawPhaseTrajectory(entry);
     }
 
     const zoom = this.cameras.main.zoom;

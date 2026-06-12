@@ -5,6 +5,7 @@
  * panel, localizing each item's name to the requested language.
  */
 import { BodyType, Language } from '../constants/constants';
+import type { Phase } from './phases';
 
 /** Per-language text block for a celestial body. */
 export interface LocalizedText {
@@ -62,6 +63,10 @@ export interface SpacecraftData {
   /** Optional Ellipse-mode visual speed factor (higher = faster); overrides the
    * ring-proximity default. Cosmetic only — see logic/orbiterSpeed. */
   readonly speedFactor?: number;
+  /** Optional multi-phase itinerary (e.g. Earth → Bennu → Earth). When present,
+   * the craft follows the phased trajectory instead of a single orbit — see
+   * logic/phases and EllipseScene. */
+  readonly phases?: readonly Phase[];
   readonly en: LocalizedSpacecraftText;
   readonly es: LocalizedSpacecraftText;
 }

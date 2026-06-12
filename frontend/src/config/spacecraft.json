@@ -250,7 +250,12 @@
     "missionStatus": "en_route",
     "missionEndYear": null,
     "orbitalRadius_mkm": 57.9,
-    "speedFactor": 1.6,
+    "phases": [
+      { "from": "earth", "to": "venus", "durationYears": 2.0 },
+      { "from": "venus", "to": "venus", "durationYears": 1.0 },
+      { "from": "venus", "to": "mercury", "durationYears": 1.0 },
+      { "from": "mercury", "to": "mercury", "durationYears": 3.0 }
+    ],
     "en": {
       "name": "BepiColombo",
       "objectives": "Enter orbit around Mercury to study its composition, magnetic field and history.",
@@ -285,7 +290,11 @@
     "missionStatus": "active",
     "missionEndYear": null,
     "orbitalRadius_mkm": 149.598,
-    "speedFactor": 0.9,
+    "phases": [
+      { "from": "earth", "to": "bennu", "durationYears": 2.2 },
+      { "from": "bennu", "to": "bennu", "durationYears": 2.4 },
+      { "from": "bennu", "to": "earth", "durationYears": 2.4 }
+    ],
     "en": {
       "name": "OSIRIS-REx",
       "objectives": "Collect a sample from asteroid Bennu and deliver it to Earth for study.",

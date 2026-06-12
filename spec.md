@@ -697,6 +697,24 @@ Feature: Orbital simulation
     Then Voyager 1 does not follow an orbital path
     And it is shown at its approximate static position in interstellar space
 
+  Scenario: Multi-phase mission trajectory
+    Given OSIRIS-REx has a phased itinerary Earth -> Bennu -> (survey) -> Earth
+    When the simulation runs
+    Then the craft follows a heliocentric arc that curves around the Sun without crossing it
+    And the arc always sweeps forward (prograde), never appearing to retreat
+    And it orbits Bennu during the survey phase rather than sitting on top of it
+    And it returns along an arc to Earth
+    And the whole itinerary repeats as a cycle
+    And its anchor bodies (Earth and Bennu) keep orbiting the Sun throughout
+    And the trajectory overlay follows the orbit-lines visibility toggle
+
+  Scenario: One-way gravity-assist itinerary
+    Given BepiColombo has a phased itinerary Earth -> Venus -> Mercury
+    When the simulation runs
+    Then the craft cruises inward, orbiting Venus then Mercury between transfers
+    And it ends in orbit around Mercury rather than returning to Earth
+    And a phase anchor only ever references a real solar-orbiting body
+
   Scenario: Moons and satellites clear their host
     Given a host body is drawn at an exaggerated size in Ellipse mode
     When its moons and host-orbiting spacecraft are placed
@@ -765,6 +783,23 @@ All tests live in `frontend/src/tests/`. Tests use Vitest. No test imports Phase
 | `orbitAngle` at 5× is 5× faster | `same delta, speed=5` | `5 × angle at speed=1` |
 | `orbitAngle` for Jupiter takes ~11.86 times longer than Earth | `period=11.86yr, speed=1` | angle fraction proportional to ratio |
 | Non-orbiting probes return null trajectory | `Voyager 1 body` | `isOrbiting === false` |
+
+### phases.test.ts
+
+| Test | Input | Expected output |
+|---|---|---|
+| `phaseCycleYears` sums phase durations | OSIRIS itinerary | `7.0` years |
+| `phaseProgressAt` starts in first phase at t=0 | `elapsed=0` | `{index:0, from:earth, to:bennu, t:0}` |
+| `phaseProgressAt` reports intra-phase fraction | mid-phase elapsed | `t` in `(0,1)` |
+| `phaseProgressAt` boundary belongs to next phase | `elapsed = phase0 duration` | next phase at `t=0` |
+| `phaseProgressAt` loops after a full cycle | `elapsed = cycle` | `{index:0, t:0}` |
+| `phasePoint` returns start/end at t=0 / t=1 | endpoints | `from` / `to` |
+| `phasePoint` blends solar distance between orbits | same-angle endpoints | mid radius on the axis |
+| `phasePoint` keeps the arc clear of the Sun | opposite-side anchors | every sample stays at the orbit radius, never near origin |
+| `phasePoint` sweeps prograde, never retreating | `to` just clockwise of `from` | first moves forward (positive y) |
+| `phasePoint` collapses when endpoints coincide | `from === to` | shared anchor |
+| phased craft anchor only real solar-orbiting bodies | `spacecraft.json` phases | every `from`/`to` is a solar body id |
+| BepiColombo itinerary is Earth→Venus→Mercury, ends at Mercury | `bepicolombo` phases | `['earth->venus','venus->venus','venus->mercury','mercury->mercury']` |
 
 ### state.test.ts
 
