@@ -325,15 +325,11 @@ export class EllipseScene extends Phaser.Scene {
   }
 
   private updateSunArrow(): void {
-    const view = this.cameras.main.worldView;
-    const sunOnScreen = view.contains(0, 0);
-    if (sunOnScreen) {
-      this.sunArrow.pointToward(0, 0, false);
-      return;
-    }
-    const screenX = ((0 - view.x) / view.width) * this.scale.width;
-    const screenY = ((0 - view.y) / view.height) * this.scale.height;
-    this.sunArrow.pointToward(screenX, screenY, true);
+    const cam = this.cameras.main;
+    this.sunArrow.placeAtCamera(cam);
+    const sunOnScreen = cam.worldView.contains(0, 0);
+    // Sun is always at world origin (0, 0).
+    this.sunArrow.pointToward(0, 0, !sunOnScreen);
   }
 
   /**
