@@ -38,6 +38,9 @@ export interface BodyData {
   readonly rotationPeriod_days: number;
   readonly radius_km: number;
   readonly eccentricity: number;
+  /** Optional Ellipse-mode visual speed factor (higher = faster); overrides the
+   * ring-proximity default. Cosmetic only — see logic/orbiterSpeed. */
+  readonly speedFactor?: number;
   readonly temperatureMin_c: number;
   readonly temperatureMax_c: number;
   readonly missionStatus?: string | null;
@@ -56,6 +59,9 @@ export interface SpacecraftData {
   readonly missionStatus: string;
   readonly missionEndYear: number | null;
   readonly orbitalRadius_mkm: number;
+  /** Optional Ellipse-mode visual speed factor (higher = faster); overrides the
+   * ring-proximity default. Cosmetic only — see logic/orbiterSpeed. */
+  readonly speedFactor?: number;
   readonly en: LocalizedSpacecraftText;
   readonly es: LocalizedSpacecraftText;
 }

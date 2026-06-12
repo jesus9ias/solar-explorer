@@ -685,6 +685,12 @@ Feature: Orbital simulation
     Given Voyager 1 is included in the scene
     Then Voyager 1 does not follow an orbital path
     And it is shown at its approximate static position in interstellar space
+
+  Scenario: Moons and satellites clear their host
+    Given a host body is drawn at an exaggerated size in Ellipse mode
+    When its moons and host-orbiting spacecraft are placed
+    Then each orbits on its own concentric ring outside the host's rendered disc
+    And no two of them share a ring
 ```
 
 ### Feature: Scale system

@@ -20,13 +20,19 @@ import {
   MAX_SCREEN_RADIUS,
   MIN_REAL_RADIUS_MKM,
   FULL_CIRCLE_RAD,
+  ELLIPSE_ORBIT_GAP_PX,
+  ELLIPSE_ORBITER_PERIOD_YEARS,
+  SPACECRAFT_RADIUS_PX,
+  BodyType,
   COLOR_BG,
   ORBIT_LINE_COLORS,
   COLOR_ORBIT_LINE,
 } from '../../constants/constants';
 import { bodies, spacecraft, sun } from '../../logic/catalog';
 import type { BodyData, SpacecraftData } from '../../logic/library';
-import { linearScale, inverseLinearScale } from '../../logic/scale';
+import { linearScale, inverseLinearScale, bodyRadiusPx } from '../../logic/scale';
+import { computeOrbitRingRadii } from '../../logic/orbitRings';
+import { resolveOrbiterSpeedFactor } from '../../logic/orbiterSpeed';
 import { yearsToOrbitMs, isOrbiting } from '../../logic/orbit';
 import { navigationState } from '../../state/NavigationState';
 import { CelestialBody, type SelectHandler } from '../objects/CelestialBody';
@@ -43,8 +49,6 @@ interface OrbitEntry {
   angle: number;
 }
 
-const MOON_ORBIT_RADIUS_PX = 26;
-const SATELLITE_ORBIT_RADIUS_PX = 20;
 const ZOOM_IN_FACTOR = 1.1;
 const ZOOM_OUT_FACTOR = 0.9;
 const VIEW_FILL_FRACTION = 0.4;
@@ -89,7 +93,7 @@ export class EllipseScene extends Phaser.Scene {
     }
 
     // Planets, dwarf planets, asteroids, comets (solar-orbiting).
-    const hostObjects = new Map<string, Phaser.GameObjects.Image>();
+    const hostObjects = new Map<string, CelestialBody>();
     for (const body of bodies) {
       if (body.host !== null || body.orbitalRadius_mkm <= 0) continue;
       const radius = linearScale(body.orbitalRadius_mkm);
@@ -108,17 +112,13 @@ export class EllipseScene extends Phaser.Scene {
       });
     }
 
-    // Moons orbit their host body.
-    for (const body of bodies) {
-      if (body.type !== 'moon' || !body.host) continue;
-      const hostObj = hostObjects.get(body.host);
-      if (!hostObj) continue;
-      this.addOrbiterAround(body, hostObj, MOON_ORBIT_RADIUS_PX);
-    }
+    // Moons and host-orbiting spacecraft, stacked as concentric rings that clear
+    // the host disc (and each other).
+    this.placeOrbiters(hostObjects);
 
-    // Spacecraft.
+    // Solar-orbiting and interstellar spacecraft.
     for (const craft of spacecraft) {
-      this.placeSpacecraft(craft, hostObjects);
+      this.placeSpacecraft(craft);
     }
 
     this.sunArrow = new SunArrow(this);
@@ -130,26 +130,111 @@ export class EllipseScene extends Phaser.Scene {
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, this.onShutdown, this);
   }
 
+  /** Rendered radius (px) of a body — mirrors CelestialBody's texture sizing. */
+  private bodyRadius(body: BodyData): number {
+    const small = body.type === BodyType.ASTEROID || body.type === BodyType.COMET;
+    return small ? SPACECRAFT_RADIUS_PX : bodyRadiusPx(body.radius_km);
+  }
+
+  /**
+   * Place every moon and host-orbiting spacecraft on its own concentric ring so
+   * none falls inside the host's exaggerated disc and none overlaps another.
+   */
+  private placeOrbiters(hostObjects: Map<string, CelestialBody>): void {
+    interface Orbiter {
+      readonly distanceMkm: number;
+      readonly radiusPx: number;
+      readonly speedFactor?: number;
+      readonly place: (orbitRadiusPx: number, speedFactor: number) => void;
+    }
+    const byHost = new Map<string, Orbiter[]>();
+    const add = (hostId: string, orbiter: Orbiter): void => {
+      const list = byHost.get(hostId);
+      if (list) list.push(orbiter);
+      else byHost.set(hostId, [orbiter]);
+    };
+
+    for (const body of bodies) {
+      if (body.type !== BodyType.MOON || !body.host) continue;
+      const hostObj = hostObjects.get(body.host);
+      if (!hostObj) continue;
+      add(body.host, {
+        distanceMkm: body.orbitalRadius_mkm,
+        radiusPx: this.bodyRadius(body),
+        speedFactor: body.speedFactor,
+        place: (r, speed) => this.addOrbiterAround(body, hostObj, r, speed),
+      });
+    }
+
+    for (const craft of spacecraft) {
+      if (!isOrbiting(craft.id) || craft.host === null || craft.host === 'sun') continue;
+      const hostObj = hostObjects.get(craft.host);
+      if (!hostObj) continue;
+      add(craft.host, {
+        distanceMkm: craft.orbitalRadius_mkm,
+        radiusPx: SPACECRAFT_RADIUS_PX,
+        speedFactor: craft.speedFactor,
+        place: (r, speed) => this.addCraftOrbiterAround(craft, hostObj, r, speed),
+      });
+    }
+
+    for (const [hostId, orbiters] of byHost) {
+      const host = hostObjects.get(hostId);
+      if (!host) continue;
+      orbiters.sort((a, b) => a.distanceMkm - b.distanceMkm);
+      const radii = computeOrbitRingRadii(
+        host.renderedRadius,
+        orbiters.map((o) => o.radiusPx),
+        ELLIPSE_ORBIT_GAP_PX,
+      );
+      orbiters.forEach((orbiter, i) => {
+        const speed = resolveOrbiterSpeedFactor(orbiter.speedFactor, i, orbiters.length);
+        orbiter.place(radii[i], speed);
+      });
+    }
+  }
+
   private addOrbiterAround(
     body: BodyData,
-    hostObj: Phaser.GameObjects.Image,
+    hostObj: CelestialBody,
     radiusPx: number,
+    speedFactor: number,
   ): void {
     const obj = new CelestialBody(this, body, this.onSelect);
     this.entries.push({
       obj,
       radiusX: radiusPx,
       radiusY: radiusPx,
-      periodMs: yearsToOrbitMs(Math.max(body.orbitalPeriod_years, 0.01)),
+      periodMs: yearsToOrbitMs(ELLIPSE_ORBITER_PERIOD_YEARS) / speedFactor,
       center: () => ({ x: hostObj.x, y: hostObj.y }),
       angle: seedAngle(body.id),
     });
   }
 
-  private placeSpacecraft(
+  private addCraftOrbiterAround(
     craft: SpacecraftData,
-    hostObjects: Map<string, Phaser.GameObjects.Image>,
+    hostObj: CelestialBody,
+    radiusPx: number,
+    speedFactor: number,
   ): void {
+    const obj = new Spacecraft(this, craft, this.onSelect);
+    this.entries.push({
+      obj,
+      radiusX: radiusPx,
+      radiusY: radiusPx,
+      periodMs: yearsToOrbitMs(ELLIPSE_ORBITER_PERIOD_YEARS) / speedFactor,
+      center: () => ({ x: hostObj.x, y: hostObj.y }),
+      angle: seedAngle(craft.id),
+    });
+  }
+
+  /**
+   * Place solar-orbiting and interstellar spacecraft. Host-orbiting craft are
+   * handled by {@link placeOrbiters} so they share their host's ring stack.
+   */
+  private placeSpacecraft(craft: SpacecraftData): void {
+    if (isOrbiting(craft.id) && craft.host !== null && craft.host !== 'sun') return;
+
     const obj = new Spacecraft(this, craft, this.onSelect);
 
     if (!isOrbiting(craft.id)) {
@@ -159,27 +244,13 @@ export class EllipseScene extends Phaser.Scene {
       return;
     }
 
-    if (craft.host === 'sun' || craft.host === null) {
-      const radius = linearScale(Math.max(craft.orbitalRadius_mkm, MIN_REAL_RADIUS_MKM));
-      this.entries.push({
-        obj,
-        radiusX: radius,
-        radiusY: radius,
-        periodMs: yearsToOrbitMs(1),
-        center: () => ({ x: 0, y: 0 }),
-        angle: seedAngle(craft.id),
-      });
-      return;
-    }
-
-    const hostObj = hostObjects.get(craft.host);
-    const center = hostObj ? () => ({ x: hostObj.x, y: hostObj.y }) : () => ({ x: 0, y: 0 });
+    const radius = linearScale(Math.max(craft.orbitalRadius_mkm, MIN_REAL_RADIUS_MKM));
     this.entries.push({
       obj,
-      radiusX: SATELLITE_ORBIT_RADIUS_PX,
-      radiusY: SATELLITE_ORBIT_RADIUS_PX,
-      periodMs: yearsToOrbitMs(0.2),
-      center,
+      radiusX: radius,
+      radiusY: radius,
+      periodMs: yearsToOrbitMs(1),
+      center: () => ({ x: 0, y: 0 }),
       angle: seedAngle(craft.id),
     });
   }

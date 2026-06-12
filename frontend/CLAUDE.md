@@ -169,9 +169,13 @@ This project is developed **test-first**:
    and `en`/`es` objects `{ name, description, facts[] }`.
 2. Names/descriptions resolve automatically via i18n (`<id>.name`,
    `<id>.description`). No code change needed for text.
-3. (Optional) Add a color in `BODY_COLORS` in `game/renderers/BodyRenderer.ts`
+3. (Optional, moons only) Add `speedFactor` (number, higher = faster) to tune a
+   moon's Ellipse-mode orbit speed; omit it to use the ring-proximity default
+   (inner rings spin faster). Cosmetic only — see `logic/orbiterSpeed.ts`. The
+   same field works on host-orbiting entries in `spacecraft.json`.
+4. (Optional) Add a color in `BODY_COLORS` in `game/renderers/BodyRenderer.ts`
    for a custom look; otherwise a per-type default is used.
-4. **Counts are asserted by tests.** `library.test.ts` expects exactly **8
+5. **Counts are asserted by tests.** `library.test.ts` expects exactly **8
    planets** and **5 dwarf planets**. Adding/removing a `planet` or
    `dwarf_planet` **will break a test** → this is a spec-level change: consult
    the developer (see §9) before changing the test.
@@ -430,6 +434,12 @@ Scenario: Non-orbiting probes
   Given Voyager 1 is included in the scene
   Then Voyager 1 does not follow an orbital path
   And it is shown at its approximate static position in interstellar space
+
+Scenario: Moons and satellites clear their host
+  Given a host body is drawn at an exaggerated size in Ellipse mode
+  When its moons and host-orbiting spacecraft are placed
+  Then each orbits on its own concentric ring outside the host's rendered disc
+  And no two of them share a ring
 ```
 
 ### Feature: Scale system

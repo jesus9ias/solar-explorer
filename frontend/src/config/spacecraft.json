@@ -8,6 +8,7 @@
     "missionStatus": "active",
     "missionEndYear": null,
     "orbitalRadius_mkm": 0.00057,
+    "speedFactor": 2.2,
     "en": {
       "name": "Hubble Space Telescope",
       "objectives": "Observe the universe in visible and ultraviolet light from low Earth orbit, free of atmospheric blur.",
@@ -144,6 +145,7 @@
     "missionStatus": "active",
     "missionEndYear": null,
     "orbitalRadius_mkm": 0.009,
+    "speedFactor": 1.8,
     "en": {
       "name": "Mars Express",
       "objectives": "Map the surface, subsurface and atmosphere of Mars from orbit.",
@@ -178,6 +180,7 @@
     "missionStatus": "active",
     "missionEndYear": null,
     "orbitalRadius_mkm": 4,
+    "speedFactor": 1.4,
     "en": {
       "name": "Juno",
       "objectives": "Study Jupiter's interior, magnetic field, and deep atmosphere.",
@@ -212,6 +215,7 @@
     "missionStatus": "active",
     "missionEndYear": null,
     "orbitalRadius_mkm": 0,
+    "speedFactor": 1,
     "en": {
       "name": "Perseverance",
       "objectives": "Seek signs of ancient microbial life on Mars and cache samples for future return.",
@@ -246,6 +250,7 @@
     "missionStatus": "en_route",
     "missionEndYear": null,
     "orbitalRadius_mkm": 57.9,
+    "speedFactor": 1.6,
     "en": {
       "name": "BepiColombo",
       "objectives": "Enter orbit around Mercury to study its composition, magnetic field and history.",
@@ -280,6 +285,7 @@
     "missionStatus": "active",
     "missionEndYear": null,
     "orbitalRadius_mkm": 149.598,
+    "speedFactor": 0.9,
     "en": {
       "name": "OSIRIS-REx",
       "objectives": "Collect a sample from asteroid Bennu and deliver it to Earth for study.",
@@ -486,6 +492,7 @@
     "missionStatus": "complete",
     "missionEndYear": 2017,
     "orbitalRadius_mkm": 1.2,
+    "speedFactor": 1.5,
     "en": {
       "name": "Cassini",
       "objectives": "Orbit Saturn to study its rings, atmosphere and moons over many years.",
@@ -520,6 +527,7 @@
     "missionStatus": "complete",
     "missionEndYear": 2003,
     "orbitalRadius_mkm": 4,
+    "speedFactor": 1.25,
     "en": {
       "name": "Galileo",
       "objectives": "Orbit Jupiter to study the planet and its major moons in detail.",

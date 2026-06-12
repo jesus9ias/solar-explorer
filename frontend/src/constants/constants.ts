@@ -192,6 +192,29 @@ export const ELLIPSE_MIN_ZOOM = 0.05;
 export const ELLIPSE_MAX_ZOOM = 4;
 /** Zoom step applied per wheel notch. */
 export const ELLIPSE_ZOOM_STEP = 0.1;
+/**
+ * Clear space (px) between a host's rendered disc and its moons/satellites, and
+ * between consecutive orbiter rings. Bodies are size-exaggerated to stay visible,
+ * so a fixed orbit radius lands inside a giant's disc; orbiters are instead given
+ * concentric rings that clear the disc (see logic/orbitRings).
+ */
+export const ELLIPSE_ORBIT_GAP_PX = 10;
+/**
+ * Visual orbital period (Earth years) for moons and host-orbiting spacecraft in
+ * Ellipse mode. Their real periods are days, which at 1 year = 60 s render as
+ * sub-second, dizzying spins; the 86× spread between the fastest and slowest moon
+ * makes a faithful proportion unusable, so they share one calm tunable period.
+ * Lower = faster. The global speed multiplier (1x/2x/5x) still applies on top.
+ */
+export const ELLIPSE_ORBITER_PERIOD_YEARS = 0.2;
+/**
+ * Default speed factor for the innermost / outermost orbiter ring around a host.
+ * A factor multiplies angular speed (period = base / factor), so inner moons run
+ * faster than outer ones for a livelier, system-like look — purely cosmetic. A
+ * per-object `speedFactor` in the JSON data overrides this default.
+ */
+export const ELLIPSE_ORBITER_SPEED_INNER = 1.8;
+export const ELLIPSE_ORBITER_SPEED_OUTER = 0.8;
 
 // ---------------------------------------------------------------------------
 // Audio
