@@ -1,7 +1,7 @@
 [
   {
     "id": "goldilocks_zone",
-    "triggerDistanceMkm": 150,
+    "triggerDistanceMkm": 135,
     "en": {
       "text": "You are crossing Earth's orbital distance — the inner edge of the Sun's habitable zone. Here temperatures allow liquid water to exist on a planet's surface. Drift much closer and oceans boil; drift farther and they freeze."
     },
@@ -21,7 +21,7 @@
   },
   {
     "id": "frost_line",
-    "triggerDistanceMkm": 500,
+    "triggerDistanceMkm": 550,
     "en": {
       "text": "You have crossed the frost line — the distance where water ice becomes stable under sunlight. This boundary was decisive in the formation of the solar system: beyond it, icy material helped the outer planets grow massive enough to capture hydrogen and helium."
     },
@@ -31,7 +31,7 @@
   },
   {
     "id": "jupiter_shield",
-    "triggerDistanceMkm": 900,
+    "triggerDistanceMkm": 1050,
     "en": {
       "text": "You are passing Jupiter's orbit. Its enormous gravity acts as a cosmic shield, pulling in or deflecting countless asteroids and comets that would otherwise threaten the inner solar system. Without Jupiter's influence, impacts on Earth might be far more frequent."
     },
@@ -41,7 +41,7 @@
   },
   {
     "id": "saturn_rings",
-    "triggerDistanceMkm": 1550,
+    "triggerDistanceMkm": 1670,
     "en": {
       "text": "You are at Saturn's orbit. Its rings span 270,000 km — wider than the distance from Earth to the Moon — yet they are only 10 to 100 metres thick. Proportionally thinner than a sheet of paper, they consist mostly of ice particles and rock."
     },
@@ -51,7 +51,7 @@
   },
   {
     "id": "uranus_tilt",
-    "triggerDistanceMkm": 2920,
+    "triggerDistanceMkm": 2980,
     "en": {
       "text": "Uranus orbits nearly on its side, with an axial tilt of 98°. Each pole spends 42 years bathed in continuous sunlight followed by 42 years of total darkness. The cause is thought to be a massive collision early in the solar system's history."
     },
@@ -81,7 +81,7 @@
   },
   {
     "id": "pluto_orbit",
-    "triggerDistanceMkm": 5906,
+    "triggerDistanceMkm": 5970,
     "en": {
       "text": "You are near Pluto's average orbital distance. Pluto takes 248 Earth years to complete one orbit. When New Horizons flew past in 2015 — humanity's first close look — Pluto had not yet completed a single orbit since its discovery in 1930."
     },
@@ -91,7 +91,7 @@
   },
   {
     "id": "eris_reclassification",
-    "triggerDistanceMkm": 10120,
+    "triggerDistanceMkm": 10160,
     "en": {
       "text": "Around here lies the orbit of Eris, discovered in 2005. Though slightly smaller in volume than Pluto, Eris is more massive — made of denser rock and ice. Its discovery sparked the 2006 IAU debate that redefined what a planet is and reclassified Pluto as a dwarf planet."
     },
