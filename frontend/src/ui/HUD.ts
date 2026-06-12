@@ -10,6 +10,7 @@ import {
   Mode,
   Unit,
   ORBIT_SPEED_MULTIPLIERS,
+  ORBIT_SPEED_PAUSED,
   DEFAULT_ORBIT_SPEED,
   DEFAULT_ORBIT_LINES_VISIBLE,
   EVENT_LINEAR_PREV,
@@ -191,7 +192,11 @@ export class HUD {
       this.container.append(
         this.segment<number>(
           'hud.orbitSpeed',
-          ORBIT_SPEED_MULTIPLIERS.map((m) => ({ value: m, label: `${m}×` })),
+          ORBIT_SPEED_MULTIPLIERS.map((m) =>
+            m === ORBIT_SPEED_PAUSED
+              ? { value: m, label: '||' }
+              : { value: m, label: `${m}×` },
+          ),
           this.orbitSpeed,
           (value) => {
             this.orbitSpeed = value;

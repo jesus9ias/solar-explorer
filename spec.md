@@ -671,6 +671,17 @@ Feature: Orbital simulation
     Given the simulation is running at 1x speed
     Then Earth completes one orbit in 60 seconds of real time
 
+  Scenario: Pause orbital simulation
+    Given the simulation is running at any speed
+    When the user presses the pause button (||)
+    Then all bodies stop moving
+    And the pause button is shown as active in the orbit speed control
+
+  Scenario: Resume from pause
+    Given the simulation is paused
+    When the user selects a speed (1x, 2x or 5x)
+    Then all bodies resume orbiting at the selected speed
+
   Scenario: Orbital speed change
     Given the simulation is at 1x speed
     When the user switches to 5x speed

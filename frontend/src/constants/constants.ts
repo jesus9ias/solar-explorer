@@ -144,8 +144,10 @@ export const DEFAULT_AUDIO_ENABLED = false;
 /** Linear conversion factor from real body radius (km) to rendered px. */
 export const BODY_RADIUS_PX_PER_KM = 0.0012;
 
-/** Available orbit speed multipliers for Ellipse mode. */
-export const ORBIT_SPEED_MULTIPLIERS: readonly number[] = [1, 2, 5];
+/** Orbit speed multiplier value that represents paused state. */
+export const ORBIT_SPEED_PAUSED = 0;
+/** Available orbit speed multipliers for Ellipse mode (0 = paused). */
+export const ORBIT_SPEED_MULTIPLIERS: readonly number[] = [0, 1, 2, 5];
 /** Default orbit speed multiplier. */
 export const DEFAULT_ORBIT_SPEED = 1;
 /** Whether orbit lines are shown by default. */
