@@ -16,6 +16,7 @@ import {
   ELLIPSE_DEFAULT_ZOOM,
   ELLIPSE_MIN_ZOOM,
   ELLIPSE_MAX_ZOOM,
+  SUN_ELLIPSE_SCALE,
   MIN_SCREEN_RADIUS,
   MAX_SCREEN_RADIUS,
   MIN_REAL_RADIUS_MKM,
@@ -85,11 +86,12 @@ export class EllipseScene extends Phaser.Scene {
 
     const origin = () => ({ x: 0, y: 0 });
 
-    // The Sun at the origin.
+    // The Sun at the origin, enlarged so it dominates the map (Ellipse only).
     const sunBody = sun();
     if (sunBody) {
       const sunObj = new CelestialBody(this, sunBody, this.onSelect);
       sunObj.setPosition(0, 0);
+      sunObj.setScale(SUN_ELLIPSE_SCALE);
     }
 
     // Planets, dwarf planets, asteroids, comets (solar-orbiting).

@@ -70,10 +70,19 @@ export const ZOOM_MIN_PX_PER_MKM = 0.5;
 export const MIN_REAL_RADIUS_MKM = 57.9;
 /** Largest real orbital radius mapped by the linear scale (Neptune). */
 export const MAX_REAL_RADIUS_MKM = 4500;
-/** Screen radius (px) the smallest real radius maps to, at base zoom. */
-export const MIN_SCREEN_RADIUS = 60;
-/** Screen radius (px) the largest real radius maps to, at base zoom. */
-export const MAX_SCREEN_RADIUS = 2800;
+/**
+ * Screen radius (px) the smallest real radius (Mercury) maps to, at base zoom.
+ * Sized so Mercury clears the enlarged Sun ({@link SUN_ELLIPSE_SCALE}); the inner
+ * planets then spread out instead of crowding the star.
+ */
+export const MIN_SCREEN_RADIUS = 200;
+/**
+ * Screen radius (px) the largest real radius (Neptune) maps to, at base zoom.
+ * The whole map is intentionally large (~2.5× the inner-only view) so true
+ * distance proportions read at a human scale: the outer planets sit off the
+ * default view and the user pans/zooms out to reach them.
+ */
+export const MAX_SCREEN_RADIUS = 7000;
 
 // ---------------------------------------------------------------------------
 // Body rendering
@@ -185,8 +194,14 @@ export const ELEMENT_JUMP_DURATION_MS = 800;
 // Ellipse mode layout
 // ---------------------------------------------------------------------------
 
-/** Default camera zoom in Ellipse mode. */
-export const ELLIPSE_DEFAULT_ZOOM = 0.12;
+/**
+ * Display scale applied to the Sun in Ellipse mode only (its procedural texture
+ * is shared with Linear mode, so this scales the on-screen object, not the
+ * texture). Makes the Sun ~2× Jupiter so the star clearly dominates the map.
+ */
+export const SUN_ELLIPSE_SCALE = 2;
+/** Default camera zoom in Ellipse mode (frames the inner system on load). */
+export const ELLIPSE_DEFAULT_ZOOM = 0.4;
 /** Minimum / maximum camera zoom in Ellipse mode. */
 export const ELLIPSE_MIN_ZOOM = 0.05;
 export const ELLIPSE_MAX_ZOOM = 4;
@@ -198,7 +213,7 @@ export const ELLIPSE_ZOOM_STEP = 0.1;
  * so a fixed orbit radius lands inside a giant's disc; orbiters are instead given
  * concentric rings that clear the disc (see logic/orbitRings).
  */
-export const ELLIPSE_ORBIT_GAP_PX = 10;
+export const ELLIPSE_ORBIT_GAP_PX = 16;
 /**
  * Visual orbital period (Earth years) for moons and host-orbiting spacecraft in
  * Ellipse mode. Their real periods are days, which at 1 year = 60 s render as
