@@ -19,7 +19,6 @@ import {
   EVENT_FOCUS_ELEMENT,
   EVENT_LANG_CHANGED,
   REGISTRY_ON_SELECT,
-  RULER_WIDTH_PX,
   COLOR_BG,
   COLOR_TEXT,
   COLOR_ACCENT_AMBER,
@@ -28,7 +27,7 @@ import { bodies, spacecraft } from '../../logic/catalog';
 import type { BodyData, SpacecraftData } from '../../logic/library';
 import { bodyRadiusPx } from '../../logic/scale';
 import { getText } from '../../logic/i18n';
-import { getAllFunFacts } from '../../logic/funfacts';
+import { getFunFactsAtDistance } from '../../logic/funfacts';
 import { computeLinearLayout } from '../../logic/linearLayout';
 import { linearDistanceToY, linearYToDistance } from '../../logic/linearScale';
 import { userPreferences } from '../../state/UserPreferences';
@@ -49,12 +48,27 @@ const SCROLL_DRAG_FRICTION = 0.92;
 const SCROLL_DRAG_MIN_VELOCITY_PX = 0.5;
 const SCROLL_VELOCITY_SAMPLES = 5;
 const LABEL_OFFSET_X = 26;
+/** Fun-fact overlay: distance from the viewport bottom edge, in pixels. */
+const FUNFACT_BOTTOM_MARGIN_PX = 18;
+/** Fun-fact overlay: horizontal inset from each viewport edge, in pixels. */
+const FUNFACT_SIDE_MARGIN_PX = 16;
+/** Fun-fact overlay: cross-fade duration when the active fact changes. */
+const FUNFACT_FADE_MS = 250;
+/**
+ * Fun-fact overlay: how far (as a fraction of the viewport height) the center
+ * of the screen may drift from a fact's trigger before the fact is hidden.
+ * Keeps each note tied to its region instead of lingering until the next one.
+ */
+const FUNFACT_VISIBLE_RANGE_VH = 0.5;
+/** No facts are ever suppressed in the overlay; it always reflects position. */
+const EMPTY_SHOWN_IDS: ReadonlySet<string> = new Set();
 
 export class LinearScene extends Phaser.Scene {
   private pxPerMkm = 1;
   private ruler!: RulerRenderer;
   private layouts: ElementLayout[] = [];
-  private funFactTexts: Phaser.GameObjects.Text[] = [];
+  private funFactOverlay!: Phaser.GameObjects.Text;
+  private activeFactId: string | null = null;
   private isDragging = false;
   private dragVelocity = 0;
   private readonly velocitySamples: number[] = [];
@@ -148,25 +162,26 @@ export class LinearScene extends Phaser.Scene {
     this.cameras.main.setBounds(0, 0, this.scale.width, worldHeight + this.scale.height);
 
     this.ruler = new RulerRenderer(this);
-    this.funFactTexts = [];
-    const centerX = this.scale.width / 2 + RULER_WIDTH_PX / 2;
-    for (const fact of getAllFunFacts(lang)) {
-      const worldY = baseY(fact.triggerDistanceMkm);
-      this.funFactTexts.push(
-        this.add
-          .text(centerX, worldY, fact.text, {
-            fontFamily: 'monospace',
-            fontSize: '13px',
-            color: COLOR_ACCENT_AMBER,
-            align: 'center',
-            wordWrap: { width: this.scale.width - RULER_WIDTH_PX - 80 },
-            backgroundColor: 'rgba(5,8,15,0.85)',
-            padding: { x: 10, y: 8 },
-          })
-          .setOrigin(0.5, 0.5)
-          .setDepth(1000),
-      );
-    }
+
+    // A single fun-fact panel pinned to the viewport bottom (scrollFactor 0).
+    // It shows the most recently crossed fact for the current scroll position
+    // (see getFunFactsAtDistance) and never competes with bodies for world Y,
+    // so it cannot overlap them on any viewport — notably narrow phones.
+    this.activeFactId = null;
+    this.funFactOverlay = this.add
+      .text(this.scale.width / 2, this.scale.height - FUNFACT_BOTTOM_MARGIN_PX, '', {
+        fontFamily: 'monospace',
+        fontSize: '13px',
+        color: COLOR_ACCENT_AMBER,
+        align: 'center',
+        wordWrap: { width: this.scale.width - FUNFACT_SIDE_MARGIN_PX * 2 },
+        backgroundColor: 'rgba(5,8,15,0.85)',
+        padding: { x: 10, y: 8 },
+      })
+      .setOrigin(0.5, 1)
+      .setScrollFactor(0)
+      .setDepth(1000)
+      .setVisible(false);
 
     this.setupInput();
     this.restoreScrollFromNavigation();
@@ -268,10 +283,57 @@ export class LinearScene extends Phaser.Scene {
     for (const layout of this.layouts) {
       layout.label.setText(getText(`${layout.id}.name`, lang));
     }
-    const updated = getAllFunFacts(lang);
-    for (let i = 0; i < this.funFactTexts.length; i++) {
-      this.funFactTexts[i].setText(updated[i].text);
+    // Re-resolve the visible fact in the new language without animating.
+    this.activeFactId = null;
+    this.refreshFunFact();
+  }
+
+  /**
+   * Sync the pinned fun-fact overlay to the current scroll position: show the
+   * most recently crossed fact, hide it before the first trigger, and
+   * cross-fade only when the active fact actually changes.
+   */
+  private refreshFunFact(): void {
+    const lang = userPreferences.getLanguage();
+    const crossed = getFunFactsAtDistance(this.centerDistance(), lang, EMPTY_SHOWN_IDS);
+
+    // Hide the note once the viewport center drifts beyond a scroll range from
+    // its trigger, so it stays tied to its region rather than lingering until
+    // the next trigger is crossed.
+    let fact = crossed;
+    if (crossed) {
+      const centerY = this.cameras.main.scrollY + this.scale.height / 2;
+      const triggerY = linearDistanceToY(
+        crossed.triggerDistanceMkm,
+        this.pxPerMkm,
+        LINEAR_TOP_PADDING_PX,
+      );
+      const range = this.scale.height * FUNFACT_VISIBLE_RANGE_VH;
+      if (Math.abs(centerY - triggerY) > range) fact = null;
     }
+
+    const nextId = fact?.id ?? null;
+    if (nextId === this.activeFactId) return;
+    this.activeFactId = nextId;
+
+    this.tweens.killTweensOf(this.funFactOverlay);
+    if (!fact) {
+      this.tweens.add({
+        targets: this.funFactOverlay,
+        alpha: 0,
+        duration: FUNFACT_FADE_MS,
+        ease: 'Sine.easeIn',
+        onComplete: () => this.funFactOverlay.setVisible(false),
+      });
+      return;
+    }
+    this.funFactOverlay.setText(fact.text).setVisible(true).setAlpha(0);
+    this.tweens.add({
+      targets: this.funFactOverlay,
+      alpha: 1,
+      duration: FUNFACT_FADE_MS,
+      ease: 'Sine.easeOut',
+    });
   }
 
   private onShutdown(): void {
@@ -290,6 +352,7 @@ export class LinearScene extends Phaser.Scene {
       this.dragVelocity *= SCROLL_DRAG_FRICTION;
     }
     this.syncNavigation();
+    this.refreshFunFact();
     this.ruler.update(this.pxPerMkm, LINEAR_TOP_PADDING_PX, scaleState.getUnit());
   }
 }
