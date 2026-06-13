@@ -10,8 +10,9 @@ tested with **Vitest**.
 ## What it does
 
 - **Two modes**
-  - **Linear** — scroll vertically from the Sun outward; a left-edge ruler shows
-    the distance traveled and contextual fun facts appear at key boundaries
+  - **Linear** — scroll vertically from the Sun outward; a left-edge distance
+    counter shows how far you've traveled (recoloring by zone) and contextual
+    fun facts appear at key boundaries
     (asteroid belt, Kuiper belt, heliopause, journey's end). Jump between
     elements with Previous/Next.
   - **Ellipse** — an orbital map with the Sun at the origin; pan and zoom,

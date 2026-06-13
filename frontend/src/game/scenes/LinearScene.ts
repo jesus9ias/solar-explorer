@@ -353,6 +353,11 @@ export class LinearScene extends Phaser.Scene {
     }
     this.syncNavigation();
     this.refreshFunFact();
-    this.ruler.update(this.pxPerMkm, LINEAR_TOP_PADDING_PX, scaleState.getUnit());
+    this.ruler.update(
+      this.pxPerMkm,
+      LINEAR_TOP_PADDING_PX,
+      scaleState.getUnit(),
+      this.centerDistance(),
+    );
   }
 }

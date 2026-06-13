@@ -185,10 +185,39 @@ export const LINEAR_TOP_PADDING_PX = 120;
  * (plus a label's height), keeping every element visible and selectable.
  */
 export const LINEAR_BODY_GAP_PX = 16;
-/** Ruler tick interval in million km. */
-export const RULER_TICK_INTERVAL_MKM = 250;
-/** Width (px) of the left distance ruler. */
-export const RULER_WIDTH_PX = 72;
+// ---------------------------------------------------------------------------
+// Linear-mode distance counter
+// ---------------------------------------------------------------------------
+
+/**
+ * The Linear-mode readout is a small box fixed at the viewport's vertical center
+ * on the left edge. It reports the distance at the viewport center, quantized to
+ * these steps so it ticks over like an odometer. Inside the box, fine lines
+ * scroll past like a turning knob to convey motion; nothing else is drawn down
+ * the left edge.
+ */
+export const COUNTER_STEP_MKM = 10;
+export const COUNTER_STEP_AU = 0.1;
+/**
+ * Counter box geometry (px). The box is flush against the left screen edge: its
+ * left side has no border and only the right corners are rounded, so it reads as
+ * a tab protruding from the edge rather than a floating panel.
+ */
+export const COUNTER_BOX_W = 82;
+export const COUNTER_BOX_H = 64;
+export const COUNTER_BOX_RADIUS = 10;
+/** Spacing (px) of the knob lines that scroll inside the box. */
+export const COUNTER_KNOB_SPACING_PX = 9;
+/**
+ * Zone boundaries (million km) that recolor the counter as the journey grows
+ * more extreme. The inner boundary reuses the asteroid-belt seam so the color
+ * change also marks the belt; the others sit at Neptune's orbit (the edge of
+ * the planetary system / start of the Kuiper belt) and the heliopause (the edge
+ * of the Sun's influence / interstellar space).
+ */
+export const COUNTER_ZONE_INNER_MAX_MKM = LINEAR_SCALE_SEAM_MKM;
+export const COUNTER_ZONE_OUTER_MAX_MKM = 4495;
+export const COUNTER_ZONE_KUIPER_MAX_MKM = 18000;
 /** Scroll animation duration (ms) for prev/next element jumps. */
 export const ELEMENT_JUMP_DURATION_MS = 800;
 
@@ -254,6 +283,15 @@ export const COLOR_ACCENT_AMBER = '#f2b134';
 export const COLOR_TEXT = '#cfe3df';
 export const COLOR_BORDER = '#1d3242';
 export const COLOR_ORBIT_LINE = '#1d3a4a';
+
+/**
+ * Distance-counter zone colors, brightening into colder/edge-of-known hues as
+ * the journey leaves the planetary system. See COUNTER_ZONE_*_MKM.
+ */
+export const COLOR_ZONE_INNER = COLOR_ACCENT_GREEN;
+export const COLOR_ZONE_OUTER = '#4fd2e0';
+export const COLOR_ZONE_KUIPER = '#b07cff';
+export const COLOR_ZONE_INTERSTELLAR = '#ff5d73';
 
 export const ORBIT_LINE_COLORS: Readonly<Record<string, string>> = {
   planet:        '#2a7fb5',

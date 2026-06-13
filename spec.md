@@ -134,7 +134,7 @@ frontend/src/
 │   │   └── SunArrow.ts      # Always-pointing-to-Sun compass arrow
 │   └── renderers/
 │       ├── BodyRenderer.ts  # Procedural canvas drawing for each body type
-│       └── RulerRenderer.ts # Left-side distance ruler for Linear mode
+│       └── RulerRenderer.ts # Left-side distance counter for Linear mode
 ├── ui/
 │   ├── LibraryModal.ts      # Two-column modal: element list + info + go-to
 │   ├── InfoView.ts          # Embeddable per-element info panel (preview + data)
@@ -239,9 +239,9 @@ When the user switches mode, the current scroll/camera position is converted to 
 | "Previous element" button | Animates scroll to the previous celestial element |
 | "Next element" button | Animates scroll to the next celestial element |
 
-### Distance Ruler
+### Distance Counter
 
-A fixed ruler on the left edge of the viewport. Shows the distance traveled from the Sun in the current unit (MKm or AU). Updates continuously as the user scrolls. Tick marks at regular intervals defined in `constants.ts`.
+A small box fixed at the vertical center of the viewport's left edge. It shows the distance traveled from the Sun in the current unit (MKm or AU), quantized so it ticks over like an odometer as the user scrolls. Inside the box, fine lines scroll past like a turning knob to convey motion; nothing else is drawn down the left edge. The readout recolors by distance zone (inner system → outer planets → Kuiper belt → interstellar), and the asteroid-belt seam is flagged in amber inside the box only while it passes through.
 
 ### Fun Facts
 
@@ -519,7 +519,7 @@ Feature: Distance unit switch
     Given the unit is set to MKm
     When the user switches to AU
     Then all distance labels update to AU values
-    And the ruler in Linear mode updates
+    And the distance counter in Linear mode updates
     And the preference is saved to localStorage
 
   Scenario: AU to Million km conversion
@@ -625,7 +625,7 @@ Feature: Linear mode navigation
     Given the user is in Linear mode
     When the user scrolls down
     Then the viewport moves away from the Sun
-    And the distance ruler updates
+    And the distance counter updates
 
   Scenario: Next element button
     Given the user is in Linear mode
@@ -770,7 +770,7 @@ Feature: Scale system
     Then distances inside the asteroid belt are drawn at an expanded rate
     And distances beyond the belt keep the base zoom rate and their original spacing
     So that the inner planets get room to breathe without crowding the outer system
-    And the ruler marks the belt where the scale rate changes
+    And the counter marks the belt where the scale rate changes
 ```
 
 ---

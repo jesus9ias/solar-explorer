@@ -303,7 +303,7 @@ Scenario: Switch to AU
   Given the unit is set to MKm
   When the user switches to AU
   Then all distance labels update to AU values
-  And the ruler in Linear mode updates
+  And the distance counter in Linear mode updates
   And the preference is saved to localStorage
 
 Scenario: AU to Million km conversion
@@ -387,7 +387,7 @@ Scenario: Scroll navigation
   Given the user is in Linear mode
   When the user scrolls down
   Then the viewport moves away from the Sun
-  And the distance ruler updates
+  And the distance counter updates
 
 Scenario: Next element button
   Given the user is in Linear mode
@@ -514,7 +514,7 @@ Scenario: Piecewise scale at the asteroid belt
   Then distances inside the asteroid belt are drawn at an expanded rate
   And distances beyond the belt keep the base zoom rate and their original spacing
   So that the inner planets get room to breathe without crowding the outer system
-  And the ruler marks the belt where the scale rate changes
+  And the counter marks the belt where the scale rate changes
 ```
 
 ---
