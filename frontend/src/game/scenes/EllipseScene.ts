@@ -11,6 +11,7 @@ import {
   SCENE_ELLIPSE,
   EVENT_ELLIPSE_SPEED,
   EVENT_ELLIPSE_LINES,
+  EVENT_FOCUS_ELEMENT,
   REGISTRY_ON_SELECT,
   DEFAULT_ORBIT_SPEED,
   ELLIPSE_DEFAULT_ZOOM,
@@ -73,6 +74,10 @@ interface PhaseEntry {
 const ZOOM_IN_FACTOR = 1.1;
 const ZOOM_OUT_FACTOR = 0.9;
 const VIEW_FILL_FRACTION = 0.4;
+/** Fraction of the viewport the focused element's orbit radius should fill. */
+const FOCUS_FILL_FRACTION = 0.35;
+/** Smooth pan/zoom duration (ms) when focusing on an element. */
+const FOCUS_DURATION_MS = 600;
 /** Sample count per transfer arc when redrawing a phased trajectory. */
 const PHASE_TRAJECTORY_SAMPLES = 32;
 /** Line width (px, world space) of a phased trajectory at base zoom. */
@@ -164,6 +169,7 @@ export class EllipseScene extends Phaser.Scene {
 
     this.game.events.on(EVENT_ELLIPSE_SPEED, this.setSpeed, this);
     this.game.events.on(EVENT_ELLIPSE_LINES, this.setOrbitLines, this);
+    this.game.events.on(EVENT_FOCUS_ELEMENT, this.focusElement, this);
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, this.onShutdown, this);
   }
 
@@ -339,6 +345,30 @@ export class EllipseScene extends Phaser.Scene {
     this.cameras.main.centerOn(0, 0);
   }
 
+  /**
+   * Smoothly pan and zoom the camera to an element's current world position.
+   * Bodies keep orbiting, so this frames where the element is *now*; the zoom
+   * is chosen so its orbit radius fills a comfortable fraction of the viewport.
+   */
+  private focusElement(id: string): void {
+    const target = this.children.list.find(
+      (c) =>
+        (c instanceof CelestialBody && c.bodyId === id) ||
+        (c instanceof Spacecraft && c.craftId === id),
+    ) as (CelestialBody | Spacecraft) | undefined;
+    if (!target) return;
+
+    const cam = this.cameras.main;
+    const dist = Math.hypot(target.x, target.y);
+    let zoom = ELLIPSE_DEFAULT_ZOOM;
+    if (dist > 1) {
+      const desiredScreen = Math.min(this.scale.width, this.scale.height) * FOCUS_FILL_FRACTION;
+      zoom = Phaser.Math.Clamp(desiredScreen / dist, ELLIPSE_MIN_ZOOM, ELLIPSE_MAX_ZOOM);
+    }
+    cam.pan(target.x, target.y, FOCUS_DURATION_MS, 'Sine.easeInOut');
+    cam.zoomTo(zoom, FOCUS_DURATION_MS, 'Sine.easeInOut');
+  }
+
   private setupInput(): void {
     this.input.addPointer(1);
 
@@ -452,6 +482,7 @@ export class EllipseScene extends Phaser.Scene {
     // down. The solar distance is saved every frame in update() instead.
     this.game.events.off(EVENT_ELLIPSE_SPEED, this.setSpeed, this);
     this.game.events.off(EVENT_ELLIPSE_LINES, this.setOrbitLines, this);
+    this.game.events.off(EVENT_FOCUS_ELEMENT, this.focusElement, this);
   }
 
   update(_time: number, delta: number): void {

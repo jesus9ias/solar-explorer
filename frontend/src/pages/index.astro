@@ -33,8 +33,7 @@ const subtitle = getText('app.subtitle', Language.EN);
       import { LinearScene } from '../game/scenes/LinearScene';
       import { EllipseScene } from '../game/scenes/EllipseScene';
       import { HUD, type AudioController } from '../ui/HUD';
-      import { InfoModal } from '../ui/InfoModal';
-      import { LibraryPanel } from '../ui/LibraryPanel';
+      import { LibraryModal } from '../ui/LibraryModal';
       import { userPreferences } from '../state/UserPreferences';
       import { modeState } from '../state/ModeState';
       import { sceneKeyForMode, otherSceneKey } from '../logic/scenes';
@@ -43,6 +42,7 @@ const subtitle = getText('app.subtitle', Language.EN);
         REGISTRY_ON_SELECT,
         EVENT_LANG_CHANGED,
         EVENT_UNIT_CHANGED,
+        EVENT_FOCUS_ELEMENT,
         AUDIO_VOLUME,
         COLOR_BG,
       } from '../constants/constants';
@@ -54,8 +54,9 @@ const subtitle = getText('app.subtitle', Language.EN);
       const audioEl = document.getElementById('ambient-audio') as HTMLAudioElement | null;
 
       if (gameRoot && hudRoot && libraryRoot && modalRoot) {
-        const modal = new InfoModal(modalRoot);
-        const library = new LibraryPanel(libraryRoot, (id) => modal.openById(id));
+        const library = new LibraryModal(modalRoot, (id) =>
+          game.events.emit(EVENT_FOCUS_ELEMENT, id),
+        );
 
         // The first scene in the array auto-starts, so order it by the saved
         // mode. Runtime switching is handled by showScene below.
@@ -83,7 +84,7 @@ const subtitle = getText('app.subtitle', Language.EN);
           scene: initialScenes,
         });
 
-        game.registry.set(REGISTRY_ON_SELECT, (id: string) => modal.openById(id));
+        game.registry.set(REGISTRY_ON_SELECT, (id: string) => library.openById(id));
 
         const audio: AudioController = {
           setEnabled(enabled: boolean) {
@@ -101,7 +102,7 @@ const subtitle = getText('app.subtitle', Language.EN);
           root: hudRoot,
           emit: (event, payload) => game.events.emit(event, payload),
           audio,
-          onLibrary: () => library.toggle(),
+          onLibrary: () => library.open(),
         });
 
         const showScene = (mode: Mode) => {
@@ -124,7 +125,6 @@ const subtitle = getText('app.subtitle', Language.EN);
         userPreferences.subscribe(() => {
           hud.refresh();
           library.refresh();
-          modal.refresh();
           game.events.emit(EVENT_LANG_CHANGED);
           game.events.emit(EVENT_UNIT_CHANGED);
         });
@@ -285,46 +285,58 @@ const subtitle = getText('app.subtitle', Language.EN);
       .se-modal-list { margin: 4px 0; padding-left: 18px; }
       .se-modal-list li { font-size: 13px; line-height: 1.5; margin-bottom: 4px; }
 
-      /* Library */
-      .se-library {
-        position: fixed;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        width: min(360px, 90vw);
+      /* Library modal (two columns) */
+      .se-lib-modal {
+        position: relative;
+        display: grid;
+        grid-template-columns: minmax(0, 320px) minmax(0, 1fr);
+        grid-template-rows: minmax(0, 1fr);
+        width: min(860px, 94vw);
+        height: min(640px, 86vh);
         background: var(--se-panel);
-        border-left: 1px solid var(--se-border);
-        z-index: 20;
+        border: 1px solid var(--se-border);
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 0 40px rgba(61, 242, 155, 0.08);
+      }
+      .se-lib-tabs { display: none; }
+
+      .se-lib-left {
         display: flex;
         flex-direction: column;
-        box-shadow: -8px 0 30px rgba(0, 0, 0, 0.4);
+        gap: 10px;
+        padding: 18px 16px;
+        border-right: 1px solid var(--se-border);
+        background: var(--se-panel);
+        min-height: 0;
       }
-      .se-library-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 14px 16px;
-        border-bottom: 1px solid var(--se-border);
+      .se-lib-search {
+        background: var(--se-panel-2);
+        color: var(--se-text);
+        border: 1px solid var(--se-border);
+        border-radius: 4px;
+        padding: 7px 10px;
+        font: inherit;
+        font-size: 13px;
       }
-      .se-library-header h2 { margin: 0; font-size: 16px; letter-spacing: 0.08em; }
-      .se-library-close {
-        background: none;
-        border: none;
+      .se-lib-search:focus { outline: none; border-color: var(--se-accent); }
+      .se-lib-group-control { display: flex; flex-direction: column; gap: 4px; }
+      .se-lib-group-label {
+        font-size: 9px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
         color: var(--se-muted);
-        font-size: 22px;
-        cursor: pointer;
       }
-      .se-library-close:hover { color: var(--se-accent); }
-      .se-library-body { overflow-y: auto; padding: 10px 14px 24px; }
-      .se-library-group { margin-bottom: 14px; }
-      .se-library-group-title {
+      .se-lib-list { overflow-y: auto; padding-right: 4px; min-height: 0; }
+      .se-lib-group { margin-bottom: 14px; }
+      .se-lib-group-title {
         margin: 8px 0 6px;
         font-size: 12px;
         color: var(--se-amber);
         letter-spacing: 0.06em;
       }
-      .se-library-items { display: flex; flex-wrap: wrap; gap: 6px; }
-      .se-library-item {
+      .se-lib-items { display: flex; flex-wrap: wrap; gap: 6px; }
+      .se-lib-item {
         background: var(--se-panel-2);
         color: var(--se-text);
         border: 1px solid var(--se-border);
@@ -334,8 +346,26 @@ const subtitle = getText('app.subtitle', Language.EN);
         font-size: 12px;
         cursor: pointer;
       }
-      .se-library-item:hover { border-color: var(--se-accent); color: var(--se-accent); }
+      .se-lib-item:hover { border-color: var(--se-accent); color: var(--se-accent); }
+      .se-lib-item.is-selected { border-color: var(--se-accent); background: var(--se-accent); color: #04140d; }
       .se-library-complete { color: var(--se-amber); }
+
+      .se-lib-right {
+        display: flex;
+        flex-direction: column;
+        padding: 20px;
+        overflow: hidden;
+        min-height: 0;
+      }
+      .se-info { flex: 1; overflow-y: auto; min-height: 0; }
+      .se-info-placeholder {
+        color: var(--se-muted);
+        font-size: 13px;
+        text-align: center;
+        margin: 40px 16px;
+        line-height: 1.5;
+      }
+      .se-lib-goto { align-self: stretch; margin-top: 16px; text-align: center; }
 
       @media (max-width: 640px) {
         .se-hud {
@@ -350,6 +380,34 @@ const subtitle = getText('app.subtitle', Language.EN);
         .se-btn-icon { display: inline; }
         .se-btn-icon ~ .se-btn-text { display: none; }
         .se-button { align-self: center; }
+
+        /* Collapse the two columns into tabs. */
+        .se-lib-modal {
+          grid-template-columns: 1fr;
+          grid-template-rows: auto minmax(0, 1fr);
+          width: 94vw;
+          height: 86vh;
+        }
+        .se-lib-tabs {
+          display: flex;
+          border-bottom: 1px solid var(--se-border);
+        }
+        .se-lib-tab {
+          flex: 1;
+          background: var(--se-panel);
+          color: var(--se-text);
+          border: none;
+          border-right: 1px solid var(--se-border);
+          padding: 12px 10px;
+          font: inherit;
+          font-size: 13px;
+          cursor: pointer;
+        }
+        .se-lib-tab:last-child { border-right: none; }
+        .se-lib-tab.is-active { background: var(--se-accent); color: #04140d; font-weight: 700; }
+        .se-lib-left { border-right: none; }
+        .se-lib-modal[data-tab="list"] .se-lib-right { display: none; }
+        .se-lib-modal[data-tab="info"] .se-lib-left { display: none; }
       }
     </style>
   </body>

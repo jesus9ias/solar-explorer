@@ -136,8 +136,8 @@ frontend/src/
 │       ├── BodyRenderer.ts  # Procedural canvas drawing for each body type
 │       └── RulerRenderer.ts # Left-side distance ruler for Linear mode
 ├── ui/
-│   ├── InfoModal.ts         # Click → modal overlay with body information
-│   ├── LibraryPanel.ts      # Grouped tree of all elements
+│   ├── LibraryModal.ts      # Two-column modal: element list + info + go-to
+│   ├── InfoView.ts          # Embeddable per-element info panel (preview + data)
 │   └── HUD.ts               # All switch controls and buttons
 ├── pages/
 │   └── index.astro          # Main page shell
@@ -167,47 +167,55 @@ frontend/src/
 
 All switch state reads from `UserPreferences` on init. On change: update `UserPreferences`, update `localStorage`, notify relevant subscribers.
 
-### Info Modal
+### Library Modal
 
-Triggered by clicking any celestial body or spacecraft in either mode. Displays:
+A single modal merges the element library and the per-element information into
+two columns. It is reached two ways:
+
+1. **The HUD Library button** — opens with no preselection; the info column
+   shows a placeholder.
+2. **Selecting any celestial body or spacecraft** in either mode — opens with
+   that element's information shown directly.
+
+**Left column — browse**
+
+- A search input that filters the list by name (case- and accent-insensitive).
+- A "group by" selector with two modes:
+  - **Type** (default): Star, Planets, Dwarf Planets, Natural Satellites,
+    Artificial Spacecraft, Asteroids & Comets.
+  - **Orbits** (the body each item orbits): the Sun first (every solar-orbiting
+    body and the Sun itself), then each planet that hosts moons or spacecraft
+    ordered by its distance from the Sun, and finally interstellar probes.
+- The grouped, clickable list of every element. Completed missions are flagged
+  with a `✦`. Group headings are labels only — not clickable.
+
+**Right column — information**
+
+Shows the selected element (or a placeholder when nothing is selected):
 
 - Name (localized)
-- Procedural image of the body (rendered on a `<canvas>` inside the modal)
+- Procedural image of the body (rendered on a `<canvas>`), or a photo when one
+  is configured
 - Distance to Sun (in current unit: Million km or AU)
 - Orbital period (years to orbit the Sun, or host planet if it is a moon)
 - Rotation period (days for a full self-rotation)
 - Surface / atmospheric temperature range
 - Additional facts (localized, from JSON)
 - For artificial spacecraft: mission objectives and main instrument descriptions
+- A **"Close and go to element"** button (only while an element is selected)
+  that closes the modal and flies the active scene to that element's current
+  position.
 
-Not all fields apply to every element. Missing fields are omitted, not shown as empty.
+Not all fields apply to every element. Missing fields are omitted, not shown as
+empty. For completed missions a "Mission complete" badge is displayed with the
+mission end date.
 
-For completed missions: a "Mission complete" badge is displayed with the mission end date.
+**General**
 
-### Library Panel
-
-Opened via a dedicated button in the HUD. Shows a tree grouped by category:
-
-```
-☀ Star
-  Sun
-🪐 Planets
-  Mercury · Venus · Earth · Mars · Jupiter · Saturn · Uranus · Neptune
-🔵 Dwarf Planets
-  Ceres · Pluto · Eris · Makemake · Haumea
-🌕 Natural Satellites
-  Moon · Phobos · Deimos · Io · Europa · Ganymede · Callisto · Titan · Triton · Charon · ...
-🛸 Artificial Spacecraft
-  Hubble · James Webb · Parker Solar Probe · Solar Orbiter · Mars Express · Juno ·
-  Voyager 1 · Voyager 2 · Pioneer 10 · Pioneer 11 · New Horizons · Cassini* ·
-  Galileo* · BepiColombo · OSIRIS-REx · Perseverance
-☄ Asteroids & Comets
-  Vesta · Pallas · Hygiea · Halley's Comet · 67P/Churyumov-Gerasimenko
-```
-
-`*` = mission complete badge
-
-Clicking any item opens its Info Modal.
+- Closes via the close (×) button, a click outside the modal, or the `Esc` key.
+- On desktop both columns are always visible. On mobile the columns collapse
+  into tabs (List / Info); opening via the Library button defaults to the List
+  tab, while opening by selecting an element defaults to the Info tab.
 
 ### Position Persistence Between Modes
 
@@ -544,53 +552,65 @@ Feature: Audio toggle
     Then audio begins playing automatically
 ```
 
-### Feature: Info Modal
+### Feature: Library Modal
 
 ```gherkin
-Feature: Info Modal
+Feature: Library Modal
   As a user
-  I want to click any celestial element
-  So that I can see detailed information about it
+  I want a single modal that lets me browse every element and read its details
+  So that I can find any element and jump to it
 
-  Scenario: Open modal from Linear mode
+  Scenario: Open from the Library button
+    Given the app is loaded
+    When the user clicks the Library button
+    Then the modal opens with the element list grouped by type
+    And the information column shows a placeholder
+
+  Scenario: Open by selecting an element in Linear mode
     Given the user is in Linear mode
     When the user clicks on a celestial body
-    Then a modal opens showing the body's name, image, and data fields
+    Then the modal opens showing that body's name, image, and data fields
     And fields not applicable to the body type are not shown
 
-  Scenario: Open modal from Ellipse mode
+  Scenario: Open by selecting an element in Ellipse mode
     Given the user is in Ellipse mode
     When the user clicks on a celestial body
     Then the same modal opens with the same content
 
-  Scenario: Close modal
-    Given a modal is open
-    When the user clicks outside the modal or the close button
-    Then the modal closes and the scene is interactive again
+  Scenario: Search elements by name
+    Given the modal is open
+    When the user types into the search box
+    Then the list shows only elements whose name matches, ignoring case and accents
+    And groups with no matching element are hidden
+
+  Scenario: Group by orbited body
+    Given the modal is open
+    When the user selects the "Orbits" grouping
+    Then solar-orbiting bodies are grouped under the Sun
+    And each moon and host-orbiting spacecraft is grouped under the body it orbits
+    And interstellar probes are grouped on their own
+
+  Scenario: Navigate to an element from the list
+    Given the modal is open with an element selected
+    When the user clicks "Close and go to element"
+    Then the modal closes
+    And the active scene moves to that element's current position
 
   Scenario: Mission complete badge
     Given a spacecraft with missionStatus "complete"
-    When the user opens its modal
+    When the user views it in the information column
     Then a "Mission complete" badge is shown with the end year
-```
 
-### Feature: Library Panel
+  Scenario: Close the modal
+    Given the modal is open
+    When the user clicks the close button, clicks outside it, or presses Esc
+    Then the modal closes and the scene is interactive again
 
-```gherkin
-Feature: Library Panel
-  As a user
-  I want to browse all elements in a grouped list
-  So that I can find and navigate to any element
-
-  Scenario: Open library
-    Given the app is loaded
-    When the user clicks the Library button
-    Then a panel opens showing all elements grouped by type
-
-  Scenario: Navigate to element from library
-    Given the library panel is open
-    When the user clicks an element's name
-    Then the modal for that element opens
+  Scenario: Columns become tabs on mobile
+    Given the viewport is narrow
+    When the modal opens via the Library button
+    Then the List and Info columns are shown as tabs with List active
+    And opening by selecting an element activates the Info tab instead
 ```
 
 ### Feature: Linear mode navigation
@@ -834,6 +854,12 @@ All tests live in `frontend/src/tests/`. Tests use Vitest. No test imports Phase
 | `buildLibraryTree` groups dwarf planets correctly | full bodies.json | dwarf_planets array has 5 items |
 | `buildLibraryTree` marks complete missions | spacecraft.json | Cassini has `missionStatus === "complete"` |
 | `buildLibraryTree` total element count matches config | all JSONs | count matches sum of all entries |
+| `buildGroupsByHost` groups solar-orbiting bodies under the Sun | all JSONs | Sun group contains earth, ceres, sun |
+| `buildGroupsByHost` groups moons under their host | all JSONs | Jupiter group contains io |
+| `buildGroupsByHost` groups host-orbiting craft under their host | all JSONs | Saturn group contains cassini |
+| `buildGroupsByHost` groups interstellar probes apart | all JSONs | interstellar group contains voyager1 |
+| `buildGroupsByHost` orders Sun first, interstellar last | all JSONs | first key `sun`, last key `interstellar` |
+| `filterLibraryItems` matches case/accent-insensitively | items + query | matching items only; empty query returns all |
 
 ### funfacts.test.ts
 
@@ -939,8 +965,8 @@ Each stage is implemented and completed in full before the next one begins. Clau
 19. `game/objects/SunArrow.ts`
 20. `game/scenes/LinearScene.ts`
 21. `game/scenes/EllipseScene.ts`
-22. `ui/InfoModal.ts`
-23. `ui/LibraryPanel.ts`
+22. `ui/InfoView.ts`
+23. `ui/LibraryModal.ts`
 24. `ui/HUD.ts`
 25. `pages/index.astro`
 26. GitHub Actions workflow — complete deploy steps

@@ -1,13 +1,16 @@
 /**
- * Solar Explorer — InfoModal.
+ * Solar Explorer — InfoView.
  *
- * Click → modal overlay showing a procedural preview and the localized data of
- * any body or spacecraft. Fields not applicable to the element are omitted.
+ * Renders the procedural preview and localized data of any body or spacecraft
+ * into a self-contained element. Unlike the old InfoModal it owns no overlay —
+ * it is embedded in the LibraryModal's right column. Fields not applicable to
+ * the element are omitted; with no selection it shows a placeholder.
  */
 import {
   Language,
   Unit,
   MissionStatus,
+  COLOR_ACCENT_GREEN,
 } from '../constants/constants';
 import { getText } from '../logic/i18n';
 import { convertMkmToAU } from '../logic/scale';
@@ -21,7 +24,6 @@ import {
   drawSmallBody,
   drawSpacecraftIcon,
 } from '../game/renderers/BodyRenderer';
-import { COLOR_ACCENT_GREEN } from '../constants/constants';
 
 const CANVAS_SIZE = 160;
 const PREVIEW_RADIUS = 56;
@@ -35,8 +37,10 @@ function el<K extends keyof HTMLElementTagNameMap>(
   return node;
 }
 
-export class InfoModal {
-  private readonly overlay: HTMLDivElement;
+export class InfoView {
+  readonly root: HTMLDivElement;
+  private readonly content: HTMLDivElement;
+  private readonly placeholder: HTMLParagraphElement;
   private readonly canvas: HTMLCanvasElement;
   private readonly previewImg: HTMLImageElement;
   private readonly title: HTMLHeadingElement;
@@ -45,14 +49,13 @@ export class InfoModal {
   private readonly facts: HTMLDivElement;
   private currentId: string | null = null;
 
-  constructor(root: HTMLElement) {
-    this.overlay = el('div', 'se-modal-overlay');
-    this.overlay.hidden = true;
+  constructor() {
+    this.root = el('div', 'se-info');
 
-    const panel = el('div', 'se-modal');
-    const closeBtn = el('button', 'se-modal-close');
-    closeBtn.textContent = '×';
-    closeBtn.addEventListener('click', () => this.close());
+    this.placeholder = el('p', 'se-info-placeholder');
+
+    this.content = el('div', 'se-info-content');
+    this.content.hidden = true;
 
     this.canvas = el('canvas', 'se-modal-canvas');
     this.canvas.width = CANVAS_SIZE;
@@ -68,16 +71,26 @@ export class InfoModal {
     this.fields = el('dl', 'se-modal-fields');
     this.facts = el('div', 'se-modal-facts');
 
-    panel.append(closeBtn, this.canvas, this.previewImg, this.title, this.badge, this.fields, this.facts);
-    this.overlay.append(panel);
-    this.overlay.addEventListener('click', (event) => {
-      if (event.target === this.overlay) this.close();
-    });
-    root.append(this.overlay);
+    this.content.append(this.canvas, this.previewImg, this.title, this.badge, this.fields, this.facts);
+    this.root.append(this.placeholder, this.content);
+    this.clear();
   }
 
-  /** Open the modal for the body/spacecraft with the given id. */
-  openById(id: string): void {
+  /** Id of the currently rendered element, or null when showing the placeholder. */
+  getCurrentId(): string | null {
+    return this.currentId;
+  }
+
+  /** Show the placeholder and drop any selection. */
+  clear(): void {
+    this.currentId = null;
+    this.placeholder.textContent = getText('library.infoPlaceholder', userPreferences.getLanguage());
+    this.placeholder.hidden = false;
+    this.content.hidden = true;
+  }
+
+  /** Render the body/spacecraft with the given id. */
+  render(id: string): void {
     const entry = findEntry(id);
     if (!entry) return;
     this.currentId = id;
@@ -91,31 +104,22 @@ export class InfoModal {
 
     if (entry.kind === 'body') {
       this.renderBody(entry.body, lang, unit);
-      if (entry.body.image) {
-        this.showImage(`/images/library/${entry.body.image}`);
-      } else {
-        this.drawBodyPreview(entry.body);
-      }
+      if (entry.body.image) this.showImage(`/images/library/${entry.body.image}`);
+      else this.drawBodyPreview(entry.body);
     } else {
       this.renderSpacecraft(entry.craft, lang, unit);
-      if (entry.craft.image) {
-        this.showImage(`/images/library/${entry.craft.image}`);
-      } else {
-        this.drawSpacecraftPreview();
-      }
+      if (entry.craft.image) this.showImage(`/images/library/${entry.craft.image}`);
+      else this.drawSpacecraftPreview();
     }
 
-    this.overlay.hidden = false;
+    this.placeholder.hidden = true;
+    this.content.hidden = false;
   }
 
-  /** Re-render the open modal (e.g. after a language or unit change). */
+  /** Re-render the current selection (e.g. after a language or unit change). */
   refresh(): void {
-    if (this.currentId && !this.overlay.hidden) this.openById(this.currentId);
-  }
-
-  close(): void {
-    this.overlay.hidden = true;
-    this.currentId = null;
+    if (this.currentId) this.render(this.currentId);
+    else this.clear();
   }
 
   private addField(label: string, value: string): void {
@@ -195,7 +199,6 @@ export class InfoModal {
       const ul = el('ul', 'se-modal-list');
       for (const instrument of localized.instruments) {
         const li = el('li');
-        li.innerHTML = '';
         const strong = el('strong');
         strong.textContent = `${instrument.name}: `;
         li.append(strong, document.createTextNode(instrument.description));

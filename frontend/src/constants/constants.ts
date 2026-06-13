@@ -282,6 +282,8 @@ export const EVENT_ELLIPSE_SPEED = 'ellipse:speed';
 export const EVENT_ELLIPSE_LINES = 'ellipse:lines';
 export const EVENT_LANG_CHANGED = 'app:lang';
 export const EVENT_UNIT_CHANGED = 'app:unit';
+/** Focus the camera/scroll on a specific element by id (payload: string id). */
+export const EVENT_FOCUS_ELEMENT = 'app:focus';
 
 // ---------------------------------------------------------------------------
 // Implementation stubs

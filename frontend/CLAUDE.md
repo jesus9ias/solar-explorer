@@ -79,7 +79,7 @@ game/
   objects/CelestialBody.ts, Spacecraft.ts, OrbitLine.ts, SunArrow.ts
   renderers/BodyRenderer.ts, RulerRenderer.ts
 ui/
-  HUD.ts, InfoModal.ts, LibraryPanel.ts
+  HUD.ts, InfoView.ts, LibraryModal.ts
 pages/
   index.astro        # Page shell, theme CSS, client bootstrap
 tests/
@@ -228,7 +228,7 @@ Phaser.
 | `phases.test.ts` | multi-phase itinerary: cycle length, active phase + fraction, looping, heliocentric transfer-arc point (stays clear of the Sun, prograde); config integrity (anchors are real solar bodies, BepiColombo itinerary) |
 | `state.test.ts` | UserPreferences defaults/persistence, NavigationState in-memory & handoff |
 | `i18n.test.ts` | getText EN/ES, fallback, `I18nKeyNotFoundError` |
-| `library.test.ts` | grouping (8 planets, 5 dwarfs), complete missions, total count |
+| `library.test.ts` | grouping by type (8 planets, 5 dwarfs), grouping by host (Sun/planet/interstellar), name filter, complete missions, total count |
 | `funfacts.test.ts` | belt trigger, null before first trigger, language, no repeats |
 | `modestate.test.ts` | ModeState derivation, setMode persist/sync, subscribe/notify |
 | `scenes.test.ts` | pure `sceneKeyForMode` / `otherSceneKey` routing |
@@ -330,41 +330,55 @@ Scenario: Audio preference persists on reload
   Then audio begins playing automatically
 ```
 
-### Feature: Info Modal
+### Feature: Library Modal
+A single two-column modal merges the element library and the per-element info.
 ```gherkin
-Scenario: Open modal from Linear mode
-  Given the user is in Linear mode
+Scenario: Open from the Library button
+  Given the app is loaded
+  When the user clicks the Library button
+  Then the modal opens with the element list grouped by type
+  And the information column shows a placeholder
+
+Scenario: Open by selecting an element
+  Given the user is in Linear or Ellipse mode
   When the user clicks on a celestial body
-  Then a modal opens showing the body's name, image, and data fields
+  Then the modal opens showing that body's name, image, and data fields
   And fields not applicable to the body type are not shown
 
-Scenario: Open modal from Ellipse mode
-  Given the user is in Ellipse mode
-  When the user clicks on a celestial body
-  Then the same modal opens with the same content
+Scenario: Search elements by name
+  Given the modal is open
+  When the user types into the search box
+  Then only elements whose name matches are listed, ignoring case and accents
+  And groups with no matching element are hidden
 
-Scenario: Close modal
-  Given a modal is open
-  When the user clicks outside the modal or the close button
-  Then the modal closes and the scene is interactive again
+Scenario: Group by orbited body
+  Given the modal is open
+  When the user selects the "Orbits" grouping
+  Then solar-orbiting bodies are grouped under the Sun
+  And each moon and host-orbiting spacecraft is grouped under the body it orbits
+  And interstellar probes are grouped on their own
+
+Scenario: Navigate to an element
+  Given the modal is open with an element selected
+  When the user clicks "Close and go to element"
+  Then the modal closes
+  And the active scene moves to that element's current position
 
 Scenario: Mission complete badge
   Given a spacecraft with missionStatus "complete"
-  When the user opens its modal
+  When the user views it in the information column
   Then a "Mission complete" badge is shown with the end year
-```
 
-### Feature: Library Panel
-```gherkin
-Scenario: Open library
-  Given the app is loaded
-  When the user clicks the Library button
-  Then a panel opens showing all elements grouped by type
+Scenario: Close the modal
+  Given the modal is open
+  When the user clicks the close button, clicks outside it, or presses Esc
+  Then the modal closes and the scene is interactive again
 
-Scenario: Navigate to element from library
-  Given the library panel is open
-  When the user clicks an element's name
-  Then the modal for that element opens
+Scenario: Columns become tabs on mobile
+  Given the viewport is narrow
+  When the modal opens via the Library button
+  Then the List and Info columns are shown as tabs with List active
+  And opening by selecting an element activates the Info tab instead
 ```
 
 ### Feature: Linear mode navigation

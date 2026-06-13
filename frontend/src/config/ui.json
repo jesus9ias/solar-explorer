@@ -45,7 +45,16 @@
       "dwarfPlanets": "Dwarf Planets",
       "moons": "Natural Satellites",
       "spacecraft": "Artificial Spacecraft",
-      "asteroidsComets": "Asteroids & Comets"
+      "asteroidsComets": "Asteroids & Comets",
+      "interstellar": "Interstellar Space",
+      "search": "Search by name…",
+      "groupBy": "Group by",
+      "byType": "Type",
+      "byHost": "Orbits",
+      "tabList": "List",
+      "tabInfo": "Info",
+      "goToElement": "Close and go to element",
+      "infoPlaceholder": "Select an element to see its details."
     },
     "ruler": {
       "label": "Distance from Sun"
@@ -97,7 +106,16 @@
       "dwarfPlanets": "Planetas enanos",
       "moons": "Satélites naturales",
       "spacecraft": "Naves artificiales",
-      "asteroidsComets": "Asteroides y cometas"
+      "asteroidsComets": "Asteroides y cometas",
+      "interstellar": "Espacio interestelar",
+      "search": "Buscar por nombre…",
+      "groupBy": "Agrupar por",
+      "byType": "Tipo",
+      "byHost": "Orbita a",
+      "tabList": "Lista",
+      "tabInfo": "Información",
+      "goToElement": "Cerrar e ir al elemento",
+      "infoPlaceholder": "Selecciona un elemento para ver su información."
     },
     "ruler": {
       "label": "Distancia desde el Sol"

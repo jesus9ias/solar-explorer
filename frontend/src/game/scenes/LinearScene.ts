@@ -16,6 +16,7 @@ import {
   ELEMENT_JUMP_DURATION_MS,
   EVENT_LINEAR_PREV,
   EVENT_LINEAR_NEXT,
+  EVENT_FOCUS_ELEMENT,
   EVENT_LANG_CHANGED,
   REGISTRY_ON_SELECT,
   RULER_WIDTH_PX,
@@ -172,6 +173,7 @@ export class LinearScene extends Phaser.Scene {
 
     this.game.events.on(EVENT_LINEAR_PREV, this.goPrevious, this);
     this.game.events.on(EVENT_LINEAR_NEXT, this.goNext, this);
+    this.game.events.on(EVENT_FOCUS_ELEMENT, this.focusElement, this);
     this.game.events.on(EVENT_LANG_CHANGED, this.relabel, this);
 
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, this.onShutdown, this);
@@ -256,6 +258,11 @@ export class LinearScene extends Phaser.Scene {
     if (previous) this.scrollToY(previous.y);
   }
 
+  private focusElement(id: string): void {
+    const layout = this.layouts.find((l) => l.id === id);
+    if (layout) this.scrollToY(layout.y);
+  }
+
   private relabel(): void {
     const lang = userPreferences.getLanguage();
     for (const layout of this.layouts) {
@@ -273,6 +280,7 @@ export class LinearScene extends Phaser.Scene {
     // update(), so the position handoff to the other mode is already saved.
     this.game.events.off(EVENT_LINEAR_PREV, this.goPrevious, this);
     this.game.events.off(EVENT_LINEAR_NEXT, this.goNext, this);
+    this.game.events.off(EVENT_FOCUS_ELEMENT, this.focusElement, this);
     this.game.events.off(EVENT_LANG_CHANGED, this.relabel, this);
   }
 
