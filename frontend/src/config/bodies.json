@@ -1008,7 +1008,7 @@
   },
   {
     "id": "bennu",
-    "image": "bennu.jpg",
+    "image": "bennu.webp",
     "type": "asteroid",
     "host": null,
     "orbitalRadius_mkm": 168.4,
