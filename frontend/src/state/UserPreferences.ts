@@ -9,14 +9,19 @@ import {
   Language,
   Mode,
   Unit,
+  MissionRestartMode,
   LS_KEY_LANGUAGE,
   LS_KEY_MODE,
   LS_KEY_UNIT,
   LS_KEY_AUDIO,
+  LS_KEY_MISSION,
+  LS_KEY_MISSION_RESTART,
   DEFAULT_LANGUAGE,
   DEFAULT_MODE,
   DEFAULT_UNIT,
   DEFAULT_AUDIO_ENABLED,
+  DEFAULT_MISSION_ID,
+  DEFAULT_MISSION_RESTART,
 } from '../constants/constants';
 
 type Listener = () => void;
@@ -50,6 +55,8 @@ export class UserPreferences {
   private mode: Mode;
   private unit: Unit;
   private audioEnabled: boolean;
+  private missionId: string | null;
+  private missionRestart: MissionRestartMode;
   private readonly listeners = new Set<Listener>();
 
   constructor() {
@@ -59,6 +66,12 @@ export class UserPreferences {
     this.audioEnabled =
       (safeStorage()?.getItem(LS_KEY_AUDIO) ?? String(DEFAULT_AUDIO_ENABLED)) ===
       BOOLEAN_TRUE;
+    this.missionId = safeStorage()?.getItem(LS_KEY_MISSION) ?? DEFAULT_MISSION_ID;
+    this.missionRestart = readEnum(
+      LS_KEY_MISSION_RESTART,
+      Object.values(MissionRestartMode),
+      DEFAULT_MISSION_RESTART,
+    );
   }
 
   /** Subscribe to any preference change. Returns an unsubscribe function. */
@@ -112,6 +125,28 @@ export class UserPreferences {
   setAudio(enabled: boolean): void {
     this.audioEnabled = enabled;
     this.persist(LS_KEY_AUDIO, enabled ? BOOLEAN_TRUE : BOOLEAN_FALSE);
+    this.notify();
+  }
+
+  /** Id of the last selected mission, or null if none has been chosen. */
+  getMissionId(): string | null {
+    return this.missionId;
+  }
+
+  setMissionId(id: string | null): void {
+    this.missionId = id;
+    if (id === null) safeStorage()?.removeItem(LS_KEY_MISSION);
+    else this.persist(LS_KEY_MISSION, id);
+    this.notify();
+  }
+
+  getMissionRestart(): MissionRestartMode {
+    return this.missionRestart;
+  }
+
+  setMissionRestart(mode: MissionRestartMode): void {
+    this.missionRestart = mode;
+    this.persist(LS_KEY_MISSION_RESTART, mode);
     this.notify();
   }
 }

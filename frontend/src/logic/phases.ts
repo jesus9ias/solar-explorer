@@ -1,16 +1,17 @@
 /**
- * Solar Explorer — multi-phase trajectory calculations.
+ * Solar Explorer — multi-phase trajectory geometry.
  *
  * Some spacecraft do not trace a single closed orbit: they hop between bodies
- * in stages (cruise out, survey, return). OSIRIS-REx is the canonical example —
- * Earth → Bennu → (survey) → Earth. Each stage is a {@link Phase} that connects
- * two anchor bodies over a duration; the whole itinerary repeats as a cycle.
+ * in stages (cruise out, survey, return). This module holds the pure geometry
+ * shared by those trajectories — the {@link Phase} shape and the heliocentric
+ * transfer arc {@link phasePoint}. The *timing* of a mission (which phase is
+ * active, when it ends) lives in {@link mission} (a clear start/end, no loop).
  *
  * Pure functions: no Phaser, no state. The scene supplies the live anchor
- * positions (which themselves move) and the elapsed simulation time; these
- * helpers decide which phase is active and where along its arc the craft sits.
+ * positions (which themselves move); this helper places the craft along the arc
+ * between two anchors.
  */
-import { EARTH_YEAR_MS, FULL_CIRCLE_RAD } from '../constants/constants';
+import { FULL_CIRCLE_RAD } from '../constants/constants';
 
 /** A single stage of a multi-phase trajectory between two anchor body ids. */
 export interface Phase {
@@ -22,55 +23,10 @@ export interface Phase {
   readonly durationYears: number;
 }
 
-/** The active phase plus how far through it the craft is. */
-export interface PhaseProgress {
-  /** Index of the active phase within the itinerary. */
-  readonly index: number;
-  readonly from: string;
-  readonly to: string;
-  /** Fraction through the active phase, 0..1. */
-  readonly t: number;
-}
-
 /** A 2D point in world space. */
 export interface Point {
   readonly x: number;
   readonly y: number;
-}
-
-/** Total length of one full itinerary cycle, in Earth years. */
-export function phaseCycleYears(phases: readonly Phase[]): number {
-  return phases.reduce((sum, p) => sum + p.durationYears, 0);
-}
-
-/**
- * Resolve the active phase and intra-phase fraction at a given elapsed time.
- *
- * The itinerary loops: elapsed time is wrapped into one cycle (negative values
- * are handled too). A phase boundary belongs to the *next* phase at fraction 0.
- */
-export function phaseProgressAt(
-  elapsedMs: number,
-  phases: readonly Phase[],
-): PhaseProgress {
-  const cycleMs = phaseCycleYears(phases) * EARTH_YEAR_MS;
-  // Wrap into [0, cycleMs), tolerating negative elapsed values.
-  let remaining = ((elapsedMs % cycleMs) + cycleMs) % cycleMs;
-  for (let i = 0; i < phases.length; i++) {
-    const durMs = phases[i].durationYears * EARTH_YEAR_MS;
-    if (remaining < durMs || i === phases.length - 1) {
-      return {
-        index: i,
-        from: phases[i].from,
-        to: phases[i].to,
-        t: durMs === 0 ? 0 : remaining / durMs,
-      };
-    }
-    remaining -= durMs;
-  }
-  // Unreachable for a non-empty itinerary; kept for type completeness.
-  const last = phases[phases.length - 1];
-  return { index: phases.length - 1, from: last.from, to: last.to, t: 1 };
 }
 
 /**

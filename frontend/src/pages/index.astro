@@ -21,8 +21,10 @@ const subtitle = getText('app.subtitle', Language.EN);
     <h1 class="se-visually-hidden">{title}</h1>
     <div id="game-root"></div>
     <div id="hud-root"></div>
+    <div id="mission-root"></div>
     <div id="library-root"></div>
     <div id="modal-root"></div>
+    <div id="mission-modal-root"></div>
     <audio id="ambient-audio" loop preload="none">
       <source src="/audio/ambient.ogg" type="audio/ogg" />
       <source src="/audio/ambient.mp3" type="audio/mpeg" />
@@ -32,38 +34,56 @@ const subtitle = getText('app.subtitle', Language.EN);
       import Phaser from 'phaser';
       import { LinearScene } from '../game/scenes/LinearScene';
       import { EllipseScene } from '../game/scenes/EllipseScene';
+      import { MissionScene } from '../game/scenes/MissionScene';
       import { HUD, type AudioController } from '../ui/HUD';
       import { LibraryModal } from '../ui/LibraryModal';
+      import { MissionModal } from '../ui/MissionModal';
+      import { MissionPanel } from '../ui/MissionPanel';
       import { userPreferences } from '../state/UserPreferences';
       import { modeState } from '../state/ModeState';
-      import { sceneKeyForMode, otherSceneKey } from '../logic/scenes';
+      import { missionState } from '../state/MissionState';
+      import { sceneKeyForMode, otherSceneKeys } from '../logic/scenes';
       import {
         Mode,
         REGISTRY_ON_SELECT,
         EVENT_LANG_CHANGED,
         EVENT_UNIT_CHANGED,
         EVENT_FOCUS_ELEMENT,
+        EVENT_MISSION_START,
         AUDIO_VOLUME,
         COLOR_BG,
       } from '../constants/constants';
 
       const gameRoot = document.getElementById('game-root');
       const hudRoot = document.getElementById('hud-root');
+      const missionRoot = document.getElementById('mission-root');
       const libraryRoot = document.getElementById('library-root');
       const modalRoot = document.getElementById('modal-root');
+      const missionModalRoot = document.getElementById('mission-modal-root');
       const audioEl = document.getElementById('ambient-audio') as HTMLAudioElement | null;
 
-      if (gameRoot && hudRoot && libraryRoot && modalRoot) {
+      if (gameRoot && hudRoot && missionRoot && libraryRoot && modalRoot && missionModalRoot) {
         const library = new LibraryModal(modalRoot, (id) =>
           game.events.emit(EVENT_FOCUS_ELEMENT, id),
         );
 
+        // Mission overlay (years counter + phase checklist) and the mission modal.
+        new MissionPanel(missionRoot);
+        const missionModal = new MissionModal(missionModalRoot, (id) => {
+          missionState.start(id);
+          game.events.emit(EVENT_MISSION_START, id);
+        });
+
         // The first scene in the array auto-starts, so order it by the saved
         // mode. Runtime switching is handled by showScene below.
-        const initialScenes =
-          modeState.getMode() === Mode.ELLIPSE
-            ? [EllipseScene, LinearScene]
-            : [LinearScene, EllipseScene];
+        const sceneByMode = {
+          [Mode.LINEAR]: LinearScene,
+          [Mode.ELLIPSE]: EllipseScene,
+          [Mode.MISSION]: MissionScene,
+        };
+        const all = [LinearScene, EllipseScene, MissionScene];
+        const first = sceneByMode[modeState.getMode()] ?? LinearScene;
+        const initialScenes = [first, ...all.filter((s) => s !== first)];
 
         const game = new Phaser.Game({
           type: Phaser.AUTO,
@@ -103,28 +123,36 @@ const subtitle = getText('app.subtitle', Language.EN);
           emit: (event, payload) => game.events.emit(event, payload),
           audio,
           onLibrary: () => library.open(),
+          onMissions: () => missionModal.open(),
         });
 
         const showScene = (mode: Mode) => {
           const target = sceneKeyForMode(mode);
-          const other = otherSceneKey(target);
           const manager = game.scene;
-          if (manager.isActive(other)) manager.stop(other);
+          for (const other of otherSceneKeys(target)) {
+            if (manager.isActive(other)) manager.stop(other);
+          }
           manager.start(target);
         };
 
         // The correct scene already auto-starts via initialScenes ordering.
-        // READY only handles deferred audio autoplay.
+        // READY handles deferred audio autoplay and the mandatory mission picker.
         game.events.once(Phaser.Core.Events.READY, () => {
           if (userPreferences.isAudioEnabled()) audio.setEnabled(true);
+          // Entering Mission mode requires choosing a mission, so open the picker.
+          if (modeState.getMode() === Mode.MISSION) missionModal.open();
         });
 
-        // Runtime mode switches.
-        modeState.subscribe((mode) => showScene(mode));
+        // Runtime mode switches. Entering Mission mode opens the picker.
+        modeState.subscribe((mode) => {
+          showScene(mode);
+          if (mode === Mode.MISSION) missionModal.open();
+        });
 
         userPreferences.subscribe(() => {
           hud.refresh();
           library.refresh();
+          missionModal.refresh();
           game.events.emit(EVENT_LANG_CHANGED);
           game.events.emit(EVENT_UNIT_CHANGED);
         });
@@ -366,6 +394,96 @@ const subtitle = getText('app.subtitle', Language.EN);
         line-height: 1.5;
       }
       .se-lib-goto { align-self: stretch; margin-top: 16px; text-align: center; }
+
+      /* Mission overlay (years counter + phase checklist) */
+      .se-mission-panel {
+        position: fixed;
+        left: 14px;
+        bottom: 16px;
+        z-index: 9;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        max-width: 280px;
+        pointer-events: none;
+        user-select: none;
+      }
+      .se-mission-counter {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        padding: 8px 12px;
+        background: linear-gradient(180deg, rgba(11, 19, 32, 0.95), rgba(11, 19, 32, 0.78));
+        border: 1px solid var(--se-border);
+        border-radius: 8px;
+      }
+      .se-mission-counter-value {
+        font-size: 26px;
+        font-weight: 700;
+        color: var(--se-amber);
+        letter-spacing: 0.02em;
+        font-variant-numeric: tabular-nums;
+      }
+      .se-mission-counter-label {
+        font-size: 9px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--se-muted);
+      }
+      .se-mission-checklist {
+        list-style: none;
+        margin: 0;
+        padding: 10px 12px;
+        background: rgba(11, 19, 32, 0.82);
+        border: 1px solid var(--se-border);
+        border-radius: 8px;
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+      }
+      .se-mission-phase {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12px;
+        color: var(--se-muted);
+        transition: color 0.3s;
+      }
+      .se-mission-check {
+        flex: none;
+        width: 15px;
+        height: 15px;
+        border: 1px solid var(--se-border);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        line-height: 1;
+        color: transparent;
+      }
+      .se-mission-phase.is-done { color: var(--se-text); }
+      .se-mission-phase.is-done .se-mission-check {
+        border-color: var(--se-accent);
+        background: var(--se-accent);
+        color: #04140d;
+      }
+      .se-mission-phase.is-done .se-mission-check::after { content: '✓'; }
+      .se-mission-phase-duration {
+        flex: none;
+        min-width: 48px;
+        color: var(--se-amber);
+        font-variant-numeric: tabular-nums;
+        font-size: 11px;
+      }
+      .se-mission-prompt { font-size: 12px; color: var(--se-muted); line-height: 1.4; }
+      .se-mission-modal-phases { margin: 4px 0; padding-left: 28px; }
+      .se-mission-modal-phases li { font-size: 13px; line-height: 1.5; margin-bottom: 4px; padding-left: 4px; }
+      .se-mission-active-dot { color: var(--se-accent); }
+
+      /* Mission picker list: one mission per row. */
+      .se-mission-list { flex-direction: column; flex-wrap: nowrap; }
+      .se-mission-list .se-lib-item { width: 100%; text-align: left; }
 
       @media (max-width: 640px) {
         .se-hud {

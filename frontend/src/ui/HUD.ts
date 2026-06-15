@@ -9,6 +9,7 @@ import {
   Language,
   Mode,
   Unit,
+  MissionRestartMode,
   ORBIT_SPEED_MULTIPLIERS,
   ORBIT_SPEED_PAUSED,
   DEFAULT_ORBIT_SPEED,
@@ -17,11 +18,15 @@ import {
   EVENT_LINEAR_NEXT,
   EVENT_ELLIPSE_SPEED,
   EVENT_ELLIPSE_LINES,
+  EVENT_MISSION_SPEED,
+  EVENT_MISSION_LINES,
+  EVENT_MISSION_RESTART,
 } from '../constants/constants';
 import { getText } from '../logic/i18n';
 import { userPreferences } from '../state/UserPreferences';
 import { scaleState } from '../state/ScaleState';
 import { modeState } from '../state/ModeState';
+import { missionState } from '../state/MissionState';
 
 /** Controls background ambient audio playback. */
 export interface AudioController {
@@ -37,6 +42,7 @@ export interface HUDDeps {
   readonly emit: EmitFn;
   readonly audio: AudioController;
   readonly onLibrary: () => void;
+  readonly onMissions: () => void;
 }
 
 interface SegmentOption<T> {
@@ -59,6 +65,7 @@ export class HUD {
   private readonly deps: HUDDeps;
   private orbitSpeed = DEFAULT_ORBIT_SPEED;
   private orbitLinesVisible = DEFAULT_ORBIT_LINES_VISIBLE;
+  private missionLinesVisible = DEFAULT_ORBIT_LINES_VISIBLE;
 
   constructor(deps: HUDDeps) {
     this.deps = deps;
@@ -146,6 +153,7 @@ export class HUD {
         [
           { value: Mode.LINEAR, label: getText('hud.linear', lang) },
           { value: Mode.ELLIPSE, label: getText('hud.ellipse', lang) },
+          { value: Mode.MISSION, label: getText('hud.mission', lang) },
         ],
         modeState.getMode(),
         (value) => modeState.setMode(value),
@@ -185,41 +193,86 @@ export class HUD {
     this.container.append(this.button('hud.library', () => this.deps.onLibrary(), '≡'));
 
     // Mode-specific controls.
-    if (modeState.getMode() === Mode.LINEAR) {
+    const mode = modeState.getMode();
+    if (mode === Mode.LINEAR) {
       this.container.append(this.button('hud.prevElement', () => this.deps.emit(EVENT_LINEAR_PREV), '◀'));
       this.container.append(this.button('hud.nextElement', () => this.deps.emit(EVENT_LINEAR_NEXT), '▶'));
+    } else if (mode === Mode.ELLIPSE) {
+      this.container.append(this.speedControl(EVENT_ELLIPSE_SPEED));
+      this.container.append(
+        this.toggleControl('hud.orbitLines', this.orbitLinesVisible, (value) => {
+          this.orbitLinesVisible = value;
+          this.deps.emit(EVENT_ELLIPSE_LINES, value);
+          this.build();
+        }),
+      );
     } else {
-      this.container.append(
-        this.segment<number>(
-          'hud.orbitSpeed',
-          ORBIT_SPEED_MULTIPLIERS.map((m) =>
-            m === ORBIT_SPEED_PAUSED
-              ? { value: m, label: '||' }
-              : { value: m, label: `${m}×` },
-          ),
-          this.orbitSpeed,
-          (value) => {
-            this.orbitSpeed = value;
-            this.deps.emit(EVENT_ELLIPSE_SPEED, value);
-            this.build();
-          },
-        ),
-      );
-      this.container.append(
-        this.segment<boolean>(
-          'hud.orbitLines',
-          [
-            { value: true, label: getText('hud.show', lang), icon: '⊙' },
-            { value: false, label: getText('hud.hide', lang), icon: '⊘' },
-          ],
-          this.orbitLinesVisible,
-          (value) => {
-            this.orbitLinesVisible = value;
-            this.deps.emit(EVENT_ELLIPSE_LINES, value);
-            this.build();
-          },
-        ),
-      );
+      this.buildMissionControls(lang);
     }
+  }
+
+  /** Orbit-speed segment (shared by Ellipse and Mission); 0 = paused (||). */
+  private speedControl(event: string): HTMLDivElement {
+    return this.segment<number>(
+      'hud.orbitSpeed',
+      ORBIT_SPEED_MULTIPLIERS.map((m) =>
+        m === ORBIT_SPEED_PAUSED ? { value: m, label: '||' } : { value: m, label: `${m}×` },
+      ),
+      this.orbitSpeed,
+      (value) => {
+        this.orbitSpeed = value;
+        this.deps.emit(event, value);
+        this.build();
+      },
+    );
+  }
+
+  /** Show/Hide toggle segment for orbit or mission lines. */
+  private toggleControl(
+    labelKey: string,
+    current: boolean,
+    onChange: (value: boolean) => void,
+  ): HTMLDivElement {
+    const lang = userPreferences.getLanguage();
+    return this.segment<boolean>(
+      labelKey,
+      [
+        { value: true, label: getText('hud.show', lang), icon: '⊙' },
+        { value: false, label: getText('hud.hide', lang), icon: '⊘' },
+      ],
+      current,
+      onChange,
+    );
+  }
+
+  private buildMissionControls(lang: Language): void {
+    // Open the mission modal (mandatory selection lives there).
+    this.container.append(this.button('hud.missions', () => this.deps.onMissions(), '🚀'));
+    // Speed doubles as pause/advance for the running mission.
+    this.container.append(this.speedControl(EVENT_MISSION_SPEED));
+    // Restart + on-finish behavior.
+    this.container.append(this.button('hud.restart', () => this.deps.emit(EVENT_MISSION_RESTART), '↻'));
+    this.container.append(
+      this.segment<MissionRestartMode>(
+        'hud.onFinish',
+        [
+          { value: MissionRestartMode.MANUAL, label: getText('hud.manual', lang) },
+          { value: MissionRestartMode.AUTO, label: getText('hud.auto', lang) },
+        ],
+        missionState.getRestartMode(),
+        (value) => {
+          missionState.setRestartMode(value);
+          this.build();
+        },
+      ),
+    );
+    // Mission trajectory lines, controlled separately from orbit lines.
+    this.container.append(
+      this.toggleControl('hud.missionLines', this.missionLinesVisible, (value) => {
+        this.missionLinesVisible = value;
+        this.deps.emit(EVENT_MISSION_LINES, value);
+        this.build();
+      }),
+    );
   }
 }

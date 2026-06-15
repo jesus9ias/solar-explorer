@@ -12,6 +12,7 @@
       "library": "Library",
       "linear": "Linear",
       "ellipse": "Ellipse",
+      "mission": "Mission",
       "mkm": "MKm",
       "au": "AU",
       "on": "On",
@@ -21,7 +22,31 @@
       "orbitSpeed": "Orbit speed",
       "orbitLines": "Orbit lines",
       "show": "Show",
-      "hide": "Hide"
+      "hide": "Hide",
+      "missions": "Missions",
+      "missionLines": "Mission lines",
+      "missionControl": "Mission control",
+      "restart": "Restart",
+      "onFinish": "On finish",
+      "auto": "Auto",
+      "manual": "Manual"
+    },
+    "mission": {
+      "elapsed": "Mission elapsed",
+      "years": "yrs",
+      "progress": "Progress",
+      "selectPrompt": "Open Missions to choose one"
+    },
+    "missionModal": {
+      "title": "Missions",
+      "start": "Start mission",
+      "restart": "Restart mission",
+      "duration": "Duration",
+      "phases": "Phases",
+      "highlights": "Of note",
+      "years": "years",
+      "active": "In progress",
+      "placeholder": "Select a mission to see its plan."
     },
     "modal": {
       "distanceToSun": "Distance to Sun",
@@ -73,6 +98,7 @@
       "library": "Biblioteca",
       "linear": "Lineal",
       "ellipse": "Elíptico",
+      "mission": "Misión",
       "mkm": "MKm",
       "au": "UA",
       "on": "Encendido",
@@ -82,7 +108,31 @@
       "orbitSpeed": "Velocidad orbital",
       "orbitLines": "Líneas de órbita",
       "show": "Mostrar",
-      "hide": "Ocultar"
+      "hide": "Ocultar",
+      "missions": "Misiones",
+      "missionLines": "Líneas de misión",
+      "missionControl": "Control de misión",
+      "restart": "Reiniciar",
+      "onFinish": "Al terminar",
+      "auto": "Auto",
+      "manual": "Manual"
+    },
+    "mission": {
+      "elapsed": "Tiempo de misión",
+      "years": "años",
+      "progress": "Progreso",
+      "selectPrompt": "Abre Misiones para elegir una"
+    },
+    "missionModal": {
+      "title": "Misiones",
+      "start": "Iniciar misión",
+      "restart": "Reiniciar misión",
+      "duration": "Duración",
+      "phases": "Fases",
+      "highlights": "Datos de interés",
+      "years": "años",
+      "active": "En curso",
+      "placeholder": "Selecciona una misión para ver su plan."
     },
     "modal": {
       "distanceToSun": "Distancia al Sol",

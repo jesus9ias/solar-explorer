@@ -64,12 +64,39 @@ export interface SpacecraftData {
   /** Optional Ellipse-mode visual speed factor (higher = faster); overrides the
    * ring-proximity default. Cosmetic only — see logic/orbiterSpeed. */
   readonly speedFactor?: number;
-  /** Optional multi-phase itinerary (e.g. Earth → Bennu → Earth). When present,
-   * the craft follows the phased trajectory instead of a single orbit — see
-   * logic/phases and EllipseScene. */
-  readonly phases?: readonly Phase[];
   readonly en: LocalizedSpacecraftText;
   readonly es: LocalizedSpacecraftText;
+}
+
+/** A localized label attached to a single mission phase. */
+export interface LocalizedPhaseLabel {
+  readonly label: string;
+}
+
+/** A mission phase: a transfer/station-keeping leg with a localized label. */
+export interface MissionPhase extends Phase {
+  readonly en: LocalizedPhaseLabel;
+  readonly es: LocalizedPhaseLabel;
+}
+
+/** Per-language text block for a mission. */
+export interface LocalizedMissionText {
+  readonly name: string;
+  readonly summary: string;
+  readonly highlights?: readonly string[];
+}
+
+/** Shape of a single entry in `missions.json`. */
+export interface MissionData {
+  readonly id: string;
+  /** Id of the spacecraft (in spacecraft.json) that flies this mission. */
+  readonly spacecraftId: string;
+  /** Total mission length in Earth years (sum of the phase durations). */
+  readonly durationYears: number;
+  /** Ordered itinerary legs. A final `to` of `self` is the craft's current pos. */
+  readonly phases: readonly MissionPhase[];
+  readonly en: LocalizedMissionText;
+  readonly es: LocalizedMissionText;
 }
 
 /** A single navigable item in the library panel. */

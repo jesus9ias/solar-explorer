@@ -1,0 +1,186 @@
+[
+  {
+    "id": "osiris_rex",
+    "spacecraftId": "osiris_rex",
+    "durationYears": 7.0,
+    "phases": [
+      { "from": "earth", "to": "bennu", "durationYears": 2.2, "en": { "label": "Cruise to Bennu" }, "es": { "label": "Crucero a Bennu" } },
+      { "from": "bennu", "to": "bennu", "durationYears": 2.5, "en": { "label": "Survey and sample Bennu" }, "es": { "label": "Estudio y muestreo de Bennu" } },
+      { "from": "bennu", "to": "earth", "durationYears": 2.3, "en": { "label": "Return the sample to Earth" }, "es": { "label": "Regreso de la muestra a la Tierra" } }
+    ],
+    "en": {
+      "name": "OSIRIS-REx",
+      "summary": "A round trip to near-Earth asteroid Bennu to grab a sample of primitive rock and bring it home.",
+      "highlights": [
+        "Spent over two years mapping Bennu before touching down for seconds to collect material.",
+        "Dropped its sample capsule over Utah in 2023, then flew on toward asteroid Apophis."
+      ]
+    },
+    "es": {
+      "name": "OSIRIS-REx",
+      "summary": "Un viaje de ida y vuelta al asteroide cercano Bennu para tomar una muestra de roca primitiva y traerla a casa.",
+      "highlights": [
+        "Pasó más de dos años cartografiando Bennu antes de descender segundos para recolectar material.",
+        "Soltó su cápsula de muestras sobre Utah en 2023 y siguió rumbo al asteroide Apofis."
+      ]
+    }
+  },
+  {
+    "id": "bepicolombo",
+    "spacecraftId": "bepicolombo",
+    "durationYears": 7.3,
+    "phases": [
+      { "from": "earth", "to": "venus", "durationYears": 2.0, "en": { "label": "Cruise to Venus" }, "es": { "label": "Crucero a Venus" } },
+      { "from": "venus", "to": "venus", "durationYears": 1.0, "en": { "label": "Venus flybys" }, "es": { "label": "Sobrevuelos de Venus" } },
+      { "from": "venus", "to": "mercury", "durationYears": 0.8, "en": { "label": "Transfer to Mercury" }, "es": { "label": "Transferencia a Mercurio" } },
+      { "from": "mercury", "to": "mercury", "durationYears": 3.5, "en": { "label": "Mercury orbit insertion" }, "es": { "label": "Inserción en órbita de Mercurio" } }
+    ],
+    "en": {
+      "name": "BepiColombo",
+      "summary": "A long, looping cruise that brakes against the Sun's gravity with repeated flybys before settling into orbit around Mercury.",
+      "highlights": [
+        "Uses nine planetary flybys to shed speed instead of carrying huge amounts of fuel.",
+        "A joint Europe–Japan mission carrying two orbiters that separate at Mercury."
+      ]
+    },
+    "es": {
+      "name": "BepiColombo",
+      "summary": "Un crucero largo y sinuoso que frena contra la gravedad del Sol con sobrevuelos repetidos antes de orbitar Mercurio.",
+      "highlights": [
+        "Usa nueve sobrevuelos planetarios para perder velocidad en lugar de cargar enormes cantidades de combustible.",
+        "Misión conjunta de Europa y Japón con dos orbitadores que se separan en Mercurio."
+      ]
+    }
+  },
+  {
+    "id": "voyager1",
+    "spacecraftId": "voyager1",
+    "durationYears": 47.3,
+    "phases": [
+      { "from": "earth", "to": "jupiter", "durationYears": 1.5, "en": { "label": "Cruise to Jupiter" }, "es": { "label": "Crucero a Júpiter" } },
+      { "from": "jupiter", "to": "saturn", "durationYears": 1.7, "en": { "label": "Jupiter to Saturn flyby" }, "es": { "label": "De Júpiter a Saturno" } },
+      { "from": "saturn", "to": "self", "durationYears": 44.1, "en": { "label": "Escape toward interstellar space" }, "es": { "label": "Escape hacia el espacio interestelar" } }
+    ],
+    "en": {
+      "name": "Voyager 1",
+      "summary": "A grand tour of Jupiter and Saturn that became humanity's farthest journey — still coasting outward decades later.",
+      "highlights": [
+        "Launched in 1977; flew past Jupiter in 1979 and Saturn in 1980.",
+        "Crossed into interstellar space in 2012 and is now the most distant human-made object."
+      ]
+    },
+    "es": {
+      "name": "Voyager 1",
+      "summary": "Una gran gira por Júpiter y Saturno que se convirtió en el viaje más lejano de la humanidad, aún avanzando décadas después.",
+      "highlights": [
+        "Lanzada en 1977; sobrevoló Júpiter en 1979 y Saturno en 1980.",
+        "Cruzó al espacio interestelar en 2012 y es el objeto fabricado por el ser humano más lejano."
+      ]
+    }
+  },
+  {
+    "id": "voyager2",
+    "spacecraftId": "voyager2",
+    "durationYears": 47.4,
+    "phases": [
+      { "from": "earth", "to": "jupiter", "durationYears": 1.9, "en": { "label": "Cruise to Jupiter" }, "es": { "label": "Crucero a Júpiter" } },
+      { "from": "jupiter", "to": "saturn", "durationYears": 2.1, "en": { "label": "Jupiter to Saturn flyby" }, "es": { "label": "De Júpiter a Saturno" } },
+      { "from": "saturn", "to": "uranus", "durationYears": 4.5, "en": { "label": "Saturn to Uranus flyby" }, "es": { "label": "De Saturno a Urano" } },
+      { "from": "uranus", "to": "neptune", "durationYears": 3.5, "en": { "label": "Uranus to Neptune flyby" }, "es": { "label": "De Urano a Neptuno" } },
+      { "from": "neptune", "to": "self", "durationYears": 35.4, "en": { "label": "Escape toward interstellar space" }, "es": { "label": "Escape hacia el espacio interestelar" } }
+    ],
+    "en": {
+      "name": "Voyager 2",
+      "summary": "The only spacecraft to visit all four giant planets, riding a rare alignment from Jupiter out to Neptune and beyond.",
+      "highlights": [
+        "Flew by Jupiter (1979), Saturn (1981), Uranus (1986) and Neptune (1989).",
+        "Entered interstellar space in 2018, six years after Voyager 1."
+      ]
+    },
+    "es": {
+      "name": "Voyager 2",
+      "summary": "La única nave que ha visitado los cuatro planetas gigantes, aprovechando una rara alineación de Júpiter a Neptuno y más allá.",
+      "highlights": [
+        "Sobrevoló Júpiter (1979), Saturno (1981), Urano (1986) y Neptuno (1989).",
+        "Entró en el espacio interestelar en 2018, seis años después de Voyager 1."
+      ]
+    }
+  },
+  {
+    "id": "pioneer10",
+    "spacecraftId": "pioneer10",
+    "durationYears": 52.8,
+    "phases": [
+      { "from": "earth", "to": "jupiter", "durationYears": 1.8, "en": { "label": "Cruise to Jupiter" }, "es": { "label": "Crucero a Júpiter" } },
+      { "from": "jupiter", "to": "self", "durationYears": 51.0, "en": { "label": "Escape across the outer system" }, "es": { "label": "Escape por el sistema exterior" } }
+    ],
+    "en": {
+      "name": "Pioneer 10",
+      "summary": "The first probe to cross the asteroid belt and fly past Jupiter, then coast silently toward the edge of the solar system.",
+      "highlights": [
+        "First spacecraft to fly by Jupiter, in December 1973.",
+        "Its last faint signal was received in 2003; it drifts on toward the star Aldebaran."
+      ]
+    },
+    "es": {
+      "name": "Pioneer 10",
+      "summary": "La primera sonda en cruzar el cinturón de asteroides y sobrevolar Júpiter, para luego deslizarse en silencio hacia el borde del sistema solar.",
+      "highlights": [
+        "Primera nave en sobrevolar Júpiter, en diciembre de 1973.",
+        "Su última señal débil se recibió en 2003; sigue a la deriva rumbo a la estrella Aldebarán."
+      ]
+    }
+  },
+  {
+    "id": "pioneer11",
+    "spacecraftId": "pioneer11",
+    "durationYears": 51.7,
+    "phases": [
+      { "from": "earth", "to": "jupiter", "durationYears": 1.6, "en": { "label": "Cruise to Jupiter" }, "es": { "label": "Crucero a Júpiter" } },
+      { "from": "jupiter", "to": "saturn", "durationYears": 4.8, "en": { "label": "Jupiter to Saturn flyby" }, "es": { "label": "De Júpiter a Saturno" } },
+      { "from": "saturn", "to": "self", "durationYears": 45.3, "en": { "label": "Escape across the outer system" }, "es": { "label": "Escape por el sistema exterior" } }
+    ],
+    "en": {
+      "name": "Pioneer 11",
+      "summary": "Used Jupiter's gravity to swing across the solar system and become the first spacecraft to fly past Saturn.",
+      "highlights": [
+        "First probe to visit Saturn, in 1979.",
+        "Contact was lost in 1995; it heads toward the constellation Aquila."
+      ]
+    },
+    "es": {
+      "name": "Pioneer 11",
+      "summary": "Aprovechó la gravedad de Júpiter para cruzar el sistema solar y convertirse en la primera nave en sobrevolar Saturno.",
+      "highlights": [
+        "Primera sonda en visitar Saturno, en 1979.",
+        "Se perdió el contacto en 1995; se dirige hacia la constelación del Águila."
+      ]
+    }
+  },
+  {
+    "id": "new_horizons",
+    "spacecraftId": "new_horizons",
+    "durationYears": 19.1,
+    "phases": [
+      { "from": "earth", "to": "jupiter", "durationYears": 1.2, "en": { "label": "Jupiter gravity assist" }, "es": { "label": "Asistencia gravitatoria de Júpiter" } },
+      { "from": "jupiter", "to": "pluto", "durationYears": 8.4, "en": { "label": "Cruise to Pluto" }, "es": { "label": "Crucero a Plutón" } },
+      { "from": "pluto", "to": "self", "durationYears": 9.5, "en": { "label": "Into the Kuiper Belt" }, "es": { "label": "Hacia el Cinturón de Kuiper" } }
+    ],
+    "en": {
+      "name": "New Horizons",
+      "summary": "A fast, direct dash to Pluto — the fastest spacecraft ever launched — continuing on to explore the Kuiper Belt.",
+      "highlights": [
+        "Left Earth in 2006 faster than any probe before it, reaching Jupiter in just over a year.",
+        "Flew past Pluto in 2015 and later visited the distant object Arrokoth."
+      ]
+    },
+    "es": {
+      "name": "New Horizons",
+      "summary": "Una carrera rápida y directa hacia Plutón —la nave más veloz jamás lanzada— que continúa explorando el Cinturón de Kuiper.",
+      "highlights": [
+        "Partió de la Tierra en 2006 más rápido que cualquier sonda anterior, llegando a Júpiter en poco más de un año.",
+        "Sobrevoló Plutón en 2015 y más tarde visitó el lejano objeto Arrokoth."
+      ]
+    }
+  }
+]

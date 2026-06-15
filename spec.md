@@ -22,7 +22,7 @@ This document is the authoritative source of truth for implementing the Solar Ex
 
 ## Project Overview
 
-Solar Explorer is a frontend-only educational web application that lets users navigate and explore a scale representation of the solar system. It has two interactive modes — Linear and Ellipse — and covers all major celestial bodies, natural satellites, artificial satellites, dwarf planets, notable asteroids, comets, and deep-space probes, from the Sun out to Voyager 1.
+Solar Explorer is a frontend-only educational web application that lets users navigate and explore a scale representation of the solar system. It has three interactive modes — Linear, Ellipse and Mission — and covers all major celestial bodies, natural satellites, artificial satellites, dwarf planets, notable asteroids, comets, and deep-space probes, from the Sun out to Voyager 1. Mission mode replays a single spacecraft's itinerary (launch to final destination) on the shared orbital map.
 
 ---
 
@@ -109,24 +109,31 @@ frontend/src/
 ├── config/
 │   ├── bodies.json          # All celestial bodies data (EN + ES)
 │   ├── spacecraft.json      # All artificial spacecraft data (EN + ES)
+│   ├── missions.json        # Mission-mode itineraries: phases + copy (EN + ES)
 │   ├── funfacts.json        # Contextual notes for Linear mode (EN + ES)
 │   └── ui.json              # All user-facing UI strings (EN + ES)
 ├── constants/
 │   └── constants.ts         # All named constants and enums — zero magic values
 ├── state/
 │   ├── NavigationState.ts   # Current position — in memory only
-│   ├── UserPreferences.ts   # Switches — persisted to localStorage
+│   ├── UserPreferences.ts   # Switches + selected mission/restart — persisted to localStorage
 │   ├── ScaleState.ts        # Current scale unit and zoom level
-│   └── ModeState.ts         # Current mode (Ellipse | Linear)
+│   ├── ModeState.ts         # Current mode (Linear | Ellipse | Mission)
+│   └── MissionState.ts      # Active mission runtime (status, elapsed)
 ├── logic/
 │   ├── scale.ts             # Scale and coordinate conversion functions
 │   ├── orbit.ts             # Orbital position calculations
+│   ├── phases.ts            # Heliocentric transfer-arc geometry (shared)
+│   ├── mission.ts           # Non-cyclic mission timeline
 │   ├── i18n.ts              # Language resolution helper
-│   └── library.ts           # Library tree builder
+│   ├── library.ts           # Library tree builder
+│   └── missions.ts          # Mission data loader/lookup
 ├── game/
 │   ├── scenes/
+│   │   ├── OrbitalMapScene.ts # Abstract base: shared heliocentric map
 │   │   ├── LinearScene.ts   # Phaser Scene for Linear mode
-│   │   └── EllipseScene.ts  # Phaser Scene for Ellipse mode
+│   │   ├── EllipseScene.ts  # Phaser Scene for Ellipse mode
+│   │   └── MissionScene.ts  # Phaser Scene for Mission mode
 │   ├── objects/
 │   │   ├── CelestialBody.ts # Phaser GameObject for planets, moons, dwarf planets
 │   │   ├── Spacecraft.ts    # Phaser GameObject for probes and satellites
@@ -137,6 +144,8 @@ frontend/src/
 │       └── RulerRenderer.ts # Left-side distance counter for Linear mode
 ├── ui/
 │   ├── LibraryModal.ts      # Two-column modal: element list + info + go-to
+│   ├── MissionModal.ts      # Two-column modal: mission list + plan + start
+│   ├── MissionPanel.ts      # Mission HUD overlay: years counter + phase checklist
 │   ├── InfoView.ts          # Embeddable per-element info panel (preview + data)
 │   └── HUD.ts               # All switch controls and buttons
 ├── pages/
@@ -161,9 +170,11 @@ frontend/src/
 | Control | Type | Options | Persisted |
 |---|---|---|---|
 | Language | Switch | English / Spanish | localStorage |
-| Mode | Switch | Linear / Ellipse | localStorage |
+| Mode | Switch | Linear / Ellipse / Mission | localStorage |
 | Distance unit | Switch | MKm / AU | localStorage |
 | Audio | Switch | On / Off | localStorage |
+| Selected mission | (Mission mode) | one of the missions in `missions.json` | localStorage |
+| Mission restart | (Mission mode) | Manual / Auto | localStorage |
 
 All switch state reads from `UserPreferences` on init. On change: update `UserPreferences`, update `localStorage`, notify relevant subscribers.
 
@@ -312,6 +323,58 @@ All four constants (`MIN_SCREEN_RADIUS`, `MAX_SCREEN_RADIUS`, `MIN_REAL_RADIUS`,
 - Natural satellites are proportional to their host planet with an independent min/max range.
 - Artificial spacecraft and asteroids use a fixed illustrative size `SPACECRAFT_RADIUS_PX` regardless of zoom.
 - At any zoom level, all bodies remain within their min/max bounds.
+
+---
+
+## Mission Mode
+
+Mission mode replays a single spacecraft's itinerary on the same heliocentric
+map as Ellipse mode (shared base scene: Sun at the origin, planets and moons
+orbiting, pan/zoom camera, compass arrow). The selected craft cruises along
+heliocentric transfer arcs between anchors, orbits an anchor during station-
+keeping/survey phases, and ends at its final anchor — a planet, Earth, or its
+current known position. Other spacecraft are hidden so the mission reads clearly.
+
+### Itinerary data (missions.json)
+
+Each mission references a spacecraft by id (reusing its name/image/objectives)
+and adds the Mission-mode itinerary and copy:
+
+```jsonc
+{
+  "id": "voyager1",
+  "spacecraftId": "voyager1",
+  "durationYears": 47.3,            // equals the sum of phase durations
+  "phases": [
+    { "from": "earth", "to": "jupiter", "durationYears": 1.5,
+      "en": { "label": "Cruise to Jupiter" }, "es": { "label": "Crucero a Júpiter" } },
+    { "from": "saturn", "to": "self", "durationYears": 44.1,
+      "en": { "label": "Escape toward interstellar space" }, "es": { "label": "..." } }
+  ],
+  "en": { "name": "Voyager 1", "summary": "...", "highlights": ["..."] },
+  "es": { ... }
+}
+```
+
+- `from`/`to` are solar-orbiting body ids. `from === to` is a station-keeping leg.
+- The final `to` may be `"self"` — the craft's current known position (an escape
+  probe's endpoint, consistent with its static position in Ellipse mode).
+- Durations are realistic (Voyager spans ~47 years), conveying the magnitude of
+  the journeys; the elapsed-years counter shows one decimal.
+
+### Behavior
+
+- Entering Mission mode opens the mission picker modal immediately — choosing a
+  mission is mandatory. Opening the picker mid-mission does not stop the running
+  mission; starting a different one resets the scene to that itinerary.
+- The orbit-speed control (pause / 1× / 2× / 5×) pauses or advances the mission
+  and the bodies together.
+- A per-phase progress checklist fills in as phases complete (illustrative only).
+- Mission trajectory lines have their own show/hide toggle and color, separate
+  from Ellipse orbit lines.
+- On completion the scene freezes (restart mode **Manual**, default) or snaps
+  every element back to its base position and replays (restart mode **Auto**).
+- The timeline is non-cyclic: it has a clear start and end (see `logic/mission.ts`).
 
 ---
 
@@ -500,6 +563,12 @@ Feature: Mode switch
     Given the user is in Ellipse mode at a certain solar distance
     When the user switches to Linear mode
     Then the Linear scene loads with the scroll position at the equivalent solar distance
+
+  Scenario: Switch to Mission mode
+    Given the user is in any mode
+    When the user switches to Mission mode
+    Then the Mission scene loads
+    And the mission picker modal opens immediately
 
   Scenario: Mode preference persists on reload
     Given the user has set mode to Ellipse
@@ -717,29 +786,71 @@ Feature: Orbital simulation
     Then Voyager 1 does not follow an orbital path
     And it is shown at its approximate static position in interstellar space
 
-  Scenario: Multi-phase mission trajectory
-    Given OSIRIS-REx has a phased itinerary Earth -> Bennu -> (survey) -> Earth
-    When the simulation runs
-    Then the craft follows a heliocentric arc that curves around the Sun without crossing it
-    And the arc always sweeps forward (prograde), never appearing to retreat
-    And it orbits Bennu during the survey phase rather than sitting on top of it
-    And it returns along an arc to Earth
-    And the whole itinerary repeats as a cycle
-    And its anchor bodies (Earth and Bennu) keep orbiting the Sun throughout
-    And the trajectory overlay follows the orbit-lines visibility toggle
-
-  Scenario: One-way gravity-assist itinerary
-    Given BepiColombo has a phased itinerary Earth -> Venus -> Mercury
-    When the simulation runs
-    Then the craft cruises inward, orbiting Venus then Mercury between transfers
-    And it ends in orbit around Mercury rather than returning to Earth
-    And a phase anchor only ever references a real solar-orbiting body
-
   Scenario: Moons and satellites clear their host
     Given a host body is drawn at an exaggerated size in Ellipse mode
     When its moons and host-orbiting spacecraft are placed
     Then each orbits on its own concentric ring outside the host's rendered disc
     And no two of them share a ring
+```
+
+### Feature: Mission mode
+
+```gherkin
+Feature: Mission mode
+  As a user
+  I want to replay a single spacecraft's mission from launch to its destination
+  So that I can grasp the route and the decades these journeys take
+
+  Scenario: Choosing a mission is mandatory
+    Given the user switches to Mission mode
+    Then the mission picker modal opens immediately
+    And the scene waits until a mission is started
+
+  Scenario: Start a mission
+    Given the mission picker is open
+    When the user selects a mission and clicks Start
+    Then the scene resets and the craft begins its itinerary from the start
+    And the elapsed-years counter runs
+    And the phase checklist fills in as each phase completes
+
+  Scenario: Round-trip itinerary
+    Given OSIRIS-REx is running
+    Then it cruises to Bennu on a heliocentric arc
+    And it orbits Bennu during the survey phase rather than sitting on top of it
+    And it returns along an arc to Earth
+    And its anchor bodies keep orbiting the Sun throughout
+
+  Scenario: One-way itinerary
+    Given BepiColombo is running
+    Then it cruises inward and ends in orbit around Mercury, never returning to Earth
+
+  Scenario: Escape itinerary ends at the current position
+    Given an escape probe (Voyager, Pioneer or New Horizons) is running
+    Then it flies past its planets and coasts out to its current known position
+    And the elapsed-years counter spans decades
+
+  Scenario: Completion freezes the scene
+    Given a mission reaches its end with restart mode Manual
+    Then the whole scene freezes in place
+
+  Scenario: Automatic restart
+    Given a mission reaches its end with restart mode Auto
+    Then every element snaps back to its base position and the itinerary replays
+
+  Scenario: Pause and speed
+    Given a mission is running
+    When the user presses pause or selects 1x, 2x or 5x
+    Then the mission and the bodies pause or advance accordingly
+
+  Scenario: Mission lines toggle
+    Given the mission trajectory is visible
+    When the user toggles Mission lines off
+    Then the trajectory overlay hides, independently of the orbit-lines toggle
+
+  Scenario: Opening the picker mid-mission
+    Given a mission is in progress
+    When the user opens the mission modal
+    Then the running mission continues until the user starts a different one
 ```
 
 ### Feature: Scale system
@@ -804,22 +915,44 @@ All tests live in `frontend/src/tests/`. Tests use Vitest. No test imports Phase
 | `orbitAngle` for Jupiter takes ~11.86 times longer than Earth | `period=11.86yr, speed=1` | angle fraction proportional to ratio |
 | Non-orbiting probes return null trajectory | `Voyager 1 body` | `isOrbiting === false` |
 
-### phases.test.ts
+### phases.test.ts (heliocentric transfer-arc geometry)
 
 | Test | Input | Expected output |
 |---|---|---|
-| `phaseCycleYears` sums phase durations | OSIRIS itinerary | `7.0` years |
-| `phaseProgressAt` starts in first phase at t=0 | `elapsed=0` | `{index:0, from:earth, to:bennu, t:0}` |
-| `phaseProgressAt` reports intra-phase fraction | mid-phase elapsed | `t` in `(0,1)` |
-| `phaseProgressAt` boundary belongs to next phase | `elapsed = phase0 duration` | next phase at `t=0` |
-| `phaseProgressAt` loops after a full cycle | `elapsed = cycle` | `{index:0, t:0}` |
 | `phasePoint` returns start/end at t=0 / t=1 | endpoints | `from` / `to` |
 | `phasePoint` blends solar distance between orbits | same-angle endpoints | mid radius on the axis |
 | `phasePoint` keeps the arc clear of the Sun | opposite-side anchors | every sample stays at the orbit radius, never near origin |
 | `phasePoint` sweeps prograde, never retreating | `to` just clockwise of `from` | first moves forward (positive y) |
 | `phasePoint` collapses when endpoints coincide | `from === to` | shared anchor |
-| phased craft anchor only real solar-orbiting bodies | `spacecraft.json` phases | every `from`/`to` is a solar body id |
-| BepiColombo itinerary is Earth→Venus→Mercury, ends at Mercury | `bepicolombo` phases | `['earth->venus','venus->venus','venus->mercury','mercury->mercury']` |
+
+### mission.test.ts (non-cyclic timeline)
+
+| Test | Input | Expected output |
+|---|---|---|
+| `missionDurationYears` sums phase durations | itinerary | total years |
+| `missionProgressAt` starts in first phase at t=0 | `elapsed=0` | `{index:0, t:0, done:false}` |
+| `missionProgressAt` reports intra-phase fraction | mid-phase elapsed | `t` in `(0,1)` |
+| `missionProgressAt` boundary belongs to next phase | `elapsed = phase0 duration` | next phase at `t=0` |
+| `missionProgressAt` clamps and marks done at/after the end | `elapsed >= total` | final phase, `t=1`, `done:true` (no loop) |
+| `completedPhaseCount` lights phases as their end is reached | various elapsed | count of fully completed phases |
+| `missionElapsedYears` / `formatElapsedYears` | elapsed ms | years value / `"NN.N"` |
+
+### missions.test.ts (config integrity)
+
+| Test | Input | Expected output |
+|---|---|---|
+| roster matches the agreed set | `missions.json` | OSIRIS-REx, BepiColombo, Voyager 1/2, Pioneer 10/11, New Horizons |
+| each mission references a real spacecraft | `spacecraftId` | exists in `spacecraft.json` |
+| anchors are real solar bodies or `self` | every phase | valid `from`/`to`; `self` only as the final `to` |
+| `durationYears` equals the phase sum; endpoints | each mission | OSIRIS→Earth, Bepi→Mercury, escape→`self` |
+
+### missionstate.test.ts
+
+| Test | Input | Expected output |
+|---|---|---|
+| UserPreferences persists mission id + restart mode | set values | read back on a new instance |
+| `MissionState.start/restart` resets elapsed and runs | start(id) | status running, elapsed 0, selection persisted |
+| `MissionState.complete` marks the mission finished | complete() | status complete |
 
 ### state.test.ts
 

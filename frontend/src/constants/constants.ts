@@ -20,6 +20,27 @@ export enum Language {
 export enum Mode {
   LINEAR = 'linear',
   ELLIPSE = 'ellipse',
+  MISSION = 'mission',
+}
+
+/**
+ * What happens when a mission reaches its end. MANUAL freezes the whole scene
+ * (the default); AUTO resets every element to its base position and replays the
+ * itinerary from the start.
+ */
+export enum MissionRestartMode {
+  MANUAL = 'manual',
+  AUTO = 'auto',
+}
+
+/** Runtime state of the active mission timeline (in-memory; not persisted). */
+export enum MissionRunState {
+  /** No mission is playing (e.g. just entered the mode, modal open). */
+  IDLE = 'idle',
+  /** A mission is playing (advancing, or paused via the speed control). */
+  RUNNING = 'running',
+  /** The mission reached its final anchor; the scene is frozen. */
+  COMPLETE = 'complete',
 }
 
 /** Distance display units. */
@@ -131,6 +152,9 @@ export const LS_KEY_LANGUAGE = 'solar_lang';
 export const LS_KEY_MODE = 'solar_mode';
 export const LS_KEY_UNIT = 'solar_unit';
 export const LS_KEY_AUDIO = 'solar_audio';
+/** Id of the last selected mission, and the chosen restart behavior. */
+export const LS_KEY_MISSION = 'solar_mission';
+export const LS_KEY_MISSION_RESTART = 'solar_mission_restart';
 
 // ---------------------------------------------------------------------------
 // Preference defaults (used when no value is stored)
@@ -140,6 +164,10 @@ export const DEFAULT_LANGUAGE = Language.EN;
 export const DEFAULT_MODE = Mode.LINEAR;
 export const DEFAULT_UNIT = Unit.MKM;
 export const DEFAULT_AUDIO_ENABLED = false;
+/** No mission is preselected until the user picks one in the mission modal. */
+export const DEFAULT_MISSION_ID: string | null = null;
+/** Missions freeze on completion by default; auto-restart is opt-in. */
+export const DEFAULT_MISSION_RESTART = MissionRestartMode.MANUAL;
 
 /** Linear conversion factor from real body radius (km) to rendered px. */
 export const BODY_RADIUS_PX_PER_KM = 0.0012;
@@ -263,6 +291,24 @@ export const ELLIPSE_ORBITER_SPEED_INNER = 1.8;
 export const ELLIPSE_ORBITER_SPEED_OUTER = 0.8;
 
 // ---------------------------------------------------------------------------
+// Mission mode
+// ---------------------------------------------------------------------------
+
+/**
+ * Reference epoch (year) for the "current known position" anchor (`self`) of
+ * escape probes. A mission's final leg cruises from its last flyby out to where
+ * the probe is estimated to be at this epoch, then freezes — conveying how many
+ * decades the journey has taken.
+ */
+export const MISSION_CURRENT_EPOCH_YEAR = 2025;
+/** Anchor token a mission phase uses for the craft's own current position. */
+export const MISSION_SELF_ANCHOR = 'self';
+/** Decimal places shown by the mission years counter. */
+export const MISSION_YEARS_DECIMALS = 1;
+/** Mission trajectory line color — amber, distinct from the orbit-line blues. */
+export const COLOR_MISSION_LINE = '#f2b134';
+
+// ---------------------------------------------------------------------------
 // Audio
 // ---------------------------------------------------------------------------
 
@@ -311,6 +357,7 @@ export const ORBIT_LINE_COLORS: Readonly<Record<string, string>> = {
 
 export const SCENE_LINEAR = 'LinearScene';
 export const SCENE_ELLIPSE = 'EllipseScene';
+export const SCENE_MISSION = 'MissionScene';
 
 export const REGISTRY_ON_SELECT = 'onSelect';
 
@@ -322,6 +369,13 @@ export const EVENT_LANG_CHANGED = 'app:lang';
 export const EVENT_UNIT_CHANGED = 'app:unit';
 /** Focus the camera/scroll on a specific element by id (payload: string id). */
 export const EVENT_FOCUS_ELEMENT = 'app:focus';
+/** Mission-mode controls. Speed reuses the orbit-speed multipliers (0 = pause). */
+export const EVENT_MISSION_SPEED = 'mission:speed';
+export const EVENT_MISSION_LINES = 'mission:lines';
+/** Restart the active mission now (payload: none). */
+export const EVENT_MISSION_RESTART = 'mission:restart';
+/** Begin a freshly selected mission by id (payload: string id). */
+export const EVENT_MISSION_START = 'mission:start';
 
 // ---------------------------------------------------------------------------
 // Implementation stubs
