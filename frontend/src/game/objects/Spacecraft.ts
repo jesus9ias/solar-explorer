@@ -24,7 +24,7 @@ export function ensureSpacecraftTexture(
     const texture = scene.textures.createCanvas(key, size, size);
     if (texture) {
       const ctx = texture.getContext();
-      drawSpacecraftIcon(ctx, size / 2, size / 2, COLOR_ACCENT_GREEN, SPACECRAFT_RADIUS_PX);
+      drawSpacecraftIcon(ctx, size / 2, size / 2, COLOR_ACCENT_GREEN, SPACECRAFT_RADIUS_PX, craft.id);
       texture.refresh();
     }
   }
