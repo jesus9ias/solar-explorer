@@ -74,10 +74,12 @@ interface PhaseEntry {
 const ZOOM_IN_FACTOR = 1.1;
 const ZOOM_OUT_FACTOR = 0.9;
 const VIEW_FILL_FRACTION = 0.4;
-/** Fraction of the viewport the focused element's orbit radius should fill. */
-const FOCUS_FILL_FRACTION = 0.35;
+/** Fraction of the viewport the focused element's rendered radius should fill. */
+const FOCUS_BODY_FILL_FRACTION = 0.12;
 /** Smooth pan/zoom duration (ms) when focusing on an element. */
 const FOCUS_DURATION_MS = 600;
+/** Camera follow lerp while focusing — eases toward the (moving) element. */
+const FOCUS_FOLLOW_LERP = 0.08;
 /** Sample count per transfer arc when redrawing a phased trajectory. */
 const PHASE_TRAJECTORY_SAMPLES = 32;
 /** Line width (px, world space) of a phased trajectory at base zoom. */
@@ -346,9 +348,10 @@ export class EllipseScene extends Phaser.Scene {
   }
 
   /**
-   * Smoothly pan and zoom the camera to an element's current world position.
-   * Bodies keep orbiting, so this frames where the element is *now*; the zoom
-   * is chosen so its orbit radius fills a comfortable fraction of the viewport.
+   * Zoom in on an element and keep the camera following it. The zoom is chosen
+   * so the element's own rendered disc fills a comfortable fraction of the
+   * viewport (a far body like Neptune gets a real close-up instead of a dot),
+   * and the camera follows it so it stays centered while it keeps orbiting.
    */
   private focusElement(id: string): void {
     const target = this.children.list.find(
@@ -359,14 +362,22 @@ export class EllipseScene extends Phaser.Scene {
     if (!target) return;
 
     const cam = this.cameras.main;
-    const dist = Math.hypot(target.x, target.y);
-    let zoom = ELLIPSE_DEFAULT_ZOOM;
-    if (dist > 1) {
-      const desiredScreen = Math.min(this.scale.width, this.scale.height) * FOCUS_FILL_FRACTION;
-      zoom = Phaser.Math.Clamp(desiredScreen / dist, ELLIPSE_MIN_ZOOM, ELLIPSE_MAX_ZOOM);
-    }
-    cam.pan(target.x, target.y, FOCUS_DURATION_MS, 'Sine.easeInOut');
+    // Frame the element itself (not its orbital radius) so far bodies like
+    // Neptune or Voyager get a real close-up instead of a tiny dot lost in a
+    // zoomed-out view. Spacecraft have no renderedRadius, so use their sprite.
+    const radius =
+      target instanceof CelestialBody ? target.renderedRadius : SPACECRAFT_RADIUS_PX;
+    const desiredScreen = Math.min(this.scale.width, this.scale.height) * FOCUS_BODY_FILL_FRACTION;
+    const zoom = Phaser.Math.Clamp(
+      desiredScreen / Math.max(radius, 1),
+      ELLIPSE_MIN_ZOOM,
+      ELLIPSE_MAX_ZOOM,
+    );
     cam.zoomTo(zoom, FOCUS_DURATION_MS, 'Sine.easeInOut');
+    // Follow the element so it stays centered as it keeps orbiting — a one-shot
+    // pan would leave a fast inner body drifting off frame at this zoom. The
+    // lerp eases the camera in smoothly; manual pan/zoom calls stopFollow().
+    cam.startFollow(target, false, FOCUS_FOLLOW_LERP, FOCUS_FOLLOW_LERP);
   }
 
   private setupInput(): void {
@@ -411,6 +422,10 @@ export class EllipseScene extends Phaser.Scene {
 
       if (!this.isDragging) return;
       const camera = this.cameras.main;
+      // A manual pan means the user wants to look elsewhere — release any
+      // focus-follow so the drag isn't overridden each frame (no-op if not
+      // following).
+      camera.stopFollow();
       camera.scrollX -= (pointer.x - pointer.prevPosition.x) / camera.zoom;
       camera.scrollY -= (pointer.y - pointer.prevPosition.y) / camera.zoom;
     });
