@@ -27,9 +27,7 @@ import {
   MissionRestartMode,
   MissionRunState,
   COLOR_MISSION_LINE,
-  DEG_TO_RAD,
   BODY_MEAN_LONGITUDE_J2000_DEG,
-  INTERSTELLAR_ESCAPE_LONGITUDE_DEG,
 } from '../../constants/constants';
 import { findEntry } from '../../logic/catalog';
 import { findMission } from '../../logic/missions';
@@ -38,7 +36,7 @@ import type { Phase, Point } from '../../logic/phases';
 import { phasePoint } from '../../logic/phases';
 import { missionProgressAt, phaseWindowMs } from '../../logic/mission';
 import { yearsToOrbitMs, orbitPositionAt } from '../../logic/orbit';
-import { heliocentricAngleAt } from '../../logic/ephemeris';
+import { heliocentricAngleAt, escapeAngleRad } from '../../logic/ephemeris';
 import { linearScale } from '../../logic/scale';
 import { missionState } from '../../state/MissionState';
 import { CelestialBody } from '../objects/CelestialBody';
@@ -131,8 +129,7 @@ export class MissionScene extends OrbitalMapScene {
     // The `self` anchor is the craft's current known position. Point it the real
     // way out of the system (its escape direction projected onto the ecliptic);
     // fall back to the deterministic seed for craft without a known heading.
-    const escapeDeg = INTERSTELLAR_ESCAPE_LONGITUDE_DEG[craft.id];
-    const selfAngle = escapeDeg !== undefined ? escapeDeg * DEG_TO_RAD : this.craftSeed;
+    const selfAngle = escapeAngleRad(craft.id) ?? this.craftSeed;
     const selfRadius = linearScale(craft.orbitalRadius_mkm);
     this.selfPoint = {
       x: Math.cos(selfAngle) * selfRadius,

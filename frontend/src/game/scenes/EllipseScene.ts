@@ -17,6 +17,7 @@ import { spacecraft } from '../../logic/catalog';
 import type { SpacecraftData } from '../../logic/library';
 import { linearScale } from '../../logic/scale';
 import { yearsToOrbitMs, isOrbiting } from '../../logic/orbit';
+import { escapeAngleRad } from '../../logic/ephemeris';
 import { Spacecraft } from '../objects/Spacecraft';
 import { SunArrow } from '../objects/SunArrow';
 import { OrbitalMapScene, seedAngle } from './OrbitalMapScene';
@@ -55,7 +56,9 @@ export class EllipseScene extends OrbitalMapScene {
     const obj = new Spacecraft(this, craft, this.onSelect);
 
     if (!isOrbiting(craft.id)) {
-      const angle = seedAngle(craft.id);
+      // Park interstellar probes along their real escape bearing, matching the
+      // `self` anchor in Mission mode so the two modes agree.
+      const angle = escapeAngleRad(craft.id) ?? seedAngle(craft.id);
       const radius = linearScale(craft.orbitalRadius_mkm);
       obj.setPosition(Math.cos(angle) * radius, Math.sin(angle) * radius);
       return;

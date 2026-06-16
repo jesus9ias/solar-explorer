@@ -17,6 +17,7 @@ import {
   FULL_CIRCLE_RAD,
   J2000_EPOCH_MS,
   MS_PER_JULIAN_YEAR,
+  INTERSTELLAR_ESCAPE_LONGITUDE_DEG,
 } from '../constants/constants';
 
 /** Julian years between the J2000 epoch and `epochMs` (negative before J2000). */
@@ -38,4 +39,16 @@ export function heliocentricAngleAt(
 ): number {
   const revolutions = yearsSinceJ2000(epochMs) / periodYears;
   return meanLongitudeJ2000Deg * DEG_TO_RAD + revolutions * FULL_CIRCLE_RAD;
+}
+
+/**
+ * Direction (radians) an interstellar probe's static `self` position sits in —
+ * its real escape bearing projected onto the ecliptic. Shared by Mission mode
+ * (the `self` anchor) and Ellipse mode (the probe's parked spot) so the two
+ * agree. Returns `null` for craft without a known heading; callers fall back to
+ * the deterministic spread (`seedAngle`).
+ */
+export function escapeAngleRad(craftId: string): number | null {
+  const deg = INTERSTELLAR_ESCAPE_LONGITUDE_DEG[craftId];
+  return deg === undefined ? null : deg * DEG_TO_RAD;
 }

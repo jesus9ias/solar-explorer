@@ -1,8 +1,10 @@
-import { yearsSinceJ2000, heliocentricAngleAt } from '../logic/ephemeris';
+import { yearsSinceJ2000, heliocentricAngleAt, escapeAngleRad } from '../logic/ephemeris';
 import {
+  DEG_TO_RAD,
   FULL_CIRCLE_RAD,
   J2000_EPOCH_MS,
   MS_PER_JULIAN_YEAR,
+  INTERSTELLAR_ESCAPE_LONGITUDE_DEG,
 } from '../constants/constants';
 
 const DEG = Math.PI / 180;
@@ -53,5 +55,18 @@ describe('ephemeris — heliocentric angle from mean longitude', () => {
       L0 * DEG - FULL_CIRCLE_RAD,
       9,
     );
+  });
+});
+
+describe('ephemeris — interstellar escape direction', () => {
+  it('returns the known escape bearing in radians', () => {
+    expect(escapeAngleRad('voyager2')).toBeCloseTo(
+      INTERSTELLAR_ESCAPE_LONGITUDE_DEG.voyager2 * DEG_TO_RAD,
+      9,
+    );
+  });
+
+  it('returns null for a craft with no known heading (caller falls back)', () => {
+    expect(escapeAngleRad('hubble')).toBeNull();
   });
 });
