@@ -7,7 +7,7 @@
  * the scene) and updates text/classes cheaply rather than rebuilding; it only
  * rebuilds the phase list when the selected mission or language changes.
  */
-import { Mode, Language, MISSION_YEARS_DECIMALS } from '../constants/constants';
+import { Mode, Language, MissionRunState, MISSION_YEARS_DECIMALS } from '../constants/constants';
 import { getText } from '../logic/i18n';
 import { findMission } from '../logic/missions';
 import { completedPhaseCount, formatElapsedYears } from '../logic/mission';
@@ -63,11 +63,22 @@ export class MissionPanel {
     const counterLabel = this.container.querySelector('.se-mission-counter-label');
     if (counterLabel) counterLabel.textContent = getText('mission.elapsed', lang);
 
-    const id = missionState.getSelectedId();
-    const mission = id ? findMission(id) : null;
+    const mission = this.activeMission();
     this.buildChecklist(mission, lang);
-    this.renderedMissionId = id;
+    this.renderedMissionId = mission ? mission.id : null;
     this.update();
+  }
+
+  /**
+   * The mission whose phases should be shown — only once a mission is actually
+   * running/finished. The selection persists across reloads, but on a fresh
+   * entry (status IDLE) the panel shows a placeholder instead of the last
+   * mission's phases, since nothing is in progress yet.
+   */
+  private activeMission(): MissionData | null {
+    if (missionState.getStatus() === MissionRunState.IDLE) return null;
+    const id = missionState.getSelectedId();
+    return id ? findMission(id) : null;
   }
 
   private buildChecklist(mission: MissionData | null, lang: Language): void {
@@ -100,8 +111,10 @@ export class MissionPanel {
   private update(): void {
     if (this.container.hidden) return;
 
-    // The selection can change without a mode switch (Start in the modal).
-    if (missionState.getSelectedId() !== this.renderedMissionId ||
+    // The active mission can change without a mode switch (Start in the modal,
+    // or a status transition out of IDLE), which needs a full rebuild.
+    const mission = this.activeMission();
+    if ((mission ? mission.id : null) !== this.renderedMissionId ||
       userPreferences.getLanguage() !== this.renderedLang) {
       this.refresh();
       return;
@@ -111,8 +124,6 @@ export class MissionPanel {
     const unit = getText('mission.years', this.renderedLang);
     this.yearsValue.textContent = `${formatElapsedYears(elapsedMs)} ${unit}`;
 
-    const id = missionState.getSelectedId();
-    const mission = id ? findMission(id) : null;
     if (!mission) return;
     const done = completedPhaseCount(elapsedMs, mission.phases);
     this.phaseItems.forEach((item, i) => {
