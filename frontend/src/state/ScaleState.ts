@@ -5,7 +5,7 @@
  * UserPreferences on load. The zoom is stored as a pixels-per-million-km
  * multiplier and clamped to the configured range.
  */
-import { Unit, ZOOM_MAX_PX_PER_MKM } from '../constants/constants';
+import { Unit } from '../constants/constants';
 import { pixelsPerMkm } from '../logic/scale';
 import { userPreferences } from './UserPreferences';
 
@@ -51,17 +51,6 @@ export class ScaleState {
 
   getZoom(): number {
     return this.zoomPxPerMkm;
-  }
-
-  /** Set the zoom multiplier, clamped to the allowed pixels-per-Mkm range. */
-  setZoom(pxPerMkm: number): void {
-    this.zoomPxPerMkm = pixelsPerMkm(pxPerMkm);
-    this.notify();
-  }
-
-  /** Maximum zoom multiplier, exposed for HUD bounds. */
-  get maxZoom(): number {
-    return ZOOM_MAX_PX_PER_MKM;
   }
 }
 

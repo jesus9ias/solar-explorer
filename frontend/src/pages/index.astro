@@ -48,7 +48,6 @@ const subtitle = getText('app.subtitle', Language.EN);
         Mode,
         REGISTRY_ON_SELECT,
         EVENT_LANG_CHANGED,
-        EVENT_UNIT_CHANGED,
         EVENT_FOCUS_ELEMENT,
         EVENT_MISSION_START,
         AUDIO_VOLUME,
@@ -164,7 +163,6 @@ const subtitle = getText('app.subtitle', Language.EN);
           library.refresh();
           missionModal.refresh();
           game.events.emit(EVENT_LANG_CHANGED);
-          game.events.emit(EVENT_UNIT_CHANGED);
         });
       }
     </script>

@@ -62,16 +62,3 @@ export function getFunFactsAtDistance(
     text: best[lang].text,
   };
 }
-
-/**
- * Return all fun facts localized to the given language, in config order.
- */
-export function getAllFunFacts(lang: Language): FunFact[] {
-  if (!Array.isArray(funfactsJson)) return [];
-  const facts = funfactsJson as FunFactConfig[];
-  return facts.map((fact) => ({
-    id: fact.id,
-    triggerDistanceMkm: fact.triggerDistanceMkm,
-    text: fact[lang].text,
-  }));
-}

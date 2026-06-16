@@ -1,4 +1,4 @@
-import { getFunFactsAtDistance, getAllFunFacts } from '../logic/funfacts';
+import { getFunFactsAtDistance } from '../logic/funfacts';
 import { Language } from '../constants/constants';
 
 // Mid-belt distance (≈ Ceres orbital radius) chosen to fall inside the
@@ -50,24 +50,5 @@ describe('funfacts — getFunFactsAtDistance', () => {
     shown.add(first?.id ?? '');
     const second = getFunFactsAtDistance(SINGLE_FACT_DISTANCE, Language.EN, shown);
     expect(second).toBeNull();
-  });
-});
-
-describe('funfacts — getAllFunFacts', () => {
-  it('returns all 14 facts', () => {
-    expect(getAllFunFacts(Language.EN)).toHaveLength(14);
-  });
-
-  it('returns localized text that differs between languages', () => {
-    const en = getAllFunFacts(Language.EN);
-    const es = getAllFunFacts(Language.ES);
-    expect(en[0].text).toBeTruthy();
-    expect(es[0].text).not.toBe(en[0].text);
-  });
-
-  it('includes a positive triggerDistanceMkm for every fact', () => {
-    for (const fact of getAllFunFacts(Language.EN)) {
-      expect(fact.triggerDistanceMkm).toBeGreaterThan(0);
-    }
   });
 });

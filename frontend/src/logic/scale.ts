@@ -26,11 +26,6 @@ export function convertMkmToAU(mkm: number): number {
   return mkm / MKM_PER_AU;
 }
 
-/** Convert a distance in astronomical units to million km. */
-export function convertAUToMkm(au: number): number {
-  return au * MKM_PER_AU;
-}
-
 /**
  * Map a real orbital radius (million km) onto a screen radius (px) using a
  * linear scale bounded by the configured min/max constants.

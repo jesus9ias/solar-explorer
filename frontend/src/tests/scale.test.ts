@@ -1,6 +1,5 @@
 import {
   convertMkmToAU,
-  convertAUToMkm,
   linearScale,
   pixelsPerMkm,
   bodyRadiusPx,
@@ -22,10 +21,6 @@ const FLOAT_TOLERANCE = 1e-6;
 describe('scale — unit conversion', () => {
   it('convertMkmToAU converts correctly', () => {
     expect(convertMkmToAU(MKM_PER_AU)).toBeCloseTo(1.0, 6);
-  });
-
-  it('convertAUToMkm converts correctly', () => {
-    expect(convertAUToMkm(1.0)).toBeCloseTo(MKM_PER_AU, 6);
   });
 });
 

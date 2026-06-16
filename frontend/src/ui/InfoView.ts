@@ -14,7 +14,7 @@ import {
 } from '../constants/constants';
 import { getText } from '../logic/i18n';
 import { convertMkmToAU } from '../logic/scale';
-import { findEntry, bodies } from '../logic/catalog';
+import { findEntry, bodySolarDistanceMkm } from '../logic/catalog';
 import type { BodyData, SpacecraftData } from '../logic/library';
 import { userPreferences } from '../state/UserPreferences';
 import { scaleState } from '../state/ScaleState';
@@ -137,16 +137,8 @@ export class InfoView {
     return `${Math.round(distanceMkm).toLocaleString()} ${getText('hud.mkm', lang)}`;
   }
 
-  private solarDistance(body: BodyData): number {
-    if (body.host) {
-      const host = bodies.find((b) => b.id === body.host);
-      return (host?.orbitalRadius_mkm ?? 0) + body.orbitalRadius_mkm;
-    }
-    return body.orbitalRadius_mkm;
-  }
-
   private renderBody(body: BodyData, lang: Language, unit: Unit): void {
-    const distance = this.solarDistance(body);
+    const distance = bodySolarDistanceMkm(body);
     if (distance > 0) {
       this.addField(getText('modal.distanceToSun', lang), this.formatDistance(distance, unit, lang));
     }

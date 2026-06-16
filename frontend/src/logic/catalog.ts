@@ -19,6 +19,28 @@ export type CatalogEntry =
   | { readonly kind: 'body'; readonly body: BodyData }
   | { readonly kind: 'spacecraft'; readonly craft: SpacecraftData };
 
+/** Solar distance (Mkm) contributed by a host body — its own orbital radius
+ * around the Sun, or 0 when there is no solar-orbiting host. */
+function hostSolarRadiusMkm(hostId: string | null): number {
+  if (!hostId) return 0;
+  return bodies.find((b) => b.id === hostId)?.orbitalRadius_mkm ?? 0;
+}
+
+/** Distance from the Sun (Mkm) of a body: a moon adds its host planet's solar
+ * distance to its own orbital radius; the Sun itself is at zero. */
+export function bodySolarDistanceMkm(body: BodyData): number {
+  if (body.type === 'star') return 0;
+  return hostSolarRadiusMkm(body.host) + body.orbitalRadius_mkm;
+}
+
+/** Distance from the Sun (Mkm) of a spacecraft: a host-orbiting craft adds its
+ * host's solar distance; solar-orbiting and interstellar craft use their own
+ * orbital radius directly. */
+export function craftSolarDistanceMkm(craft: SpacecraftData): number {
+  if (craft.host === null || craft.host === 'sun') return craft.orbitalRadius_mkm;
+  return hostSolarRadiusMkm(craft.host) + craft.orbitalRadius_mkm;
+}
+
 /** Find any body or spacecraft by id. */
 export function findEntry(id: string): CatalogEntry | null {
   const body = bodies.find((b) => b.id === id);
@@ -26,16 +48,6 @@ export function findEntry(id: string): CatalogEntry | null {
   const craft = spacecraft.find((s) => s.id === id);
   if (craft) return { kind: 'spacecraft', craft };
   return null;
-}
-
-/** Bodies that orbit the Sun directly (excludes the Sun and moons). */
-export function solarOrbitingBodies(): BodyData[] {
-  return bodies.filter((b) => b.host === null && b.orbitalRadius_mkm > 0);
-}
-
-/** Moons grouped under a given host body id. */
-export function moonsOf(hostId: string): BodyData[] {
-  return bodies.filter((b) => b.type === 'moon' && b.host === hostId);
 }
 
 /** The Sun body. */

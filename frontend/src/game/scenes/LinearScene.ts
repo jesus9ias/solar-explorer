@@ -23,8 +23,13 @@ import {
   COLOR_TEXT,
   COLOR_ACCENT_AMBER,
 } from '../../constants/constants';
-import { bodies, spacecraft } from '../../logic/catalog';
-import type { BodyData, SpacecraftData } from '../../logic/library';
+import {
+  bodies,
+  spacecraft,
+  bodySolarDistanceMkm,
+  craftSolarDistanceMkm,
+} from '../../logic/catalog';
+import type { BodyData } from '../../logic/library';
 import { bodyRadiusPx } from '../../logic/scale';
 import { getText } from '../../logic/i18n';
 import { getFunFactsAtDistance } from '../../logic/funfacts';
@@ -81,23 +86,6 @@ export class LinearScene extends Phaser.Scene {
     return (this.registry.get(REGISTRY_ON_SELECT) as SelectHandler | undefined) ?? (() => {});
   }
 
-  private hostDistance(hostId: string | null): number {
-    if (!hostId) return 0;
-    const host = bodies.find((b) => b.id === hostId);
-    return host ? host.orbitalRadius_mkm : 0;
-  }
-
-  private bodyDistance(body: BodyData): number {
-    if (body.type === 'star') return 0;
-    return this.hostDistance(body.host) + body.orbitalRadius_mkm;
-  }
-
-  private craftDistance(craft: SpacecraftData): number {
-    if (craft.host === null) return craft.orbitalRadius_mkm;
-    if (craft.host === 'sun') return craft.orbitalRadius_mkm;
-    return this.hostDistance(craft.host) + craft.orbitalRadius_mkm;
-  }
-
   /** Rendered radius (px) of a body — mirrors CelestialBody's texture sizing. */
   private bodyRadius(body: BodyData): number {
     const small = body.type === BodyType.ASTEROID || body.type === BodyType.COMET;
@@ -114,16 +102,19 @@ export class LinearScene extends Phaser.Scene {
     const baseY = (distanceMkm: number): number =>
       linearDistanceToY(distanceMkm, this.pxPerMkm, LINEAR_TOP_PADDING_PX);
 
+    const bodyById = new Map(bodies.map((b) => [b.id, b]));
+    const craftById = new Map(spacecraft.map((c) => [c.id, c]));
+
     const placements = computeLinearLayout(
       [
         ...bodies.map((b) => ({
           id: b.id,
-          baseY: baseY(this.bodyDistance(b)),
+          baseY: baseY(bodySolarDistanceMkm(b)),
           radiusPx: this.bodyRadius(b),
         })),
         ...spacecraft.map((c) => ({
           id: c.id,
-          baseY: baseY(this.craftDistance(c)),
+          baseY: baseY(craftSolarDistanceMkm(c)),
           radiusPx: SPACECRAFT_RADIUS_PX,
         })),
       ],
@@ -137,12 +128,12 @@ export class LinearScene extends Phaser.Scene {
       const y = element.y;
       worldHeight = Math.max(worldHeight, y);
 
-      const body = bodies.find((b) => b.id === element.id);
+      const body = bodyById.get(element.id);
       if (body) {
         const obj = new CelestialBody(this, body, this.onSelect);
         obj.setPosition(axisX, y);
       } else {
-        const craft = spacecraft.find((c) => c.id === element.id);
+        const craft = craftById.get(element.id);
         if (craft) {
           const obj = new Spacecraft(this, craft, this.onSelect);
           obj.setPosition(axisX, y);
