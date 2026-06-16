@@ -4,6 +4,7 @@ import {
   completedPhaseCount,
   missionElapsedYears,
   formatElapsedYears,
+  phaseWindowMs,
 } from '../logic/mission';
 import { EARTH_YEAR_MS } from '../constants/constants';
 import type { Phase } from '../logic/phases';
@@ -71,6 +72,20 @@ describe('mission — progress over time (non-cyclic)', () => {
     expect(p.index).toBe(PHASES.length - 1);
     expect(p.t).toBeCloseTo(1, 6);
     expect(p.done).toBe(true);
+  });
+});
+
+describe('mission — phase time window (frozen transfer endpoints)', () => {
+  it('the first phase starts at 0 and ends at its duration', () => {
+    const w = phaseWindowMs(0, PHASES);
+    expect(w.startMs).toBeCloseTo(0, 6);
+    expect(w.endMs).toBeCloseTo(2 * YEAR, 6);
+  });
+
+  it('a later phase window is the cumulative offset of preceding phases', () => {
+    const w = phaseWindowMs(2, PHASES);
+    expect(w.startMs).toBeCloseTo(3 * YEAR, 6);
+    expect(w.endMs).toBeCloseTo(7 * YEAR, 6);
   });
 });
 

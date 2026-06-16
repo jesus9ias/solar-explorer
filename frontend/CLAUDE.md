@@ -208,8 +208,9 @@ This project is developed **test-first**:
 
 1. Add an entry to `config/missions.json`: `id`, `spacecraftId` (an id in
    `spacecraft.json`, reused for name/image/objectives), `durationYears` (must
-   equal the sum of the phase durations), a `phases[]` array, and `en`/`es`
-   `{ name, summary, highlights[] }`.
+   equal the sum of the phase durations), `launchDate` (ISO `YYYY-MM-DD`; the
+   epoch that seeds the planets at their historical positions), a `phases[]`
+   array, and `en`/`es` `{ name, summary, highlights[] }`.
 2. Each phase is `{ from, to, durationYears, en:{label}, es:{label} }`. `from`/`to`
    are solar-orbiting body ids (`from === to` is a station-keeping/survey leg).
    The **final** `to` may be `"self"` (the constant `MISSION_SELF_ANCHOR`) — the
@@ -253,7 +254,8 @@ Phaser.
 | `orbit.test.ts` | orbital angle progression, speed scaling, period ratio, non-orbiting probes |
 | `phases.test.ts` | heliocentric transfer-arc geometry (`phasePoint`): start/end, blended radius, stays clear of the Sun, prograde sweep, coincident endpoints |
 | `mission.test.ts` | non-cyclic mission timeline: total duration, active phase + fraction, clamp at end (`done`, no loop), completed-phase count, elapsed-years readout/format |
-| `missions.test.ts` | `missions.json` integrity: roster, real spacecraft refs, anchors are solar bodies or `self`, `self` only final, durations match, endpoints (OSIRIS→Earth, Bepi→Mercury, escape→self) |
+| `missions.test.ts` | `missions.json` integrity: roster, real spacecraft refs, anchors are solar bodies or `self`, `self` only final, durations match, ISO launch dates, endpoints (OSIRIS→Earth, Bepi→Mercury, escape→self) |
+| `ephemeris.test.ts` | `yearsSinceJ2000` sign/zero; `heliocentricAngleAt` mean-longitude model (J2000 value, one turn per period, slower for longer periods, backward before J2000) |
 | `missionstate.test.ts` | UserPreferences mission persistence (id + restart mode), MissionState run status/elapsed/start/restart/complete |
 | `state.test.ts` | UserPreferences defaults/persistence, NavigationState in-memory & handoff |
 | `i18n.test.ts` | getText EN/ES, fallback, `I18nKeyNotFoundError` |
@@ -535,6 +537,13 @@ Scenario: Escape itinerary ends at the current position
   Given an escape probe (Voyager, Pioneer, New Horizons) is running
   Then it flies past its planets and coasts out to its current known position (the self anchor)
   And the journey spans decades on the elapsed-years counter
+
+Scenario: Historical planet positions at launch
+  Given a mission with a known launch date
+  When the mission starts
+  Then each planet is placed at its approximate real heliocentric position for that date
+  And each transfer arc is fixed, aiming at where its target will be on arrival
+  So that the craft meets each planet without stray loops or jumps
 
 Scenario: Mission completion freezes the scene
   Given a mission reaches its final anchor with restart mode Manual

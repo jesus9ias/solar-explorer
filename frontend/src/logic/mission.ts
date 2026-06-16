@@ -26,6 +26,25 @@ export interface MissionProgress {
   readonly done: boolean;
 }
 
+/** The elapsed-time window [startMs, endMs] a phase occupies in the itinerary. */
+export interface PhaseWindow {
+  readonly startMs: number;
+  readonly endMs: number;
+}
+
+/**
+ * Elapsed-time bounds of the phase at `index`. Used to freeze a transfer arc:
+ * the craft departs from where the `from` anchor sits at `startMs` and arrives
+ * where the `to` anchor *will be* at `endMs`, so the arc no longer chases a
+ * moving target (which caused stray loops and jumps when the target wrapped).
+ */
+export function phaseWindowMs(index: number, phases: readonly Phase[]): PhaseWindow {
+  let startMs = 0;
+  for (let i = 0; i < index; i++) startMs += phases[i].durationYears * EARTH_YEAR_MS;
+  const endMs = startMs + phases[index].durationYears * EARTH_YEAR_MS;
+  return { startMs, endMs };
+}
+
 /** Total length of a mission itinerary, in Earth years. */
 export function missionDurationYears(phases: readonly Phase[]): number {
   return phases.reduce((sum, p) => sum + p.durationYears, 0);

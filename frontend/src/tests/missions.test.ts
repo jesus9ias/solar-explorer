@@ -1,6 +1,11 @@
 import { missions, findMission } from '../logic/missions';
 import { missionDurationYears } from '../logic/mission';
-import { MISSION_SELF_ANCHOR } from '../constants/constants';
+import {
+  MISSION_SELF_ANCHOR,
+  NON_ORBITING_PROBE_IDS,
+  INTERSTELLAR_ESCAPE_LONGITUDE_DEG,
+  BODY_MEAN_LONGITUDE_J2000_DEG,
+} from '../constants/constants';
 import type { BodyData, SpacecraftData } from '../logic/library';
 import bodiesJson from '../config/bodies.json';
 import spacecraftJson from '../config/spacecraft.json';
@@ -72,9 +77,40 @@ describe('missions — config integrity', () => {
     }
   });
 
+  it('every mission has a parseable ISO launch date', () => {
+    for (const m of missions) {
+      expect(m.launchDate).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+      expect(Number.isNaN(Date.parse(m.launchDate))).toBe(false);
+    }
+  });
+
   it('the stored durationYears matches the sum of its phases', () => {
     for (const m of missions) {
       expect(m.durationYears).toBeCloseTo(missionDurationYears(m.phases), 6);
+    }
+  });
+});
+
+describe('missions — historical seeding data completeness', () => {
+  it('every interstellar (self-anchored) probe has an escape direction', () => {
+    for (const id of NON_ORBITING_PROBE_IDS) {
+      const lon = INTERSTELLAR_ESCAPE_LONGITUDE_DEG[id];
+      expect(typeof lon).toBe('number');
+      expect(lon).toBeGreaterThanOrEqual(0);
+      expect(lon).toBeLessThan(360);
+    }
+  });
+
+  it('every non-self mission anchor has a J2000 mean longitude', () => {
+    const anchors = new Set<string>();
+    for (const m of missions) {
+      for (const p of m.phases) {
+        if (p.from !== MISSION_SELF_ANCHOR) anchors.add(p.from);
+        if (p.to !== MISSION_SELF_ANCHOR) anchors.add(p.to);
+      }
+    }
+    for (const id of anchors) {
+      expect(typeof BODY_MEAN_LONGITUDE_J2000_DEG[id]).toBe('number');
     }
   });
 });

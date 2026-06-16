@@ -3,6 +3,7 @@
     "id": "osiris_rex",
     "spacecraftId": "osiris_rex",
     "durationYears": 7.0,
+    "launchDate": "2016-09-08",
     "phases": [
       { "from": "earth", "to": "bennu", "durationYears": 2.2, "en": { "label": "Cruise to Bennu" }, "es": { "label": "Crucero a Bennu" } },
       { "from": "bennu", "to": "bennu", "durationYears": 2.5, "en": { "label": "Survey and sample Bennu" }, "es": { "label": "Estudio y muestreo de Bennu" } },
@@ -29,6 +30,7 @@
     "id": "bepicolombo",
     "spacecraftId": "bepicolombo",
     "durationYears": 7.3,
+    "launchDate": "2018-10-20",
     "phases": [
       { "from": "earth", "to": "venus", "durationYears": 2.0, "en": { "label": "Cruise to Venus" }, "es": { "label": "Crucero a Venus" } },
       { "from": "venus", "to": "venus", "durationYears": 1.0, "en": { "label": "Venus flybys" }, "es": { "label": "Sobrevuelos de Venus" } },
@@ -56,6 +58,7 @@
     "id": "voyager1",
     "spacecraftId": "voyager1",
     "durationYears": 47.3,
+    "launchDate": "1977-09-05",
     "phases": [
       { "from": "earth", "to": "jupiter", "durationYears": 1.5, "en": { "label": "Cruise to Jupiter" }, "es": { "label": "Crucero a Júpiter" } },
       { "from": "jupiter", "to": "saturn", "durationYears": 1.7, "en": { "label": "Jupiter to Saturn flyby" }, "es": { "label": "De Júpiter a Saturno" } },
@@ -82,6 +85,7 @@
     "id": "voyager2",
     "spacecraftId": "voyager2",
     "durationYears": 47.4,
+    "launchDate": "1977-08-20",
     "phases": [
       { "from": "earth", "to": "jupiter", "durationYears": 1.9, "en": { "label": "Cruise to Jupiter" }, "es": { "label": "Crucero a Júpiter" } },
       { "from": "jupiter", "to": "saturn", "durationYears": 2.1, "en": { "label": "Jupiter to Saturn flyby" }, "es": { "label": "De Júpiter a Saturno" } },
@@ -110,6 +114,7 @@
     "id": "pioneer10",
     "spacecraftId": "pioneer10",
     "durationYears": 52.8,
+    "launchDate": "1972-03-03",
     "phases": [
       { "from": "earth", "to": "jupiter", "durationYears": 1.8, "en": { "label": "Cruise to Jupiter" }, "es": { "label": "Crucero a Júpiter" } },
       { "from": "jupiter", "to": "self", "durationYears": 51.0, "en": { "label": "Escape across the outer system" }, "es": { "label": "Escape por el sistema exterior" } }
@@ -135,6 +140,7 @@
     "id": "pioneer11",
     "spacecraftId": "pioneer11",
     "durationYears": 51.7,
+    "launchDate": "1973-04-06",
     "phases": [
       { "from": "earth", "to": "jupiter", "durationYears": 1.6, "en": { "label": "Cruise to Jupiter" }, "es": { "label": "Crucero a Júpiter" } },
       { "from": "jupiter", "to": "saturn", "durationYears": 4.8, "en": { "label": "Jupiter to Saturn flyby" }, "es": { "label": "De Júpiter a Saturno" } },
@@ -161,6 +167,7 @@
     "id": "new_horizons",
     "spacecraftId": "new_horizons",
     "durationYears": 19.1,
+    "launchDate": "2006-01-19",
     "phases": [
       { "from": "earth", "to": "jupiter", "durationYears": 1.2, "en": { "label": "Jupiter gravity assist" }, "es": { "label": "Asistencia gravitatoria de Júpiter" } },
       { "from": "jupiter", "to": "pluto", "durationYears": 8.4, "en": { "label": "Cruise to Pluto" }, "es": { "label": "Crucero a Plutón" } },

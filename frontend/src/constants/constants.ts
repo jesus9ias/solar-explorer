@@ -124,6 +124,53 @@ export const SPACECRAFT_RADIUS_PX = 5;
 export const EARTH_YEAR_MS = 60000;
 /** A full revolution in radians. */
 export const FULL_CIRCLE_RAD = Math.PI * 2;
+/** Degrees-to-radians factor (one home for the conversion). */
+export const DEG_TO_RAD = Math.PI / 180;
+
+/** The J2000.0 epoch (2000 Jan 1, 12:00 TT) as a Unix timestamp in ms. The
+ * reference epoch the body mean longitudes below are quoted at. */
+export const J2000_EPOCH_MS = Date.UTC(2000, 0, 1, 12, 0, 0);
+/** Length of a Julian year (365.25 days) in ms — the unit mean longitudes use. */
+export const MS_PER_JULIAN_YEAR = 365.25 * 24 * 60 * 60 * 1000;
+
+/**
+ * Mean heliocentric ecliptic longitude (degrees) at the J2000 epoch, per body.
+ * Source: JPL Keplerian elements for the major planets (Standish, valid
+ * 1800–2050), the approximate elements for Pluto, and (101955) Bennu's elements
+ * propagated from their 2011 epoch back to J2000. Combined with each body's
+ * orbital period these seed Mission mode at the historical configuration for a
+ * mission's launch date, so transfer arcs look like the real diagrams instead
+ * of starting from arbitrary positions. Bodies absent here fall back to a
+ * deterministic spread. See {@link heliocentricAngleAt}.
+ */
+export const BODY_MEAN_LONGITUDE_J2000_DEG: Readonly<Record<string, number>> = {
+  mercury: 252.25032350,
+  venus: 181.97909950,
+  earth: 100.46457166,
+  mars: 355.44656795,
+  jupiter: 34.39644051,
+  saturn: 49.95424423,
+  uranus: 313.23810451,
+  neptune: 304.87997031,
+  pluto: 238.92903833,
+  bennu: 97.77,
+};
+
+/**
+ * Heliocentric ecliptic longitude (degrees) of each interstellar probe's escape
+ * direction — the bearing of its `self` anchor, so the final coast points the
+ * real way out of the system instead of an arbitrary direction. Derived by
+ * projecting each craft's known RA/Dec heading onto the ecliptic plane (the 2D
+ * map ignores the out-of-ecliptic component). Probes absent here fall back to a
+ * deterministic spread.
+ */
+export const INTERSTELLAR_ESCAPE_LONGITUDE_DEG: Readonly<Record<string, number>> = {
+  voyager1: 257.0,
+  voyager2: 289.9,
+  pioneer10: 79.6,
+  pioneer11: 285.3,
+  new_horizons: 284.5,
+};
 
 /**
  * Bodies that are not in solar orbit. They are drawn at static / slowly

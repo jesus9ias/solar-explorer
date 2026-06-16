@@ -27,14 +27,18 @@ import {
   MissionRestartMode,
   MissionRunState,
   COLOR_MISSION_LINE,
+  DEG_TO_RAD,
+  BODY_MEAN_LONGITUDE_J2000_DEG,
+  INTERSTELLAR_ESCAPE_LONGITUDE_DEG,
 } from '../../constants/constants';
 import { findEntry } from '../../logic/catalog';
 import { findMission } from '../../logic/missions';
-import type { MissionData, SpacecraftData } from '../../logic/library';
+import type { BodyData, MissionData, SpacecraftData } from '../../logic/library';
 import type { Phase, Point } from '../../logic/phases';
 import { phasePoint } from '../../logic/phases';
-import { missionProgressAt } from '../../logic/mission';
-import { yearsToOrbitMs } from '../../logic/orbit';
+import { missionProgressAt, phaseWindowMs } from '../../logic/mission';
+import { yearsToOrbitMs, orbitPositionAt } from '../../logic/orbit';
+import { heliocentricAngleAt } from '../../logic/ephemeris';
 import { linearScale } from '../../logic/scale';
 import { missionState } from '../../state/MissionState';
 import { CelestialBody } from '../objects/CelestialBody';
@@ -58,10 +62,14 @@ const STATION_ORBIT_PERIOD_MS = yearsToOrbitMs(ELLIPSE_ORBITER_PERIOD_YEARS);
 export class MissionScene extends OrbitalMapScene {
   private mission: MissionData | null = null;
   private phases: readonly Phase[] = [];
+  /** Launch epoch (ms) of the active mission, for seeding historical positions. */
+  private launchEpochMs: number | null = null;
   private probe?: Spacecraft;
   private trajectory?: Phaser.GameObjects.Graphics;
   private missionLinesVisible = true;
   private craftSeed = 0;
+  /** The craft's current known position — the `self` anchor (static). */
+  private selfPoint: Anchor = { x: 0, y: 0, radius: SPACECRAFT_RADIUS_PX };
   /** Resolves an anchor id (body id or `self`) to a live world position. */
   private anchorFor: (id: string) => Anchor = () => ({ x: 0, y: 0, radius: SPACECRAFT_RADIUS_PX });
 
@@ -69,16 +77,33 @@ export class MissionScene extends OrbitalMapScene {
     super(SCENE_MISSION);
   }
 
+  /**
+   * Seed each planet at the real position it held on the mission's launch date
+   * (mean-longitude model), so the craft's transfer arcs resemble the real
+   * trajectory diagrams. Bodies without a known mean longitude (dwarf planets
+   * other than Pluto, asteroids, comets) keep the deterministic base spread.
+   */
+  protected override initialOrbitAngle(body: BodyData): number {
+    const l0 = BODY_MEAN_LONGITUDE_J2000_DEG[body.id];
+    if (this.launchEpochMs === null || l0 === undefined) {
+      return super.initialOrbitAngle(body);
+    }
+    return heliocentricAngleAt(this.launchEpochMs, body.orbitalPeriod_years, l0);
+  }
+
   create(): void {
     this.resetMap();
+
+    // Resolve the mission first: its launch date seeds the planets at their
+    // historical positions, so it must be known before the map is built.
+    const id = missionState.getSelectedId();
+    this.mission = id ? findMission(id) : null;
+    this.phases = this.mission?.phases ?? [];
+    this.launchEpochMs = this.mission ? Date.parse(this.mission.launchDate) : null;
 
     const hostObjects = this.buildSunAndPlanets();
     // Moons orbit normally; other spacecraft are hidden to focus on the mission.
     this.placeOrbiterRings(hostObjects, false);
-
-    const id = missionState.getSelectedId();
-    this.mission = id ? findMission(id) : null;
-    this.phases = this.mission?.phases ?? [];
 
     if (this.mission) {
       const entry = findEntry(this.mission.spacecraftId);
@@ -103,16 +128,19 @@ export class MissionScene extends OrbitalMapScene {
     this.probe = new Spacecraft(this, craft, this.onSelect);
     this.craftSeed = seedAngle(craft.id);
 
-    // The `self` anchor is the craft's current known position — the same static
-    // spot Ellipse mode parks an interstellar probe at (so the two modes agree).
+    // The `self` anchor is the craft's current known position. Point it the real
+    // way out of the system (its escape direction projected onto the ecliptic);
+    // fall back to the deterministic seed for craft without a known heading.
+    const escapeDeg = INTERSTELLAR_ESCAPE_LONGITUDE_DEG[craft.id];
+    const selfAngle = escapeDeg !== undefined ? escapeDeg * DEG_TO_RAD : this.craftSeed;
     const selfRadius = linearScale(craft.orbitalRadius_mkm);
-    const selfPoint: Anchor = {
-      x: Math.cos(this.craftSeed) * selfRadius,
-      y: Math.sin(this.craftSeed) * selfRadius,
+    this.selfPoint = {
+      x: Math.cos(selfAngle) * selfRadius,
+      y: Math.sin(selfAngle) * selfRadius,
       radius: SPACECRAFT_RADIUS_PX,
     };
     this.anchorFor = (anchorId: string): Anchor => {
-      if (anchorId === MISSION_SELF_ANCHOR) return selfPoint;
+      if (anchorId === MISSION_SELF_ANCHOR) return this.selfPoint;
       const host = hostObjects.get(anchorId);
       return host
         ? { x: host.x, y: host.y, radius: host.renderedRadius }
@@ -130,6 +158,20 @@ export class MissionScene extends OrbitalMapScene {
     return anchor.radius + ELLIPSE_ORBIT_GAP_PX + SPACECRAFT_RADIUS_PX;
   }
 
+  /**
+   * Where an anchor (a solar body or the `self` point) sits at a *given* elapsed
+   * time — including the future. A transfer arc is frozen by sampling its `from`
+   * anchor at the phase start and its `to` anchor at the phase end, so the craft
+   * aims at the rendezvous point instead of chasing the anchor's live position
+   * (which made the arc swing around and jump as the target wrapped).
+   */
+  private anchorPointAt(anchorId: string, elapsedMs: number): Point {
+    if (anchorId === MISSION_SELF_ANCHOR) return this.selfPoint;
+    const p = this.solarOrbitParams.get(anchorId);
+    if (!p) return { x: 0, y: 0 };
+    return orbitPositionAt(elapsedMs, p.periodMs, p.radiusX, p.radiusY, p.initialAngle);
+  }
+
   /** Position the craft for the given elapsed time along its itinerary. */
   private placeProbe(elapsedMs: number): void {
     if (!this.probe || this.phases.length === 0) return;
@@ -140,15 +182,20 @@ export class MissionScene extends OrbitalMapScene {
       const ang = this.craftSeed + (elapsedMs / STATION_ORBIT_PERIOD_MS) * FULL_CIRCLE_RAD;
       this.probe.setPosition(a.x + Math.cos(ang) * orbitR, a.y + Math.sin(ang) * orbitR);
     } else {
-      const p = phasePoint(this.anchorFor(prog.from), this.anchorFor(prog.to), prog.t);
+      const w = phaseWindowMs(prog.index, this.phases);
+      const from = this.anchorPointAt(prog.from, w.startMs);
+      const to = this.anchorPointAt(prog.to, w.endMs);
+      const p = phasePoint(from, to, prog.t);
       this.probe.setPosition(p.x, p.y);
     }
   }
 
   /**
-   * Redraw the mission trajectory. Anchors move every frame, so the whole
-   * itinerary is re-sampled: each transfer phase becomes a heliocentric arc;
-   * each station-keeping phase becomes the small orbit ring around its anchor.
+   * Redraw the mission trajectory. Each transfer phase is a fixed heliocentric
+   * arc from where its `from` anchor sits at the phase start to where its `to`
+   * anchor will be at the phase end — so the overlay is stable and the bodies
+   * glide along it to meet the craft. Each station-keeping phase is the small
+   * orbit ring around its (live) anchor.
    */
   private drawTrajectory(): void {
     const g = this.trajectory;
@@ -157,14 +204,15 @@ export class MissionScene extends OrbitalMapScene {
     if (!this.missionLinesVisible) return;
     const color = Phaser.Display.Color.HexStringToColor(COLOR_MISSION_LINE).color;
     g.lineStyle(TRAJECTORY_WIDTH_PX / this.cameras.main.zoom, color, 0.85);
-    for (const phase of this.phases) {
+    this.phases.forEach((phase, index) => {
       if (phase.from === phase.to) {
         const a = this.anchorFor(phase.from);
         g.strokeCircle(a.x, a.y, this.stationOrbitRadius(a));
-        continue;
+        return;
       }
-      const from = this.anchorFor(phase.from);
-      const to = this.anchorFor(phase.to);
+      const w = phaseWindowMs(index, this.phases);
+      const from = this.anchorPointAt(phase.from, w.startMs);
+      const to = this.anchorPointAt(phase.to, w.endMs);
       g.beginPath();
       for (let i = 0; i <= TRAJECTORY_SAMPLES; i++) {
         const p = phasePoint(from, to, i / TRAJECTORY_SAMPLES);
@@ -172,7 +220,7 @@ export class MissionScene extends OrbitalMapScene {
         else g.lineTo(p.x, p.y);
       }
       g.strokePath();
-    }
+    });
   }
 
   private setMissionLines(visible: boolean): void {

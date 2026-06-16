@@ -51,6 +51,14 @@ export interface OrbitEntry {
   angle: number;
 }
 
+/** Closed-form parameters of a solar-orbiting body, for predicting its position. */
+export interface SolarOrbitParams {
+  readonly radiusX: number;
+  readonly radiusY: number;
+  readonly periodMs: number;
+  readonly initialAngle: number;
+}
+
 const ZOOM_IN_FACTOR = 1.1;
 const ZOOM_OUT_FACTOR = 0.9;
 const VIEW_FILL_FRACTION = 0.4;
@@ -71,6 +79,13 @@ export function seedAngle(id: string): number {
 export abstract class OrbitalMapScene extends Phaser.Scene {
   protected readonly entries: OrbitEntry[] = [];
   protected readonly orbitLines: OrbitLine[] = [];
+  /**
+   * Closed-form orbit parameters per solar-orbiting body id, populated by
+   * {@link buildSunAndPlanets}. Mission mode reads these to predict an anchor's
+   * future position; the same `initialAngle` seeds the live orbit entry, so the
+   * prediction and the visible body always agree.
+   */
+  protected readonly solarOrbitParams = new Map<string, SolarOrbitParams>();
   /**
    * The selected sim speed (0 = paused) is shared across scenes so it survives a
    * mode switch and a mission restart — the HUD keeps showing the same choice, so
@@ -95,6 +110,7 @@ export abstract class OrbitalMapScene extends Phaser.Scene {
     this.cameras.main.setBackgroundColor(COLOR_BG);
     this.entries.length = 0;
     this.orbitLines.length = 0;
+    this.solarOrbitParams.clear();
     this.lastZoom = -1;
   }
 
@@ -128,16 +144,33 @@ export abstract class OrbitalMapScene extends Phaser.Scene {
       const obj = new CelestialBody(this, body, this.onSelect);
       hostObjects.set(body.id, obj);
       const minor = radius * Math.sqrt(1 - Math.min(body.eccentricity, 0.9) ** 2);
+      const periodMs = yearsToOrbitMs(body.orbitalPeriod_years);
+      const initialAngle = this.initialOrbitAngle(body);
+      this.solarOrbitParams.set(body.id, {
+        radiusX: radius,
+        radiusY: minor,
+        periodMs,
+        initialAngle,
+      });
       this.entries.push({
         obj,
         radiusX: radius,
         radiusY: minor,
-        periodMs: yearsToOrbitMs(body.orbitalPeriod_years),
+        periodMs,
         center: origin,
-        angle: seedAngle(body.id),
+        angle: initialAngle,
       });
     }
     return hostObjects;
+  }
+
+  /**
+   * Starting angle of a solar-orbiting body. The base spread is deterministic
+   * but arbitrary (a hash of the id); Mission mode overrides this to seed the
+   * planets at their real positions for the active mission's launch date.
+   */
+  protected initialOrbitAngle(body: BodyData): number {
+    return seedAngle(body.id);
   }
 
   /**

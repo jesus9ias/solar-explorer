@@ -829,6 +829,13 @@ Feature: Mission mode
     Then it flies past its planets and coasts out to its current known position
     And the elapsed-years counter spans decades
 
+  Scenario: Historical planet positions at launch
+    Given a mission with a known launch date
+    When the mission starts
+    Then each planet is placed at its approximate real heliocentric position for that date
+    And each transfer arc is fixed, aiming at where its target will be on arrival
+    So that the craft meets each planet without stray loops or jumps
+
   Scenario: Completion freezes the scene
     Given a mission reaches its end with restart mode Manual
     Then the whole scene freezes in place

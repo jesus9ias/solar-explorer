@@ -93,6 +93,9 @@ export interface MissionData {
   readonly spacecraftId: string;
   /** Total mission length in Earth years (sum of the phase durations). */
   readonly durationYears: number;
+  /** ISO launch date (e.g. "1977-09-05"); the epoch used to seed the planets at
+   * their historical positions when the mission starts. */
+  readonly launchDate: string;
   /** Ordered itinerary legs. A final `to` of `self` is the craft's current pos. */
   readonly phases: readonly MissionPhase[];
   readonly en: LocalizedMissionText;

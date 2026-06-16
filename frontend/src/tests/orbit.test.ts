@@ -1,4 +1,4 @@
-import { orbitAngleRad, yearsToOrbitMs, isOrbiting } from '../logic/orbit';
+import { orbitAngleRad, orbitPositionAt, yearsToOrbitMs, isOrbiting } from '../logic/orbit';
 import {
   EARTH_YEAR_MS,
   FULL_CIRCLE_RAD,
@@ -39,6 +39,36 @@ describe('orbit — angle progression', () => {
     const earth = orbitAngleRad(delta, yearsToOrbitMs(EARTH_PERIOD_YEARS), SPEED_1X);
     const jupiter = orbitAngleRad(delta, yearsToOrbitMs(JUPITER_PERIOD_YEARS), SPEED_1X);
     expect(jupiter).toBeCloseTo(earth / JUPITER_PERIOD_YEARS, 6);
+  });
+});
+
+describe('orbit — analytic position on an ellipse', () => {
+  const PERIOD = yearsToOrbitMs(EARTH_PERIOD_YEARS);
+
+  it('at t=0 sits at the initial angle on the major axis', () => {
+    const p = orbitPositionAt(0, PERIOD, 100, 80, 0);
+    expect(p.x).toBeCloseTo(100, 6);
+    expect(p.y).toBeCloseTo(0, 6);
+  });
+
+  it('after a quarter period reaches the minor-axis extreme', () => {
+    const p = orbitPositionAt(PERIOD / 4, PERIOD, 100, 80, 0);
+    expect(p.x).toBeCloseTo(0, 6);
+    expect(p.y).toBeCloseTo(80, 6);
+  });
+
+  it('honors the initial angle offset', () => {
+    const p = orbitPositionAt(0, PERIOD, 100, 100, Math.PI / 2);
+    expect(p.x).toBeCloseTo(0, 6);
+    expect(p.y).toBeCloseTo(100, 6);
+  });
+
+  it('depends only on elapsed time (speed history is irrelevant)', () => {
+    // The same elapsed time must yield the same point regardless of how it was
+    // reached — this is what lets the mission predict a future rendezvous.
+    const a = orbitPositionAt(PERIOD * 0.3, PERIOD, 50, 50, 1);
+    const b = orbitPositionAt(PERIOD * 0.3, PERIOD, 50, 50, 1);
+    expect(a).toEqual(b);
   });
 });
 
