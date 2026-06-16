@@ -321,6 +321,31 @@ export const COUNTER_ZONE_KUIPER_MAX_MKM = 18000;
 /** Scroll animation duration (ms) for prev/next element jumps. */
 export const ELEMENT_JUMP_DURATION_MS = 800;
 
+/**
+ * Keyboard arrow-key navigation speed, in screen pixels per second. Linear mode
+ * uses it to scroll (up/down only); the orbital map (Ellipse and Mission) uses
+ * it to pan the camera in all four directions, dividing by zoom so the on-screen
+ * pan rate stays constant regardless of how far the camera is zoomed.
+ */
+export const KEYBOARD_PAN_SPEED_PX = 600;
+
+/**
+ * Keyboard +/- zoom rate for the orbital map (Ellipse and Mission), as the
+ * multiplicative factor the camera zoom reaches after holding the key for one
+ * full second. Applied frame-by-frame as `factor^(delta/1000)` so the zoom
+ * speed is smooth and frame-rate independent.
+ */
+export const KEYBOARD_ZOOM_FACTOR_PER_SEC = 2.5;
+/**
+ * Key codes for the +/- zoom controls — both the main number row and the numpad,
+ * so either '+'/'-' works. 187/189 are the unshifted '='/'-' keys (Shift makes
+ * them '+'/'_'), which is how a user presses '+'/'-' on most layouts.
+ */
+export const KEY_CODE_EQUALS = 187;
+export const KEY_CODE_MINUS = 189;
+export const KEY_CODE_NUMPAD_ADD = 107;
+export const KEY_CODE_NUMPAD_SUBTRACT = 109;
+
 // ---------------------------------------------------------------------------
 // Ellipse mode layout
 // ---------------------------------------------------------------------------

@@ -9,15 +9,21 @@ tested with **Vitest**.
 
 ## What it does
 
-- **Two modes**
-  - **Linear** — scroll vertically from the Sun outward; a left-edge distance
+- **Three modes**
+  - **Linear** — scroll vertically (wheel, drag, or the Up/Down arrow keys) from
+    the Sun outward; a left-edge distance
     counter shows how far you've traveled (recoloring by zone) and contextual
     fun facts appear at key boundaries
     (asteroid belt, Kuiper belt, heliopause, journey's end). Jump between
     elements with Previous/Next.
-  - **Ellipse** — an orbital map with the Sun at the origin; pan and zoom,
+  - **Ellipse** — an orbital map with the Sun at the origin; pan and zoom (drag/
+    pinch/wheel, the arrow keys to pan, or `+`/`-` to zoom),
     bodies orbit in real time (1 Earth year = 60 s at 1×, switchable 1×/2×/5×),
     toggle orbit lines, and a compass arrow always points to the Sun.
+  - **Mission** — replays a single spacecraft's itinerary (e.g. Voyager 1 or
+    OSIRIS-REx) from launch to its final destination on the shared orbital map,
+    with an elapsed-years counter and a phase checklist. Shares the same
+    pan/zoom controls as Ellipse mode.
 - **Info modal** for every body/spacecraft: procedurally drawn image, distance,
   orbital and rotation periods, temperature, facts; for spacecraft, mission
   objectives, instruments and a "Mission complete" badge where applicable.

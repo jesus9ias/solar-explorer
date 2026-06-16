@@ -426,6 +426,14 @@ Scenario: Scroll navigation
   Then the viewport moves away from the Sun
   And the distance counter updates
 
+Scenario: Keyboard navigation
+  Given the user is in Linear mode
+  When the user holds the Down arrow key
+  Then the viewport moves away from the Sun
+  And holding the Up arrow key moves it back toward the Sun
+  And the Left and Right arrow keys have no effect on this single axis
+  And the keys do nothing while a text field is focused
+
 Scenario: Next element button
   Given the user is in Linear mode
   When the user clicks "Next element"
@@ -453,18 +461,25 @@ Scenario: Satellites do not overlap their host
 ```gherkin
 Scenario: Zoom in
   Given the user is in Ellipse mode
-  When the user pinches inward or scrolls up
+  When the user pinches inward, scrolls up, or holds the "+" key
   Then the camera zooms in and bodies appear larger
 
 Scenario: Zoom out
   Given the user is in Ellipse mode
-  When the user pinches outward or scrolls down
+  When the user pinches outward, scrolls down, or holds the "-" key
   Then the camera zooms out and more of the solar system is visible
 
 Scenario: Pan
   Given the user is in Ellipse mode
   When the user clicks and drags
   Then the camera pans in the direction of the drag
+
+Scenario: Keyboard navigation
+  Given the user is in Ellipse or Mission mode
+  When the user holds an arrow key
+  Then the camera pans in that direction at a constant on-screen rate, releasing any focus-follow
+  And the "+" and "-" keys zoom the camera in and out within the mode's zoom limits
+  And the keys do nothing while a text field is focused
 
 Scenario: Sun arrow always visible
   Given the user has panned away from the Sun

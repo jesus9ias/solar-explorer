@@ -24,6 +24,12 @@ import {
   ELLIPSE_ORBIT_GAP_PX,
   ELLIPSE_ORBITER_PERIOD_YEARS,
   SPACECRAFT_RADIUS_PX,
+  KEYBOARD_PAN_SPEED_PX,
+  KEYBOARD_ZOOM_FACTOR_PER_SEC,
+  KEY_CODE_EQUALS,
+  KEY_CODE_MINUS,
+  KEY_CODE_NUMPAD_ADD,
+  KEY_CODE_NUMPAD_SUBTRACT,
   BodyType,
   COLOR_BG,
   ORBIT_LINE_COLORS,
@@ -69,6 +75,19 @@ const FOCUS_DURATION_MS = 600;
 /** Camera follow lerp while focusing — eases toward the (moving) element. */
 const FOCUS_FOLLOW_LERP = 0.08;
 
+/**
+ * True when keyboard focus is in a text field (modal search box, etc.). The
+ * Phaser keyboard manager listens on `window`, so arrow keys would otherwise pan
+ * the scene behind an open modal while the user is typing — skip navigation then
+ * and let the caret move instead.
+ */
+export function isTypingInField(): boolean {
+  const el = document.activeElement;
+  if (!el) return false;
+  const tag = el.tagName;
+  return tag === 'INPUT' || tag === 'TEXTAREA' || (el as HTMLElement).isContentEditable;
+}
+
 /** Deterministic starting angle so bodies are spread around their orbits. */
 export function seedAngle(id: string): number {
   let h = 0;
@@ -96,6 +115,9 @@ export abstract class OrbitalMapScene extends Phaser.Scene {
   private isDragging = false;
   private lastPinchDist = -1;
   private lastZoom = -1;
+  private cursors?: Phaser.Types.Input.Keyboard.CursorKeys;
+  private zoomInKeys: Phaser.Input.Keyboard.Key[] = [];
+  private zoomOutKeys: Phaser.Input.Keyboard.Key[] = [];
 
   protected get speedMultiplier(): number {
     return OrbitalMapScene.selectedSpeed;
@@ -317,6 +339,16 @@ export abstract class OrbitalMapScene extends Phaser.Scene {
 
   protected setupInput(): void {
     this.input.addPointer(1);
+    const kb = this.input.keyboard;
+    this.cursors = kb?.createCursorKeys();
+    // '+' / '-' zoom — main row and numpad. addKey(false) skips global capture so
+    // the keys still reach focused DOM inputs (the modal search box).
+    this.zoomInKeys = kb
+      ? [kb.addKey(KEY_CODE_EQUALS, false), kb.addKey(KEY_CODE_NUMPAD_ADD, false)]
+      : [];
+    this.zoomOutKeys = kb
+      ? [kb.addKey(KEY_CODE_MINUS, false), kb.addKey(KEY_CODE_NUMPAD_SUBTRACT, false)]
+      : [];
 
     this.input.on(
       'wheel',
@@ -364,6 +396,47 @@ export abstract class OrbitalMapScene extends Phaser.Scene {
       camera.scrollX -= (pointer.x - pointer.prevPosition.x) / camera.zoom;
       camera.scrollY -= (pointer.y - pointer.prevPosition.y) / camera.zoom;
     });
+  }
+
+  /**
+   * Drive the camera from the keyboard each frame: arrow keys pan in all four
+   * directions, '+'/'-' zoom in/out. Skipped while typing in a field so the keys
+   * reach the focused input instead. Any active focus-follow is released on a pan
+   * so the keyboard drives the view, mirroring a manual drag.
+   */
+  protected handleKeyboardCamera(delta: number): void {
+    if (isTypingInField()) return;
+    this.handleKeyboardPan(delta);
+    this.handleKeyboardZoom(delta);
+  }
+
+  private handleKeyboardPan(delta: number): void {
+    const c = this.cursors;
+    if (!c) return;
+    const dx = (c.right.isDown ? 1 : 0) - (c.left.isDown ? 1 : 0);
+    const dy = (c.down.isDown ? 1 : 0) - (c.up.isDown ? 1 : 0);
+    if (dx === 0 && dy === 0) return;
+    const camera = this.cameras.main;
+    camera.stopFollow();
+    // Constant on-screen pan rate: dividing by zoom keeps a key-press moving the
+    // view by the same pixels whether zoomed in or out.
+    const step = (KEYBOARD_PAN_SPEED_PX * (delta / 1000)) / camera.zoom;
+    camera.scrollX += dx * step;
+    camera.scrollY += dy * step;
+  }
+
+  private handleKeyboardZoom(delta: number): void {
+    const zoomIn = this.zoomInKeys.some((k) => k.isDown);
+    const zoomOut = this.zoomOutKeys.some((k) => k.isDown);
+    const dir = (zoomIn ? 1 : 0) - (zoomOut ? 1 : 0);
+    if (dir === 0) return;
+    const camera = this.cameras.main;
+    // factor^(dt) grows the zoom smoothly and frame-rate independently; the same
+    // clamp as wheel/pinch keeps it within the mode's zoom range.
+    const factor = KEYBOARD_ZOOM_FACTOR_PER_SEC ** ((dir * delta) / 1000);
+    camera.setZoom(
+      Phaser.Math.Clamp(camera.zoom * factor, ELLIPSE_MIN_ZOOM, ELLIPSE_MAX_ZOOM),
+    );
   }
 
   protected setSpeed(multiplier: number): void {

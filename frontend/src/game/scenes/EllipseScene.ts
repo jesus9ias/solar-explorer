@@ -85,6 +85,7 @@ export class EllipseScene extends OrbitalMapScene {
   }
 
   update(_time: number, delta: number): void {
+    this.handleKeyboardCamera(delta);
     this.advanceOrbits(delta);
     this.refreshOrbitLineZoom();
     this.updateSunArrow();

@@ -256,6 +256,7 @@ export class MissionScene extends OrbitalMapScene {
   }
 
   update(_time: number, delta: number): void {
+    this.handleKeyboardCamera(delta);
     const status = missionState.getStatus();
     const playing = this.mission !== null && status === MissionRunState.RUNNING;
 

@@ -14,6 +14,7 @@ import {
   SPACECRAFT_RADIUS_PX,
   BodyType,
   ELEMENT_JUMP_DURATION_MS,
+  KEYBOARD_PAN_SPEED_PX,
   EVENT_LINEAR_PREV,
   EVENT_LINEAR_NEXT,
   EVENT_FOCUS_ELEMENT,
@@ -41,6 +42,7 @@ import { navigationState } from '../../state/NavigationState';
 import { CelestialBody, type SelectHandler } from '../objects/CelestialBody';
 import { Spacecraft } from '../objects/Spacecraft';
 import { RulerRenderer } from '../renderers/RulerRenderer';
+import { isTypingInField } from './OrbitalMapScene';
 
 interface ElementLayout {
   readonly id: string;
@@ -77,6 +79,7 @@ export class LinearScene extends Phaser.Scene {
   private isDragging = false;
   private dragVelocity = 0;
   private readonly velocitySamples: number[] = [];
+  private cursors?: Phaser.Types.Input.Keyboard.CursorKeys;
 
   constructor() {
     super(SCENE_LINEAR);
@@ -186,6 +189,8 @@ export class LinearScene extends Phaser.Scene {
   }
 
   private setupInput(): void {
+    this.cursors = this.input.keyboard?.createCursorKeys();
+
     this.input.on(
       'wheel',
       (_p: Phaser.Input.Pointer, _o: unknown, _dx: number, dy: number) => {
@@ -337,7 +342,20 @@ export class LinearScene extends Phaser.Scene {
     this.game.events.off(EVENT_LANG_CHANGED, this.relabel, this);
   }
 
-  update(): void {
+  /** Scroll with the up/down arrow keys (left/right have no axis here). */
+  private handleKeyboardScroll(delta: number): void {
+    const c = this.cursors;
+    if (!c || isTypingInField()) return;
+    const dy = (c.down.isDown ? 1 : 0) - (c.up.isDown ? 1 : 0);
+    if (dy === 0) return;
+    // An arrow press cancels coasting so the keyboard takes immediate control.
+    this.dragVelocity = 0;
+    this.cameras.main.scrollY += dy * KEYBOARD_PAN_SPEED_PX * (delta / 1000);
+    this.syncNavigation();
+  }
+
+  update(_time: number, delta: number): void {
+    this.handleKeyboardScroll(delta);
     if (!this.isDragging && Math.abs(this.dragVelocity) > SCROLL_DRAG_MIN_VELOCITY_PX) {
       this.cameras.main.scrollY -= this.dragVelocity;
       this.dragVelocity *= SCROLL_DRAG_FRICTION;
