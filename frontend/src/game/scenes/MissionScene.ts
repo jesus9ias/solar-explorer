@@ -133,7 +133,7 @@ export class MissionScene extends OrbitalMapScene {
     const selfRadius = linearScale(craft.orbitalRadius_mkm);
     this.selfPoint = {
       x: Math.cos(selfAngle) * selfRadius,
-      y: Math.sin(selfAngle) * selfRadius,
+      y: -Math.sin(selfAngle) * selfRadius,
       radius: SPACECRAFT_RADIUS_PX,
     };
     this.anchorFor = (anchorId: string): Anchor => {
@@ -177,7 +177,7 @@ export class MissionScene extends OrbitalMapScene {
       const a = this.anchorFor(prog.from);
       const orbitR = this.stationOrbitRadius(a);
       const ang = this.craftSeed + (elapsedMs / STATION_ORBIT_PERIOD_MS) * FULL_CIRCLE_RAD;
-      this.probe.setPosition(a.x + Math.cos(ang) * orbitR, a.y + Math.sin(ang) * orbitR);
+      this.probe.setPosition(a.x + Math.cos(ang) * orbitR, a.y - Math.sin(ang) * orbitR);
     } else {
       const w = phaseWindowMs(prog.index, this.phases);
       const from = this.anchorPointAt(prog.from, w.startMs);

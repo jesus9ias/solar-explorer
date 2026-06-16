@@ -399,9 +399,11 @@ export abstract class OrbitalMapScene extends Phaser.Scene {
     for (const entry of this.entries) {
       entry.angle += (delta / entry.periodMs) * FULL_CIRCLE_RAD * this.speedMultiplier;
       const center = entry.center();
+      // Y is negated so an increasing angle orbits counterclockwise on screen
+      // (true prograde) despite the screen's y-down axis. See orbitPositionAt.
       entry.obj.setPosition(
         center.x + Math.cos(entry.angle) * entry.radiusX,
-        center.y + Math.sin(entry.angle) * entry.radiusY,
+        center.y - Math.sin(entry.angle) * entry.radiusY,
       );
     }
   }

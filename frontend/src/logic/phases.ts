@@ -48,8 +48,10 @@ export function phasePoint(from: Point, to: Point, t: number): Point {
   // the move is purely radial rather than NaN.
   const aFrom = rFrom === 0 ? Math.atan2(to.y, to.x) : Math.atan2(from.y, from.x);
   let aTo = rTo === 0 ? aFrom : Math.atan2(to.y, to.x);
-  // Unwrap so the sweep is prograde (increasing angle, matching orbital motion).
-  while (aTo < aFrom) aTo += FULL_CIRCLE_RAD;
+  // Unwrap so the sweep is prograde. Bodies orbit counterclockwise on screen,
+  // which — because the vertical axis is flipped (y-down) — is a *decreasing*
+  // stored polar angle, so the arc sweeps toward the smaller angle.
+  while (aTo > aFrom) aTo -= FULL_CIRCLE_RAD;
 
   const r = rFrom + (rTo - rFrom) * t;
   const angle = aFrom + (aTo - aFrom) * t;

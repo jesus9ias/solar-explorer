@@ -60,7 +60,8 @@ export class EllipseScene extends OrbitalMapScene {
       // `self` anchor in Mission mode so the two modes agree.
       const angle = escapeAngleRad(craft.id) ?? seedAngle(craft.id);
       const radius = linearScale(craft.orbitalRadius_mkm);
-      obj.setPosition(Math.cos(angle) * radius, Math.sin(angle) * radius);
+      // Y negated to match the counterclockwise (prograde) convention.
+      obj.setPosition(Math.cos(angle) * radius, -Math.sin(angle) * radius);
       return;
     }
 

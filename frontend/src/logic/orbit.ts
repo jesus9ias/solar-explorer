@@ -52,7 +52,9 @@ export function orbitPositionAt(
   initialAngleRad: number,
 ): Point {
   const angle = orbitAngleRad(elapsedMs, orbitPeriodMs, 1, initialAngleRad);
-  return { x: Math.cos(angle) * radiusX, y: Math.sin(angle) * radiusY };
+  // Y is negated so that an increasing angle reads as counterclockwise on screen
+  // (true prograde, as seen from ecliptic north) despite the screen's y-down axis.
+  return { x: Math.cos(angle) * radiusX, y: -Math.sin(angle) * radiusY };
 }
 
 /** Whether a body follows a solar orbit (false for interstellar probes). */

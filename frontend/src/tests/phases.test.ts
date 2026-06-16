@@ -36,12 +36,13 @@ describe('phases — point along the heliocentric transfer arc', () => {
   });
 
   it('sweeps the angle prograde (forward), never retreating', () => {
-    // `to` sits just clockwise (negative angle) of `from`; going prograde means
-    // sweeping the long way round, so the craft first moves to positive y.
+    // Bodies orbit counterclockwise on screen (Y is flipped), i.e. decreasing
+    // stored angle. `to` sits just counter-prograde of `from`, so going prograde
+    // means sweeping the long way round — the craft first moves to negative y.
     const from = { x: 100, y: 0 };
-    const to = { x: 100 * Math.cos(-0.2), y: 100 * Math.sin(-0.2) };
+    const to = { x: 100 * Math.cos(0.2), y: 100 * Math.sin(0.2) };
     const p = phasePoint(from, to, 0.01);
-    expect(p.y).toBeGreaterThan(0);
+    expect(p.y).toBeLessThan(0);
   });
 
   it('collapses to the shared anchor when the endpoints coincide', () => {

@@ -52,15 +52,17 @@ describe('orbit — analytic position on an ellipse', () => {
   });
 
   it('after a quarter period reaches the minor-axis extreme', () => {
+    // Y is flipped so bodies orbit counterclockwise on screen (true prograde,
+    // as seen from ecliptic north), so a quarter turn lands at negative y.
     const p = orbitPositionAt(PERIOD / 4, PERIOD, 100, 80, 0);
     expect(p.x).toBeCloseTo(0, 6);
-    expect(p.y).toBeCloseTo(80, 6);
+    expect(p.y).toBeCloseTo(-80, 6);
   });
 
   it('honors the initial angle offset', () => {
     const p = orbitPositionAt(0, PERIOD, 100, 100, Math.PI / 2);
     expect(p.x).toBeCloseTo(0, 6);
-    expect(p.y).toBeCloseTo(100, 6);
+    expect(p.y).toBeCloseTo(-100, 6);
   });
 
   it('depends only on elapsed time (speed history is irrelevant)', () => {

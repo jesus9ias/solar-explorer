@@ -760,6 +760,12 @@ Feature: Orbital simulation
     Given the simulation is running at 1x speed
     Then Earth completes one orbit in 60 seconds of real time
 
+  Scenario: Prograde orbital direction
+    Given the simulation is running
+    Then every body orbits the Sun counterclockwise on screen
+    And mission transfer arcs and probe positions follow the same direction
+    (true prograde, as seen from north of the ecliptic)
+
   Scenario: Pause orbital simulation
     Given the simulation is running at any speed
     When the user presses the pause button (||)
