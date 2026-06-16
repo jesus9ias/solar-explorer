@@ -117,6 +117,31 @@ export const BODY_MAX_RADIUS_PX = 80;
 export const SPACECRAFT_RADIUS_PX = 5;
 
 // ---------------------------------------------------------------------------
+// Pointer interaction (tap vs. drag, body hit areas)
+// ---------------------------------------------------------------------------
+
+/**
+ * Padding factor enlarging a body's hit area beyond its rendered disc so small
+ * bodies stay tappable. Capped by {@link HIT_PADDING_MAX_PX} so it never inflates
+ * a large body's hit area into neighboring orbits.
+ */
+export const HIT_RADIUS_FACTOR = 1.4;
+/** Floor for a body's hit radius (px) so even the tiniest bodies are tappable. */
+export const MIN_HIT_RADIUS_PX = 8;
+/**
+ * Maximum padding (px, in the body's own texture space) the hit area may add
+ * beyond the rendered disc. Keeps a large, scaled body (the Sun) from claiming
+ * empty space past the nearest orbit — clicks beyond Mercury must miss the Sun.
+ */
+export const HIT_PADDING_MAX_PX = 6;
+/**
+ * Maximum pointer travel (px) from press to release still counted as a tap
+ * (element selection). Beyond this the gesture is a pan/pinch and must not open
+ * an element's info — the long-standing "I tried to drag but opened info" bug.
+ */
+export const TAP_MAX_MOVE_PX = 8;
+
+// ---------------------------------------------------------------------------
 // Orbital simulation
 // ---------------------------------------------------------------------------
 

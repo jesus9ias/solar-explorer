@@ -8,6 +8,7 @@ import Phaser from 'phaser';
 import type { SpacecraftData } from '../../logic/library';
 import { SPACECRAFT_RADIUS_PX, COLOR_ACCENT_GREEN } from '../../constants/constants';
 import { drawSpacecraftIcon } from '../renderers/BodyRenderer';
+import { isTapGesture } from '../../logic/pointerInput';
 import type { SelectHandler } from './CelestialBody';
 
 const TEXTURE_PAD = 8;
@@ -42,7 +43,9 @@ export class Spacecraft extends Phaser.GameObjects.Image {
 
     const hit = new Phaser.Geom.Circle(this.width / 2, this.height / 2, HIT_RADIUS);
     this.setInteractive(hit, Phaser.Geom.Circle.Contains);
-    this.on('pointerdown', (_p: Phaser.Input.Pointer, _x: number, _y: number, event: Phaser.Types.Input.EventData) => {
+    // Select on release and only for a tap — a traveling press is a pan/pinch.
+    this.on('pointerup', (pointer: Phaser.Input.Pointer, _x: number, _y: number, event: Phaser.Types.Input.EventData) => {
+      if (!isTapGesture(pointer.getDistance())) return;
       event.stopPropagation();
       onSelect(craft.id);
     });

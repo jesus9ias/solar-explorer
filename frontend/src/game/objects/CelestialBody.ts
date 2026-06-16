@@ -13,12 +13,11 @@ import {
   drawCelestialBody,
   drawSmallBody,
 } from '../renderers/BodyRenderer';
+import { bodyHitRadiusPx, isTapGesture } from '../../logic/pointerInput';
 
 /** Padding factor so rings and comet tails fit inside the texture canvas. */
 const TEXTURE_PAD = 6;
 const MIN_TEXTURE_SIZE = 12;
-const HIT_RADIUS_FACTOR = 1.4;
-const MIN_HIT_RADIUS = 8;
 
 export type SelectHandler = (id: string) => void;
 
@@ -66,10 +65,13 @@ export class CelestialBody extends Phaser.GameObjects.Image {
     const hit = new Phaser.Geom.Circle(
       this.width / 2,
       this.height / 2,
-      Math.max(radius * HIT_RADIUS_FACTOR, MIN_HIT_RADIUS),
+      bodyHitRadiusPx(radius),
     );
     this.setInteractive(hit, Phaser.Geom.Circle.Contains);
-    this.on('pointerdown', (_p: Phaser.Input.Pointer, _x: number, _y: number, event: Phaser.Types.Input.EventData) => {
+    // Select on release, not press, and only when the gesture was a tap — a
+    // press that travels is a pan/pinch and must not open this body's info.
+    this.on('pointerup', (pointer: Phaser.Input.Pointer, _x: number, _y: number, event: Phaser.Types.Input.EventData) => {
+      if (!isTapGesture(pointer.getDistance())) return;
       event.stopPropagation();
       onSelect(body.id);
     });
