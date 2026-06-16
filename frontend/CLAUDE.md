@@ -519,10 +519,12 @@ Scenario: Moons and satellites clear their host
 
 ### Feature: Mission mode
 ```gherkin
-Scenario: Choosing a mission is mandatory
+Scenario: Choosing a mission is optional
   Given the user switches to Mission mode
   Then the mission picker modal opens immediately
-  And the scene waits until a mission is started
+  And the user may dismiss it without choosing a mission
+  And the scene stays frozen until a mission is started
+  And the user can reopen the picker from the missions button
 
 Scenario: Start a mission
   Given the mission picker is open

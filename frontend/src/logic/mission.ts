@@ -11,8 +11,21 @@
  * the heliocentric arc helper from {@link phases}; only the time→phase mapping
  * differs (clamped, not modular).
  */
-import { EARTH_YEAR_MS, MISSION_YEARS_DECIMALS } from '../constants/constants';
+import { EARTH_YEAR_MS, MISSION_YEARS_DECIMALS, MissionRunState } from '../constants/constants';
 import type { Phase } from './phases';
+
+/**
+ * Whether the mission should be rendered and advanced. Run status is memory-only
+ * (a reload resets it to IDLE) while the selection persists, so a refresh must
+ * NOT resurrect the old mission's craft and trajectory — only an actually
+ * running (or completed-and-frozen) mission with a selection is active.
+ */
+export function isMissionActive(
+  status: MissionRunState,
+  selectedId: string | null,
+): boolean {
+  return status !== MissionRunState.IDLE && selectedId !== null;
+}
 
 /** The active phase plus how far through it the craft is, and whether it ended. */
 export interface MissionProgress {

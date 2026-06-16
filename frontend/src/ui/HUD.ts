@@ -246,7 +246,7 @@ export class HUD {
   }
 
   private buildMissionControls(lang: Language): void {
-    // Open the mission modal (mandatory selection lives there).
+    // Open the mission picker — also the way back to it after dismissing it.
     this.container.append(this.button('hud.missions', () => this.deps.onMissions(), '🚀'));
     // Speed doubles as pause/advance for the running mission.
     this.container.append(this.speedControl(EVENT_MISSION_SPEED));

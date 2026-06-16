@@ -34,7 +34,7 @@ import type { BodyData, SpacecraftData } from '../../logic/library';
 import { linearScale, inverseLinearScale, bodyRadiusPx } from '../../logic/scale';
 import { computeOrbitRingRadii } from '../../logic/orbitRings';
 import { resolveOrbiterSpeedFactor } from '../../logic/orbiterSpeed';
-import { yearsToOrbitMs, isOrbiting } from '../../logic/orbit';
+import { yearsToOrbitMs, isOrbiting, orbitAngleRad } from '../../logic/orbit';
 import { navigationState } from '../../state/NavigationState';
 import { CelestialBody, type SelectHandler } from '../objects/CelestialBody';
 import { Spacecraft } from '../objects/Spacecraft';
@@ -392,6 +392,19 @@ export abstract class OrbitalMapScene extends Phaser.Scene {
       Math.min(this.scale.width, this.scale.height) / (2 * this.cameras.main.zoom);
     const clamped = Phaser.Math.Clamp(visibleScreenRadius, MIN_SCREEN_RADIUS, MAX_SCREEN_RADIUS);
     navigationState.setDistance(inverseLinearScale(clamped));
+  }
+
+  /**
+   * Fast-forward every orbit entry from its initial angle to the position it
+   * holds at `elapsedMs`. Call once on a scene rebuilt mid-run (Mission mode
+   * returning from another mode) so the planets resume in sync with a craft
+   * placed by elapsed time — otherwise they snap back to their launch positions
+   * while the craft sits at its elapsed position. A no-op at elapsedMs = 0.
+   */
+  protected seedOrbitsToElapsed(elapsedMs: number): void {
+    for (const entry of this.entries) {
+      entry.angle = orbitAngleRad(elapsedMs, entry.periodMs, 1, entry.angle);
+    }
   }
 
   /** Advance every orbit entry by `delta`, honoring the speed multiplier. */

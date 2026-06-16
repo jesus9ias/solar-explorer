@@ -6,8 +6,10 @@
  * a Start button. Opening it does not interrupt a mission in progress — only
  * pressing Start (re)launches one, which resets the scene to that itinerary.
  *
- * Entering Mission mode opens this modal automatically: choosing a mission is
- * mandatory. On mobile the columns collapse into tabs, like the Library modal.
+ * Entering Mission mode opens this modal automatically, but choosing a mission
+ * is optional: the modal can be dismissed (×, Esc, click-outside), leaving the
+ * scene frozen until the user picks one — they decide what to do. On mobile the
+ * columns collapse into tabs, like the Library modal.
  */
 import { Language } from '../constants/constants';
 import { MissionRunState } from '../constants/constants';
@@ -39,8 +41,6 @@ export class MissionModal {
   private readonly closeBtn: HTMLButtonElement;
   private readonly onStart: StartHandler;
   private selectedId: string | null = null;
-  /** While true the modal cannot be dismissed — a mission must be chosen. */
-  private mandatory = false;
 
   constructor(root: HTMLElement, onStart: StartHandler) {
     this.onStart = onStart;
@@ -81,13 +81,11 @@ export class MissionModal {
   }
 
   /**
-   * Open the modal, preselecting the last chosen mission if any. While no mission
-   * is running (status IDLE) the modal is mandatory: it cannot be dismissed, so
-   * the user must start one rather than leaving the scene with no mission.
+   * Open the modal, preselecting the last chosen mission if any. It can always be
+   * dismissed (× / Esc / click-outside); dismissing without starting leaves the
+   * scene frozen until the user picks one.
    */
   open(): void {
-    this.mandatory = missionState.getStatus() === MissionRunState.IDLE;
-    this.closeBtn.hidden = this.mandatory;
     this.selectedId = missionState.getSelectedId();
     this.refresh();
     this.setTab(this.selectedId ? 'info' : 'list');
@@ -96,8 +94,6 @@ export class MissionModal {
   }
 
   close(): void {
-    // A mandatory open (no mission yet) can only be dismissed by starting one.
-    if (this.mandatory) return;
     this.overlay.hidden = true;
     document.removeEventListener('keydown', this.onKeyDown);
   }
@@ -224,8 +220,6 @@ export class MissionModal {
     startBtn.textContent = getText('missionModal.start', lang);
     startBtn.addEventListener('click', () => {
       const id = mission.id;
-      // Starting a mission satisfies the mandatory requirement, so allow the close.
-      this.mandatory = false;
       this.close();
       this.onStart(id);
     });

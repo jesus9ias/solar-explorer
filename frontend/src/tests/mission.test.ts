@@ -5,8 +5,9 @@ import {
   missionElapsedYears,
   formatElapsedYears,
   phaseWindowMs,
+  isMissionActive,
 } from '../logic/mission';
-import { EARTH_YEAR_MS } from '../constants/constants';
+import { EARTH_YEAR_MS, MissionRunState } from '../constants/constants';
 import type { Phase } from '../logic/phases';
 
 // A representative escape itinerary: cruise to Jupiter, brief flyby, then a long
@@ -23,6 +24,27 @@ const YEAR = EARTH_YEAR_MS;
 describe('mission — total duration', () => {
   it('sums the phase durations', () => {
     expect(missionDurationYears(PHASES)).toBeCloseTo(TOTAL, 6);
+  });
+});
+
+describe('mission — isMissionActive (render gate)', () => {
+  it('is inactive when idle, even if a mission is still selected', () => {
+    // A reload resets run status to IDLE while the selection persists; the scene
+    // must not pre-draw the old mission's trajectory.
+    expect(isMissionActive(MissionRunState.IDLE, 'voyager2')).toBe(false);
+  });
+
+  it('is active while running with a selection', () => {
+    expect(isMissionActive(MissionRunState.RUNNING, 'voyager2')).toBe(true);
+  });
+
+  it('stays active when complete (frozen at the end, not reset)', () => {
+    expect(isMissionActive(MissionRunState.COMPLETE, 'voyager2')).toBe(true);
+  });
+
+  it('is inactive when no mission is selected, whatever the status', () => {
+    expect(isMissionActive(MissionRunState.RUNNING, null)).toBe(false);
+    expect(isMissionActive(MissionRunState.IDLE, null)).toBe(false);
   });
 });
 

@@ -42,6 +42,7 @@ const subtitle = getText('app.subtitle', Language.EN);
       import { userPreferences } from '../state/UserPreferences';
       import { modeState } from '../state/ModeState';
       import { missionState } from '../state/MissionState';
+      import { isMissionActive } from '../logic/mission';
       import { sceneKeyForMode, otherSceneKeys } from '../logic/scenes';
       import {
         Mode,
@@ -135,18 +136,27 @@ const subtitle = getText('app.subtitle', Language.EN);
           manager.start(target);
         };
 
+        // Open the mission picker on entering Mission mode, but only when no
+        // mission is active — returning to a running mission should resume it
+        // silently, not pop the picker over it each time.
+        const openPickerIfNeeded = () => {
+          if (!isMissionActive(missionState.getStatus(), missionState.getSelectedId())) {
+            missionModal.open();
+          }
+        };
+
         // The correct scene already auto-starts via initialScenes ordering.
-        // READY handles deferred audio autoplay and the mandatory mission picker.
+        // READY handles deferred audio autoplay and the initial mission picker.
         game.events.once(Phaser.Core.Events.READY, () => {
           if (userPreferences.isAudioEnabled()) audio.setEnabled(true);
-          // Entering Mission mode requires choosing a mission, so open the picker.
-          if (modeState.getMode() === Mode.MISSION) missionModal.open();
+          if (modeState.getMode() === Mode.MISSION) openPickerIfNeeded();
         });
 
-        // Runtime mode switches. Entering Mission mode opens the picker.
+        // Runtime mode switches. Entering Mission mode opens the picker unless a
+        // mission is already running.
         modeState.subscribe((mode) => {
           showScene(mode);
-          if (mode === Mode.MISSION) missionModal.open();
+          if (mode === Mode.MISSION) openPickerIfNeeded();
         });
 
         userPreferences.subscribe(() => {

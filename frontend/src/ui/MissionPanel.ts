@@ -7,10 +7,10 @@
  * the scene) and updates text/classes cheaply rather than rebuilding; it only
  * rebuilds the phase list when the selected mission or language changes.
  */
-import { Mode, Language, MissionRunState, MISSION_YEARS_DECIMALS } from '../constants/constants';
+import { Mode, Language, MISSION_YEARS_DECIMALS } from '../constants/constants';
 import { getText } from '../logic/i18n';
 import { findMission } from '../logic/missions';
-import { completedPhaseCount, formatElapsedYears } from '../logic/mission';
+import { completedPhaseCount, formatElapsedYears, isMissionActive } from '../logic/mission';
 import type { MissionData } from '../logic/library';
 import { userPreferences } from '../state/UserPreferences';
 import { modeState } from '../state/ModeState';
@@ -76,9 +76,8 @@ export class MissionPanel {
    * mission's phases, since nothing is in progress yet.
    */
   private activeMission(): MissionData | null {
-    if (missionState.getStatus() === MissionRunState.IDLE) return null;
     const id = missionState.getSelectedId();
-    return id ? findMission(id) : null;
+    return id !== null && isMissionActive(missionState.getStatus(), id) ? findMission(id) : null;
   }
 
   private buildChecklist(mission: MissionData | null, lang: Language): void {

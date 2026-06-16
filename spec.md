@@ -364,9 +364,11 @@ and adds the Mission-mode itinerary and copy:
 
 ### Behavior
 
-- Entering Mission mode opens the mission picker modal immediately — choosing a
-  mission is mandatory. Opening the picker mid-mission does not stop the running
-  mission; starting a different one resets the scene to that itinerary.
+- Entering Mission mode opens the mission picker modal immediately, but choosing
+  a mission is optional: the picker can be dismissed, leaving the scene frozen
+  (like a completed mission) until the user starts one from the picker. Opening
+  the picker mid-mission does not stop the running mission; starting a different
+  one resets the scene to that itinerary.
 - The orbit-speed control (pause / 1× / 2× / 5×) pauses or advances the mission
   and the bodies together.
 - A per-phase progress checklist fills in as phases complete (illustrative only).
@@ -807,10 +809,12 @@ Feature: Mission mode
   I want to replay a single spacecraft's mission from launch to its destination
   So that I can grasp the route and the decades these journeys take
 
-  Scenario: Choosing a mission is mandatory
+  Scenario: Choosing a mission is optional
     Given the user switches to Mission mode
     Then the mission picker modal opens immediately
-    And the scene waits until a mission is started
+    And the user may dismiss it without choosing a mission
+    And the scene stays frozen until a mission is started
+    And the user can reopen the picker from the missions button
 
   Scenario: Start a mission
     Given the mission picker is open

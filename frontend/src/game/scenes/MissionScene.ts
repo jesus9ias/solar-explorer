@@ -34,7 +34,7 @@ import { findMission } from '../../logic/missions';
 import type { BodyData, MissionData, SpacecraftData } from '../../logic/library';
 import type { Phase, Point } from '../../logic/phases';
 import { phasePoint } from '../../logic/phases';
-import { missionProgressAt, phaseWindowMs } from '../../logic/mission';
+import { missionProgressAt, phaseWindowMs, isMissionActive } from '../../logic/mission';
 import { yearsToOrbitMs, orbitPositionAt } from '../../logic/orbit';
 import { heliocentricAngleAt, escapeAngleRad } from '../../logic/ephemeris';
 import { linearScale } from '../../logic/scale';
@@ -93,9 +93,12 @@ export class MissionScene extends OrbitalMapScene {
     this.resetMap();
 
     // Resolve the mission first: its launch date seeds the planets at their
-    // historical positions, so it must be known before the map is built.
+    // historical positions, so it must be known before the map is built. Only an
+    // active run counts — after a reload the selection persists but the run
+    // status is IDLE, so the scene must not pre-draw the old trajectory.
     const id = missionState.getSelectedId();
-    this.mission = id ? findMission(id) : null;
+    this.mission =
+      id !== null && isMissionActive(missionState.getStatus(), id) ? findMission(id) : null;
     this.phases = this.mission?.phases ?? [];
     this.launchEpochMs = this.mission ? Date.parse(this.mission.launchDate) : null;
 
@@ -107,6 +110,10 @@ export class MissionScene extends OrbitalMapScene {
       const entry = findEntry(this.mission.spacecraftId);
       const craft = entry?.kind === 'spacecraft' ? entry.craft : null;
       if (craft) this.spawnProbe(craft, hostObjects);
+      // Resume in sync: when rebuilt mid-run (returning from another mode), the
+      // craft is placed by elapsed time, so the planets must be too — otherwise
+      // they snap back to launch while the craft sits at its elapsed position.
+      this.seedOrbitsToElapsed(missionState.getElapsedMs());
     }
 
     this.sunArrow = new SunArrow(this);
@@ -228,6 +235,9 @@ export class MissionScene extends OrbitalMapScene {
 
   /** Restart the current mission: snap everything to base, then replay. */
   private onRestart(): void {
+    // Nothing to restart when no mission is active (e.g. the picker was
+    // dismissed): restarting must not resurrect the persisted selection.
+    if (!isMissionActive(missionState.getStatus(), missionState.getSelectedId())) return;
     missionState.restart();
     this.scene.restart();
   }
@@ -249,18 +259,20 @@ export class MissionScene extends OrbitalMapScene {
     const status = missionState.getStatus();
     const playing = this.mission !== null && status === MissionRunState.RUNNING;
 
-    if (this.mission === null) {
-      // No mission chosen yet (modal open): let the map drift gently.
-      this.advanceOrbits(delta);
-    } else if (playing) {
+    if (playing) {
       this.advanceOrbits(delta);
       const elapsed = missionState.getElapsedMs() + delta * this.speedMultiplier;
       missionState.setElapsedMs(elapsed);
       this.placeProbe(elapsed);
       this.drawTrajectory();
       if (missionProgressAt(elapsed, this.phases).done) this.handleComplete();
+    } else {
+      // Not playing — either no mission chosen yet (picker dismissed) or a
+      // completed mission with manual restart. Lay the bodies out once at their
+      // base positions and hold; the scene reads as a frozen solar system until
+      // the user picks a mission. advanceOrbits(0) places without advancing.
+      this.advanceOrbits(0);
     }
-    // When COMPLETE (manual restart) nothing advances — the scene is frozen.
 
     this.refreshOrbitLineZoom();
     this.updateSunArrow();
