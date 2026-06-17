@@ -123,11 +123,21 @@ frontend/src/
 ├── logic/
 │   ├── scale.ts             # Scale and coordinate conversion functions
 │   ├── orbit.ts             # Orbital position calculations
+│   ├── ephemeris.ts         # Historical heliocentric angle (J2000 mean longitude)
 │   ├── phases.ts            # Heliocentric transfer-arc geometry (shared)
 │   ├── mission.ts           # Non-cyclic mission timeline
 │   ├── i18n.ts              # Language resolution helper
-│   ├── library.ts           # Library tree builder
-│   └── missions.ts          # Mission data loader/lookup
+│   ├── library.ts           # Config types + library tree builder
+│   ├── catalog.ts           # Typed body/spacecraft loaders + lookups
+│   ├── missions.ts          # Mission data loader/lookup
+│   ├── scenes.ts            # Pure mode <-> scene-key routing
+│   ├── funfacts.ts          # Fun-fact retrieval by distance
+│   ├── linearScale.ts       # Linear-mode piecewise distance<->pixel mapping
+│   ├── linearLayout.ts      # Linear-mode vertical layout (moons clear of host)
+│   ├── distanceCounter.ts   # Linear-mode counter zones/colors/readout
+│   ├── orbitRings.ts        # Ellipse-mode concentric ring radii for orbiters
+│   ├── orbiterSpeed.ts      # Ellipse-mode orbiter speed factors
+│   └── pointerInput.ts      # Pure pointer intent (hit-area, tap-vs-drag)
 ├── game/
 │   ├── scenes/
 │   │   ├── OrbitalMapScene.ts # Abstract base: shared heliocentric map
@@ -1034,6 +1044,25 @@ All tests live in `frontend/src/tests/`. Tests use Vitest. No test imports Phase
 | `getFunFactsAtDistance` returns null before first trigger | distance 0 | `null` |
 | `getFunFactsAtDistance` returns fact in correct language | `lang=ES` | Spanish text |
 | `getFunFactsAtDistance` does not repeat a fact already shown | second pass at same distance | `null` (already triggered) |
+
+### Additional support-logic tests
+
+As the implementation grew, several pure helpers were extracted from the scene
+layer so their decisions could be unit-tested. Each has its own suite:
+
+| File | Covers |
+|---|---|
+| `ephemeris.test.ts` | `yearsSinceJ2000` sign/zero; `heliocentricAngleAt` mean-longitude model (J2000 value, one turn per period, slower for longer periods, backward before J2000) |
+| `missionstate.test.ts` | `UserPreferences` mission persistence (id + restart mode); `MissionState` run status/elapsed/start/restart/complete |
+| `modestate.test.ts` | `ModeState` derivation, `setMode` persist/sync, subscribe/notify |
+| `scenes.test.ts` | pure `sceneKeyForMode` (3 modes) / `otherSceneKeys` routing |
+| `catalog.test.ts` | typed body/spacecraft loaders and lookup-by-id |
+| `linearScale.test.ts` | piecewise distance↔pixel mapping, asteroid-belt expansion, monotonicity |
+| `linearLayout.test.ts` | moons pushed clear of the host disc, even laddering, no spillover into the next cluster |
+| `distanceCounter.test.ts` | journey zone boundaries, zone colors, quantized unit-aware readout |
+| `orbitRings.test.ts` | concentric ring radii outside the host disc, no two orbiters sharing a ring |
+| `orbiterSpeed.test.ts` | per-ring speed factors and explicit `speedFactor` override |
+| `pointerInput.test.ts` | hit-area sizing, tap-vs-drag classification |
 
 ---
 

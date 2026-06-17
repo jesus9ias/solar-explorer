@@ -73,6 +73,7 @@ state/
 logic/
   scale.ts           # Mkm<->AU, log scale, zoom/body clamps
   orbit.ts           # Orbital angle, period conversion, isOrbiting
+  ephemeris.ts       # Historical heliocentric angle (J2000 mean-longitude model)
   phases.ts          # Heliocentric transfer-arc geometry (phasePoint) — shared
   mission.ts         # Non-cyclic mission timeline (progress, completed phases, years)
   i18n.ts            # getText(key, lang); builds dictionaries from ui/bodies/spacecraft
@@ -81,6 +82,12 @@ logic/
   catalog.ts         # Typed loaders + lookups over bodies/spacecraft JSON
   missions.ts        # Typed loader + lookup over missions JSON
   scenes.ts          # Pure mode<->scene-key routing (sceneKeyForMode/otherSceneKeys)
+  linearScale.ts     # Linear-mode piecewise distance<->pixel mapping (belt expansion)
+  linearLayout.ts    # Linear-mode vertical layout: push moons clear of their host
+  distanceCounter.ts # Linear-mode counter zones, colors and quantized readout
+  orbitRings.ts      # Ellipse-mode concentric ring radii for moons/host-orbiting craft
+  orbiterSpeed.ts    # Ellipse-mode orbiter speed factors (per-ring liveliness)
+  pointerInput.ts    # Pure pointer intent: hit-area sizing, tap-vs-drag rule
 game/
   scenes/OrbitalMapScene.ts (abstract base), LinearScene.ts, EllipseScene.ts, MissionScene.ts
   objects/CelestialBody.ts, Spacecraft.ts, OrbitLine.ts, SunArrow.ts
@@ -263,6 +270,13 @@ Phaser.
 | `funfacts.test.ts` | belt trigger, null before first trigger, language, no repeats |
 | `modestate.test.ts` | ModeState derivation, setMode persist/sync, subscribe/notify |
 | `scenes.test.ts` | pure `sceneKeyForMode` (3 modes) / `otherSceneKeys` routing |
+| `catalog.test.ts` | typed body/spacecraft loaders and lookup-by-id |
+| `linearScale.test.ts` | piecewise distance↔pixel mapping, belt expansion, monotonicity |
+| `linearLayout.test.ts` | moons pushed clear of the host disc, even laddering, no spillover |
+| `distanceCounter.test.ts` | journey zone boundaries, zone colors, quantized unit-aware readout |
+| `orbitRings.test.ts` | concentric ring radii outside the host disc, no shared rings |
+| `orbiterSpeed.test.ts` | per-ring speed factors, explicit `speedFactor` override |
+| `pointerInput.test.ts` | hit-area sizing, tap-vs-drag classification |
 
 ### Fixtures the tests assume (keep consistent or consult the dev)
 

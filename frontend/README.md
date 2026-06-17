@@ -1,8 +1,9 @@
 # Solar Explorer — Frontend
 
 An educational, **frontend-only** web app to explore a scale model of the solar
-system. Travel from the Sun out to Voyager 1 in two interactive modes and click
-any element to learn about it. Available in **English** and **Spanish**.
+system. Travel from the Sun out to Voyager 1 in three interactive modes
+(Linear, Ellipse and Mission) and click any element to learn about it.
+Available in **English** and **Spanish**.
 
 Built with **Astro** (static) + **Phaser 4** (canvas) + **TypeScript** (strict),
 tested with **Vitest**.
