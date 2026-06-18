@@ -5,7 +5,7 @@
       "name": "solar-explorer-dev",
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev", "--prefix", "frontend"],
-      "port": 4322
+      "port": 4321
     }
   ]
 }

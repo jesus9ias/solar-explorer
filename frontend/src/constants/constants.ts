@@ -233,7 +233,7 @@ export const LS_KEY_MISSION_RESTART = 'solar_mission_restart';
 // ---------------------------------------------------------------------------
 
 export const DEFAULT_LANGUAGE = Language.EN;
-export const DEFAULT_MODE = Mode.LINEAR;
+export const DEFAULT_MODE = Mode.ELLIPSE;
 export const DEFAULT_UNIT = Unit.MKM;
 export const DEFAULT_AUDIO_ENABLED = false;
 /** No mission is preselected until the user picks one in the mission modal. */
