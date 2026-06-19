@@ -19,8 +19,8 @@ describe('UserPreferences — defaults with no stored values', () => {
     expect(new UserPreferences().getLanguage()).toBe(Language.EN);
   });
 
-  it('defaults mode to Linear', () => {
-    expect(new UserPreferences().getMode()).toBe(Mode.LINEAR);
+  it('defaults mode to Ellipse', () => {
+    expect(new UserPreferences().getMode()).toBe(Mode.ELLIPSE);
   });
 
   it('defaults unit to Million km', () => {
